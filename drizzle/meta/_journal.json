@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1788895263419,
+      "tag": "0000_blue_captain_stacy",
+      "breakpoints": true
+    }
+  ]
+}

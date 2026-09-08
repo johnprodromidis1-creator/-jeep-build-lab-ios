@@ -1,0 +1,48 @@
+# Manual builds only. Connect this repository in the same Codemagic team as
+# the owner's existing apps; see docs/app-store/CODEMAGIC.md before first run.
+workflows:
+  jeep-ios-testflight:
+    name: Jeep Build Lab — TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 45
+    integrations:
+      # Existing integration name read from the owner's other iOS repository.
+      # Confirm it belongs to the Apple team used for this app.
+      app_store_connect: spice_czar_apple
+    environment:
+      node: 24.19.0
+      xcode: 26.6
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.johnprodromidis.jeepbuildlab
+      vars:
+        BUNDLE_ID: com.johnprodromidis.jeepbuildlab
+        BUILD_NUMBER_OFFSET: 0
+    scripts:
+      - name: Install locked dependencies
+        script: npm ci
+      - name: Check TypeScript
+        script: npx tsc --noEmit
+      - name: Bundle the offline app and sync iOS plugins
+        script: npm run ios:sync
+      - name: Verify app identity and assign a unique build number
+        script: python3 scripts/prepare-codemagic-ios.py
+      - name: Apply this app's provisioning profile
+        script: xcode-project use-profiles
+      - name: Archive and export signed IPA
+        script: |
+          xcode-project build-ipa \
+            --project ios/App/App.xcodeproj \
+            --scheme App
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - build/ios/archive/*.xcarchive/dSYMs/*.dSYM
+    publishing:
+      app_store_connect:
+        auth: integration
+        # Upload for internal TestFlight testing. Add the processed build to
+        # the owner's internal group in App Store Connect (or enable its
+        # automatic distribution). Neither review nor public release is started.
+        submit_to_testflight: false
+        submit_to_app_store: false

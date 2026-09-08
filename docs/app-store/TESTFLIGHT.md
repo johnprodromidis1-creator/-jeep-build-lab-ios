@@ -2,7 +2,11 @@
 
 Use the owner's Apple Developer account. Do not paste signing certificates, private keys, account passwords or API keys into source files or chat. No paid build service has been provisioned.
 
-## On a Mac
+## Preferred route: Codemagic
+
+Use the owner's existing Codemagic account. The repository now includes a manual iOS archive/upload workflow and [Codemagic setup instructions](CODEMAGIC.md). The mobile GitHub repository, app-specific Apple record and provisioning profile still need to be connected before the first run. No personal Mac is required for that route.
+
+## Alternative: on a Mac
 
 1. Install Xcode 26 or later, its command-line tools, and Node 22 or later. Open Xcode once and complete its first-run setup. A paid Apple Developer Program membership is needed for TestFlight; an existing active membership can be reused.
 2. Obtain the current repository source. The canonical repository is managed by Sites; it is not currently a connected GitHub Actions build project. Keep generated files and `node_modules` out of source control.
@@ -13,7 +17,7 @@ Use the owner's Apple Developer account. Do not paste signing certificates, priv
 7. In Xcode select a generic iOS device destination, then Product → Archive. In Organizer validate and distribute to App Store Connect. Use Xcode's signed distribution flow. Increment the build number for subsequent uploads.
 8. Wait for processing. Complete export-compliance and beta information accurately. In TestFlight, create/select an internal testing group, add the processed build, and add the owner as an eligible internal tester. Install through the TestFlight invitation or app. [Apple internal-testing instructions](https://developer.apple.com/help/app-store-connect/test-a-beta-version/add-internal-testers/)
 
-If no Mac is available, connect a Mac build service or a GitHub repository with an appropriate macOS CI runner. That account/runner has not been selected or authorized here. The Sites web deployment does not create a TestFlight binary.
+Codemagic is the selected Mac build service. Its first successful native run remains pending. The Sites web deployment does not create a TestFlight binary.
 
 ## Test one task at a time
 

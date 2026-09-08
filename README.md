@@ -40,3 +40,11 @@ Run npm run db:generate when schema changes. Build with Sites build helper. Run 
 Official Jeep Build & Price (https://www.jeep.com/bmo.html) is the benchmark for clear vehicle configuration and pricing. This app focuses on aftermarket ownership planning: compatible combinations, staged purchases, owner-supplied quotes and comparison of saved options. No claim is made that Jeep lacks any particular feature or that its full interactive flow has been browser-tested.
 
 Version 2 preserves the limited vehicle/catalog scope and illustrative preview. Pricing, compatibility and owner-isolation tests cover the new planning features; no browser interaction or visual QA was performed for this revision. No paid service was added.
+
+## iOS / App Store preparation (0.2.0)
+
+The native project is in `ios/App/App.xcodeproj`; the separately bundled React entry is `mobile/main.tsx`. `npm run ios:sync` builds the offline assets and updates Capacitor. The app targets iOS 17+ and requires Xcode 26+ for the current upload rules. No signed IPA or TestFlight upload has been produced.
+
+Anonymous website visitors and the iOS app use `lib/storage/device.ts`; the website's authenticated cloud garage uses `lib/storage/cloud.ts` and the original owner-isolated APIs. Settings includes backup, device restore, data erasure, support and privacy. Do not expose cloud data to solve anonymous access. `/api/catalog` returns the public source catalog to guests, never another owner's quotes.
+
+Current preparation and test instructions: `docs/app-store/READINESS.md`, `TESTFLIGHT.md`, `LISTING-DRAFT.md`. The optional native sign-in/cloud sync feature is intentionally absent from this candidate; existing web cloud records remain accessible on the website. No paid build service was added.

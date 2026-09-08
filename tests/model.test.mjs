@@ -9,12 +9,14 @@ await mkdir(output,{recursive:true});
 const sql=new DatabaseSync(":memory:");
 for(const file of (await readdir(root+"/drizzle")).filter(f=>f.endsWith(".sql")).sort())sql.exec(await readFile(root+"/drizzle/"+file,"utf8"));
 const DB={prepare(query){const stmt=sql.prepare(query);const bound=(args=[])=>({bind(...a){return bound(a);},async all(){return{results:stmt.all(...args),success:true};},async first(){return stmt.get(...args)??null;},async run(){const r=stmt.run(...args);return{success:true,meta:{changes:Number(r.changes)}};}});return bound();}};
+DB.batch=async(statements)=>{sql.exec('BEGIN');try{const result=[];for(const stmt of statements)result.push(await stmt.run());sql.exec('COMMIT');return result;}catch(error){sql.exec('ROLLBACK');throw error;}};
 globalThis.__testEnv={DB};
 async function module(file,name){await build({entryPoints:[root+"/"+file],outfile:output+name+".mjs",bundle:true,format:"esm",platform:"node",plugins:[{name:"test-binding",setup(b){b.onResolve({filter:/^cloudflare:workers$/},()=>({path:"env",namespace:"binding"}));b.onLoad({filter:/.*/,namespace:"binding"},()=>({contents:"export const env = globalThis.__testEnv;"}));}}]});return import(output+name+".mjs");}
 const model=await module("lib/model.ts","model");
 const api=await module("app/api/builds/route.ts","builds");
 const drafts=await module("app/api/draft/route.ts","drafts");
 const planning=await module("lib/planning.ts","planning");
+const accountData=await module("app/api/data/route.ts","data");
 const catalog=await module("app/api/catalog/route.ts","catalog");
 const {initialState,baseCatalog,totalFor,buildIssues,stateSchema}=model;
 const base=()=>structuredClone(initialState);
@@ -104,5 +106,21 @@ test("draft recovery keeps owners isolated and rejects stale concurrent writes",
  assert.equal((await drafts.PUT(req("draft-a","PUT",{revision:1,draft:{...draft,name:"Stale update"}}))).status,409);
  assert.equal((await (await drafts.GET(req("draft-a"))).json()).draft.name,"Newest draft");
  assert.equal((await drafts.PUT(req("draft-a","PUT",{revision:2,draft:{...draft,state:{...base(),picks:{tires:"fictional"}}}}))).status,400);
+});
+test("guest catalog excludes personal prices and private data export/deletion stay owner scoped",async()=>{
+ const state=base();state.picks={tires:"nitto-217020"};
+ await api.POST(req("export-a","POST",{name:"Private A",notes:"Personal",state}));
+ await api.POST(req("export-b","POST",{name:"Private B",notes:"Other",state}));
+ await catalog.PUT(req("export-a","PUT",{partId:"nitto-217020",priceCents:12345}));
+ const publicCatalog=await catalog.GET(req(null));assert.equal(publicCatalog.status,200);
+ assert.equal((await publicCatalog.json()).parts.find(p=>p.id==="nitto-217020").priceCents,43200);
+ assert.equal((await accountData.GET(req(null))).status,401);
+ const backup=await (await accountData.GET(req("export-a"))).json();
+ assert.equal(backup.builds.length,1);assert.equal(backup.builds[0].name,"Private A");assert.equal(backup.prices[0].priceCents,12345);
+ assert.equal((await accountData.DELETE(req("export-a","DELETE",{confirm:"NO"}))).status,400);
+ assert.equal((await accountData.DELETE(req("export-a","DELETE",{confirm:"DELETE MY APP DATA"},"https://evil.example"))).status,403);
+ assert.equal((await accountData.DELETE(req("export-a","DELETE",{confirm:"DELETE MY APP DATA"}))).status,200);
+ const erased=await (await accountData.GET(req("export-a"))).json();assert.equal(erased.builds.length,0);assert.equal(erased.prices.length,0);assert.equal(erased.draft,null);
+ assert.equal((await (await accountData.GET(req("export-b"))).json()).builds[0].name,"Private B");
 });
 after(async()=>{sql.close();delete globalThis.__testEnv;await rm(output,{recursive:true,force:true});});

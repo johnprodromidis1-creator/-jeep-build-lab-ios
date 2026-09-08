@@ -42,3 +42,16 @@ next-env.d.ts
 /work/
 
 *.tsbuildinfo
+
+# Native build products; the iOS source project is tracked.
+/mobile-dist/
+/ios/App/App/public/
+/ios/App/App/capacitor.config.json
+/ios/App/App/config.xml
+/ios/App/build/
+*.xcuserstate
+xcuserdata/
+*.ipa
+*.dSYM.zip
+*.mobileprovision
+*.p12

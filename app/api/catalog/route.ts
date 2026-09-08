@@ -1,7 +1,7 @@
 import {z} from "zod";
 import {baseCatalog} from "@/lib/model";
 import {db,owner,sameOrigin,json,catalogFor} from "@/lib/server";
-export async function GET(request:Request){const id=owner(request);if(!id)return json({error:"Sign in to load your catalog."},401);try{return json({parts:await catalogFor(id)});}catch{return json({error:"Could not load saved prices. Showing source prices."},503);}}
+export async function GET(request:Request){const id=owner(request);if(!id)return json({parts:baseCatalog});try{return json({parts:await catalogFor(id)});}catch{return json({error:"Could not load saved prices. Showing source prices."},503);}}
 export async function PUT(request:Request){const id=owner(request);if(!id)return json({error:"Sign in first."},401);if(!sameOrigin(request))return json({error:"Invalid origin."},403);try{
  const parsed=z.object({partId:z.string().max(100),priceCents:z.number().int().min(0).max(10000000)}).strict().safeParse(await request.json());
  if(!parsed.success||!baseCatalog.some(p=>p.id===parsed.data.partId))return json({error:"Enter a valid product and price."},400);

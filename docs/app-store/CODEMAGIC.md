@@ -6,7 +6,7 @@ The owner uses Codemagic for existing apps. This repository now contains a manua
 
 The canonical source is saved in the existing Sites repository. That source credential is short-lived and is not suitable as a permanent Codemagic checkout credential. The website URL is not a source repository URL.
 
-Create an empty **private** GitHub repository named `jeep-build-lab-ios` under `johnprodromidis1-creator`, without a README, license or gitignore. Copy the committed source into it, including `codemagic.yaml`, the lockfile and `ios/`. Keep the current Sites origin; the GitHub copy is the mobile build destination. Do not use the existing `thats-ducked-up-ios` repository: it is a different app. No new GitHub repository has been created yet.
+The owner created [johnprodromidis1-creator/-jeep-build-lab-ios](https://github.com/johnprodromidis1-creator/-jeep-build-lab-ios). The leading hyphen is part of its name. Its visibility is public. This is the mobile build destination for the committed source, including `codemagic.yaml`, the lockfile and `ios/`. Keep the current Sites origin for website development. Do not use the existing `thats-ducked-up-ios` repository: it is a different app. Signing keys and private runtime data do not belong in either repository.
 
 In [Codemagic Applications](https://codemagic.io/apps), select the same team used by the owner's other apps, add the new GitHub repository, choose the Capacitor/Ionic project type if offered, and use the repository's `codemagic.yaml`. If the repository is absent, allow the Codemagic GitHub integration access to that specific repository.
 
@@ -28,4 +28,4 @@ In [Codemagic Applications](https://codemagic.io/apps), select the same team use
 
 Build numbers use Codemagic's project-wide `PROJECT_BUILD_NUMBER + BUILD_NUMBER_OFFSET + 1`. Rebuilds therefore get a new value. `BUILD_NUMBER_OFFSET` defaults to zero. If the Codemagic app is recreated or a higher build was uploaded elsewhere, set an offset large enough to exceed the latest uploaded number before retrying. The script stops rather than producing a five-digit single-component version. [Codemagic build variables](https://docs.codemagic.io/yaml-basic-configuration/environment-variables/)
 
-No automatic push triggers or paid plan changes are configured. The workflow timeout is 45 minutes; actual consumption depends on the build and the owner's existing allowance. The next external blocker is creating/connecting the mobile source repository and confirming signing; local checks cannot substitute for a successful Mac archive.
+No automatic push triggers or paid plan changes are configured. The workflow timeout is 45 minutes; actual consumption depends on the build and the owner's existing allowance. The next external blocker is adding the mobile repository to Codemagic and confirming signing; local checks cannot substitute for a successful Mac archive.

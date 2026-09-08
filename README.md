@@ -1,6 +1,10 @@
 # Jeep Build Lab
 Mobile-first Wrangler JL build planner. Initial scope: 2018–2023 JL Unlimited 4-door, Sport/Sahara/Rubicon, 3.6L gasoline, standard suspension. Not for 4xe, diesel, 392 or Xtreme Recon.
 
+## Build for TestFlight with Codemagic
+
+The iOS build destination is [johnprodromidis1-creator/-jeep-build-lab-ios](https://github.com/johnprodromidis1-creator/-jeep-build-lab-ios). The leading hyphen is part of the repository name. Add this repository to the owner's Codemagic team and select the `jeep-ios-testflight` workflow on `main`. Follow [the Codemagic setup guide](docs/app-store/CODEMAGIC.md) to connect this app's Apple record and provisioning profile before starting a build. No signed build has been verified yet.
+
 ## Implemented
 - 43 sourced product variants across wheels, tires, suspension, front bumpers, winches and side armor.
 - Original illustrative PNG vehicle and wheel layers; tire diameter, wheel finish and lift change the preview. Accessories are list-only.
@@ -13,7 +17,7 @@ Mobile-first Wrangler JL build planner. Initial scope: 2018–2023 JL Unlimited 
 - Buy now/later/owned/installed stages, remaining upgrade budget and optional user-entered vehicle price. All allowances are reserved in the first phase; installation sequence is not verified.
 - Owner-scoped D1 draft recovery with debounced writes and revision checks to prevent stale tab/device overwrites; explicit failure/retry states. Named garage snapshots remain separate.
 - Twenty configuration undo steps per session. Fitment conflicts appear above the preview with review links, including retained-tire/new-wheel mismatches.
-- No affiliate tracking, paid APIs, scraping pipeline, public audience or checkout.
+- No affiliate tracking, paid APIs, scraping pipeline or checkout.
 
 ## Catalog
 lib/catalog.json contains variant records and dated source URLs. Facts were manually checked September 8, 2026. Prices are snapshots; no stock status promised. Descriptions are original. Generated illustrations are not branded product photographs.
@@ -26,7 +30,7 @@ builds keyed by id and indexed by owner_id; every lookup/mutation checks oai-aut
 price_notes keyed by owner_id + part_id.
 build_drafts keyed by owner_id; writes use an expected revision and return 409 instead of overwriting a newer draft. Appends migration 0001; the original migration is unchanged. Existing saved and linked state gains default purchase stages and vehicle price through Zod parsing.
 API writes reject mismatched Origin. Zod validates client state and catalog references. Money uses integer cents.
-Sharing serializes only supported BuildState, omitting private name, notes and custom prices. Site remains owner-private.
+Sharing serializes only supported BuildState, omitting private name, notes and custom prices. The website is public; anonymous visitors use device storage, and cloud records require their authenticated owner.
 
 ## Extending
 Keep product identity/specifications separate from offers. Current source and personal quote are a minimal offer layer. Add retailer offer records keyed by part ID, then an affiliate link resolver, without changing selections.
@@ -47,4 +51,4 @@ The native project is in `ios/App/App.xcodeproj`; the separately bundled React e
 
 Anonymous website visitors and the iOS app use `lib/storage/device.ts`; the website's authenticated cloud garage uses `lib/storage/cloud.ts` and the original owner-isolated APIs. Settings includes backup, device restore, data erasure, support and privacy. Do not expose cloud data to solve anonymous access. `/api/catalog` returns the public source catalog to guests, never another owner's quotes.
 
-Current preparation and test instructions: `docs/app-store/READINESS.md`, `TESTFLIGHT.md`, `LISTING-DRAFT.md`. The optional native sign-in/cloud sync feature is intentionally absent from this candidate; existing web cloud records remain accessible on the website. No paid build service was added.
+Current preparation and test instructions: `docs/app-store/CODEMAGIC.md`, `READINESS.md`, `TESTFLIGHT.md`, `LISTING-DRAFT.md`. The native candidate uses device storage; existing web cloud records remain accessible on the website. The owner's existing Codemagic account is the selected build service. No paid plan change was made.

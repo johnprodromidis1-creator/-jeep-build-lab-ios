@@ -1,6 +1,18 @@
 # Manual builds only. Connect this repository in the same Codemagic team as
 # the owner's existing apps; see docs/app-store/CODEMAGIC.md before first run.
 workflows:
+  jeep-ios-verify:
+    name: Jeep Build Lab — iOS compile check
+    instance_type: mac_mini_m2
+    max_build_duration: 30
+    environment:
+      node: 24.19.0
+      xcode: 26.6
+    scripts:
+      - name: Compile the bundled app for iOS Simulator
+        script: bash scripts/ios-verify.sh
+    artifacts:
+      - ios/DerivedData/Build/Products/Debug-iphonesimulator/*.app
   jeep-ios-testflight:
     name: Jeep Build Lab — TestFlight
     instance_type: mac_mini_m2

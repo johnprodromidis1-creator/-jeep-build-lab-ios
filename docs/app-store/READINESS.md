@@ -20,7 +20,7 @@ The web version retains an optional ChatGPT cloud garage. Anonymous visitors use
 | Gate | Status / next action |
 | --- | --- |
 | Apple signing account | Not connected to this environment. Reuse the owner's existing enrolled Apple account if available. |
-| Codemagic | Manual workflow prepared using the owner's existing integration name; GitHub mobile source and app-specific signing profile still need connection. See CODEMAGIC.md. No run started. |
+| Codemagic | GitHub source transferred and app connected. Unsigned compile-check and signed upload workflows are prepared. App-specific Apple registration/profile remains pending; see CODEMAGIC.md. |
 | Bundle registration | `com.johnprodromidis.jeepbuildlab` is a proposed bundle identifier in source; registration/availability has not been verified. Confirm it before uploading. |
 | Mac compilation | Run the supplied verification script with Xcode 26+. Linux cannot compile or sign iOS binaries. |
 | Native functionality | Test actual iPhone/iPad startup, airplane-mode relaunch, keyboard, share sheet, file picker, restore, deletion, retailer return and lifecycle. |

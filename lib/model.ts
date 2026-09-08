@@ -9,16 +9,18 @@ export const baseCatalog = catalog as Part[];
 export const stateSchema = z.object({
  year:z.number().int().min(2018).max(2023), trim:z.enum(["Sport","Sahara","Rubicon"]),
  stockRim:z.union([z.literal(17),z.literal(18)]), stockTire:z.number().min(30).max(35),
+ vehicleCost:z.number().int().min(0).max(10000000).default(0),
+ stages:z.object({wheels:z.enum(["now","later","owned","installed"]).optional(),tires:z.enum(["now","later","owned","installed"]).optional(),lift:z.enum(["now","later","owned","installed"]).optional(),bumpers:z.enum(["now","later","owned","installed"]).optional(),winches:z.enum(["now","later","owned","installed"]).optional(),armor:z.enum(["now","later","owned","installed"]).optional()}).strict().default({}),
  quantity:z.union([z.literal(4),z.literal(5)]),
  budget:z.number().int().min(0).max(10000000),
  labor:z.number().int().min(0).max(10000000), extras:z.number().int().min(0).max(10000000),
  picks:z.object({wheels:z.string().max(100).optional(),tires:z.string().max(100).optional(),lift:z.string().max(100).optional(),bumpers:z.string().max(100).optional(),winches:z.string().max(100).optional(),armor:z.string().max(100).optional()}).strict(),
 }).strict().superRefine((s,ctx)=>{for(const [cat,id] of Object.entries(s.picks)){if(!baseCatalog.some(p=>p.id===id&&p.category===cat))ctx.addIssue({code:z.ZodIssueCode.custom,message:"Unknown part or category",path:["picks",cat]});}});
 export type BuildState = z.infer<typeof stateSchema>;
-export const initialState:BuildState={year:2021,trim:"Sport",stockRim:17,stockTire:32,quantity:5,budget:500000,labor:0,extras:0,picks:{}};
+export const initialState:BuildState={year:2021,trim:"Sport",stockRim:17,stockTire:32,quantity:5,vehicleCost:0,stages:{},budget:500000,labor:0,extras:0,picks:{}};
 export const saveSchema=z.object({id:z.string().uuid().optional(),name:z.string().trim().min(1).max(80),notes:z.string().max(1500),state:stateSchema}).strict();
 export type SavedBuild={id:string;name:string;notes:string;state:BuildState;updatedAt:string;savedTotal:number};
-export type Issue={level:"error"|"note";message:string};
+export type Issue={level:"error"|"note";message:string;category?:Category};
 export function selectedParts(s:BuildState,parts:Part[]=baseCatalog){return categories.map(c=>parts.find(p=>p.id===s.picks[c])).filter((p):p is Part=>!!p);}
 export function fitsVehicle(p:Part,s:BuildState){return s.year>=p.yearFrom&&s.year<=p.yearTo&&p.trims.includes(s.trim);}
 export function quantityFor(p:Part,s:BuildState){return p.category==="wheels"||p.category==="tires"?s.quantity:1;}
@@ -26,12 +28,13 @@ export function totalFor(s:BuildState,parts:Part[]=baseCatalog){const subtotal=s
 export function buildIssues(s:BuildState,parts:Part[]=baseCatalog):Issue[]{
  const issues:Issue[]=[]; const selected=selectedParts(s,parts);
  const wheel=selected.find(p=>p.category==="wheels"), tire=selected.find(p=>p.category==="tires"), lift=selected.find(p=>p.category==="lift"), bumper=selected.find(p=>p.category==="bumpers");
- for(const p of selected)if(!fitsVehicle(p,s))issues.push({level:"error",message:p.name+" — this variant is not listed for your selected year/trim."});
+ for(const p of selected)if(!fitsVehicle(p,s))issues.push({level:"error",category:p.category,message:p.name+" — this variant is not listed for your selected year/trim."});
  const rim=wheel?.specs.rim??s.stockRim;
- if(tire&&tire.specs.rim!==rim)issues.push({level:"error",message:`Wheel diameter mismatch: ${tire.specs.rim}″ tire requires a ${tire.specs.rim}″ wheel. Your selected wheels are ${rim}″.`});
+ if(tire&&tire.specs.rim!==rim)issues.push({level:"error",category:"tires",message:`Wheel diameter mismatch: ${tire.specs.rim}″ tire requires a ${tire.specs.rim}″ wheel. Your selected wheels are ${rim}″.`});
+ if(wheel&&!tire&&rim!==s.stockRim)issues.push({level:"error",category:"tires",message:`Wheel diameter mismatch: your current tires fit ${s.stockRim}″ wheels and cannot mount on these ${rim}″ wheels. Add ${rim}″ tires or keep your current wheels.`});
  const diameter=tire?.specs.diameter??s.stockTire;
  const max=lift?(s.trim==="Rubicon"?(lift.specs.maxTireRubicon??lift.specs.maxTire):lift.specs.maxTire):undefined;
- if(max&&diameter>max)issues.push({level:"error",message:`${diameter}″ tires exceed this lift's listed ${max}″ tire limit for your trim.`});
+ if(max&&diameter>max)issues.push({level:"error",category:"tires",message:`${diameter}″ tires exceed this lift's listed ${max}″ tire limit for your trim.`});
  if(tire&&!lift&&diameter>s.stockTire+.2)issues.push({level:"note",message:"Larger-than-stock tires: clearance is unverified. Check lift, fenders, steering and suspension travel before purchase."});
  if(lift&&!wheel)issues.push({level:"note",message:"Factory wheels with this lift need additional clearance checks; wheel changes or spacers may be required."});
  if(wheel||tire)issues.push({level:"note",message:"Confirm rim width, offset/backspacing, brake clearance, tire load rating and spare-carrier capacity. Matching diameters alone does not establish fitment."});

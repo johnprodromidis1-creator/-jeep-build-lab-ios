@@ -1,18 +1,20 @@
 import assert from "node:assert/strict";
 import test, {after} from "node:test";
-import {readFile,mkdir,rm} from "node:fs/promises";
+import {readFile,readdir,mkdir,rm} from "node:fs/promises";
 import {build} from "esbuild";
 import {DatabaseSync} from "node:sqlite";
 const root=new URL("..",import.meta.url).pathname;
 const output=root+"/.sites-runtime/unit/";
 await mkdir(output,{recursive:true});
 const sql=new DatabaseSync(":memory:");
-sql.exec(await readFile(root+"/drizzle/0000_blue_captain_stacy.sql","utf8"));
+for(const file of (await readdir(root+"/drizzle")).filter(f=>f.endsWith(".sql")).sort())sql.exec(await readFile(root+"/drizzle/"+file,"utf8"));
 const DB={prepare(query){const stmt=sql.prepare(query);const bound=(args=[])=>({bind(...a){return bound(a);},async all(){return{results:stmt.all(...args),success:true};},async first(){return stmt.get(...args)??null;},async run(){const r=stmt.run(...args);return{success:true,meta:{changes:Number(r.changes)}};}});return bound();}};
 globalThis.__testEnv={DB};
 async function module(file,name){await build({entryPoints:[root+"/"+file],outfile:output+name+".mjs",bundle:true,format:"esm",platform:"node",plugins:[{name:"test-binding",setup(b){b.onResolve({filter:/^cloudflare:workers$/},()=>({path:"env",namespace:"binding"}));b.onLoad({filter:/.*/,namespace:"binding"},()=>({contents:"export const env = globalThis.__testEnv;"}));}}]});return import(output+name+".mjs");}
 const model=await module("lib/model.ts","model");
 const api=await module("app/api/builds/route.ts","builds");
+const drafts=await module("app/api/draft/route.ts","drafts");
+const planning=await module("lib/planning.ts","planning");
 const catalog=await module("app/api/catalog/route.ts","catalog");
 const {initialState,baseCatalog,totalFor,buildIssues,stateSchema}=model;
 const base=()=>structuredClone(initialState);
@@ -65,5 +67,42 @@ test("D1 route round-trip, price isolation, update ownership and delete ownershi
  assert.equal((await (await catalog.GET(req("alice"))).json()).parts.find(p=>p.id==="nitto-217020").priceCents,43200);
  await api.DELETE(req("alice","DELETE",undefined,undefined,"?id="+data.id));
  assert.deepEqual((await (await api.GET(req("alice"))).json()).builds,[]);
+});
+test("new 17-inch wheels conflict with retained 18-inch tires until matching tires are added",()=>{
+ const state=base();state.trim="Sahara";state.stockRim=18;state.picks={wheels:"method-MR70178550900"};
+ assert.ok(buildIssues(state).some(issue=>issue.level==="error"&&issue.message.includes("current tires fit 18")));
+ state.picks.tires="nitto-217020";
+ assert.ok(!buildIssues(state).some(issue=>issue.level==="error"&&issue.message.includes("diameter mismatch")));
+});
+test("purchase stages exclude owned items without hiding parts from final-build fitment",()=>{
+ const state=base();state.picks={wheels:"method-MR70178550900",tires:"nitto-217130",lift:"aev-spacer"};
+ state.stages={wheels:"owned",tires:"later",lift:"installed"};state.labor=60000;state.extras=15000;state.vehicleCost=3500000;
+ const costs=planning.costPlan(state,baseCatalog);
+ assert.equal(costs.now,0);assert.equal(costs.later,47200*5);assert.equal(costs.covered,36600*5+48900);
+ assert.equal(costs.remaining,47200*5+75000);assert.equal(costs.dueNow,75000);assert.equal(costs.project,costs.remaining+3500000);
+ assert.ok(buildIssues(state).some(i=>i.level==="error"&&i.message.includes("diameter mismatch")));
+ state.stages.wheels="now";assert.equal(planning.costPlan(state,baseCatalog).dueNow,36600*5+75000);
+});
+test("legacy saved configurations gain defaults and comparisons include quantity and purchase stage",()=>{
+ const legacy=base();delete legacy.stages;delete legacy.vehicleCost;
+ const restored=stateSchema.parse(legacy);assert.deepEqual(restored.stages,{});assert.equal(restored.vehicleCost,0);
+ restored.picks={tires:"nitto-217020"};const other=structuredClone(restored);other.quantity=4;
+ const rows=planning.compareRows(restored,other,baseCatalog);assert.equal(rows.filter(r=>r.changed).length,1);assert.equal(rows.find(r=>r.category==="tires").leftCost,43200*5);
+ other.quantity=5;other.stages.tires="owned";assert.equal(planning.compareRows(restored,other,baseCatalog).find(r=>r.category==="tires").changed,true);
+ assert.equal(planning.groupParts(baseCatalog).reduce((n,g)=>n+g.variants.length,0),43);
+ assert.equal(stateSchema.safeParse({...base(),stages:{wheels:"free"}}).success,false);
+});
+test("draft recovery keeps owners isolated and rejects stale concurrent writes",async()=>{
+ const draft={name:"Trail draft",notes:"Still choosing",state:base(),buildId:null,lastSavedTotal:null};
+ assert.equal((await drafts.GET(req(null))).status,401);
+ assert.equal((await drafts.PUT(req("draft-a","PUT",{revision:0,draft},"https://evil.example"))).status,403);
+ assert.equal((await drafts.PUT(req("draft-a","PUT",{revision:0,draft}))).status,200);
+ const first=await (await drafts.GET(req("draft-a"))).json();assert.equal(first.revision,1);assert.equal(first.draft.name,"Trail draft");
+ assert.equal((await (await drafts.GET(req("draft-b"))).json()).draft,null);
+ assert.equal((await drafts.PUT(req("draft-a","PUT",{revision:0,draft:{...draft,name:"Stale first write"}}))).status,409);
+ assert.equal((await drafts.PUT(req("draft-a","PUT",{revision:1,draft:{...draft,name:"Newest draft"}}))).status,200);
+ assert.equal((await drafts.PUT(req("draft-a","PUT",{revision:1,draft:{...draft,name:"Stale update"}}))).status,409);
+ assert.equal((await (await drafts.GET(req("draft-a"))).json()).draft.name,"Newest draft");
+ assert.equal((await drafts.PUT(req("draft-a","PUT",{revision:2,draft:{...draft,state:{...base(),picks:{tires:"fictional"}}}}))).status,400);
 });
 after(async()=>{sql.close();delete globalThis.__testEnv;await rm(output,{recursive:true,force:true});});

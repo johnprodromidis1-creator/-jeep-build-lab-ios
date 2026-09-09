@@ -13,6 +13,8 @@ workflows:
         script: bash scripts/ios-verify.sh
     artifacts:
       - ios/DerivedData/Build/Products/Debug-iphonesimulator/*.app
+      - build/ios/verify/*.log
+      - build/ios/verify/*.xcresult
   jeep-ios-testflight:
     name: Jeep Build Lab — TestFlight
     instance_type: mac_mini_m2

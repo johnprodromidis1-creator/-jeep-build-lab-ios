@@ -4,13 +4,13 @@ Use the owner's Apple Developer account. Do not paste signing certificates, priv
 
 ## Preferred route: Codemagic
 
-Use the owner's existing Codemagic account. The repository now includes a manual iOS archive/upload workflow and [Codemagic setup instructions](CODEMAGIC.md). The mobile GitHub repository, app-specific Apple record and provisioning profile still need to be connected before the first run. No personal Mac is required for that route.
+Use the owner's existing Codemagic account. The mobile GitHub repository is connected, and the repository includes a manual iOS archive/upload workflow and [Codemagic setup instructions](CODEMAGIC.md). This app's Apple record and provisioning profile remain unverified. No personal Mac is required for that route.
 
 ## Alternative: on a Mac
 
 1. Install Xcode 26 or later, its command-line tools, and Node 22 or later. Open Xcode once and complete its first-run setup. A paid Apple Developer Program membership is needed for TestFlight; an existing active membership can be reused.
 2. Obtain the current repository source. The canonical repository is managed by Sites; it is not currently a connected GitHub Actions build project. Keep generated files and `node_modules` out of source control.
-3. At the repository root, run `bash scripts/ios-verify.sh`. This installs the locked dependencies, bundles the app, syncs Capacitor plugins and compiles an unsigned simulator build. It has not been run here because this environment has no Xcode.
+3. At the repository root, run `bash scripts/ios-verify.sh`. This installs the locked dependencies, checks TypeScript, bundles the app, syncs Capacitor plugins and compiles an unsigned simulator build. Logs and Xcode result bundles are saved under `build/ios/verify/`. The first Codemagic run's result remains unverified; this local environment has no Xcode.
 4. Run `npm run ios:open`. In Xcode choose the App target → Signing & Capabilities → your Apple team, with automatic signing. Confirm the Bundle Identifier before registration. The current proposed identifier is `com.johnprodromidis.jeepbuildlab`.
 5. Run on your iPhone first. Complete the smoke tests below. Correct actual native issues before creating an archive.
 6. In [App Store Connect](https://appstoreconnect.apple.com/), create this app's record using the matching registered Bundle ID. Do not reuse the records for the owner's other Jeep apps. Final name availability is not yet checked; choose a SKU unique to this app.
@@ -33,5 +33,8 @@ Codemagic is the selected Mac build service. Its first successful native run rem
 | 8 | Delete app data after exporting a backup | Garage and price overrides cleared; relaunch does not resurrect them | Pending |
 | 9 | Open retailer page online and return | Correct retailer variant page; build preserved | Pending |
 | 10 | Check privacy/help, large text, VoiceOver, keyboard and rotation | Content and buttons remain usable; contact link opens mail composer | Pending |
+| 11 | Change the current build, choose New build and confirm, wait for draft saved, then close and reopen | Empty new build returns; the old draft does not reappear; named garage builds remain | Pending |
+
+On the web version, also open a shared build link before restoring a backup or deleting app data. After the confirmed action and reload, the old link must be cleared; the restored draft or an empty garage must appear as appropriate.
 
 Do not delete useful personal builds during testing without a verified backup. Test cloud isolation separately on the website with distinct accounts; never use a shared database owner ID for guests.

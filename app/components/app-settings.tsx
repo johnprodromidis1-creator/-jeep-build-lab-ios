@@ -13,7 +13,11 @@ export function AppSettings({open,onOpenChange,storage,currentDraft,pauseDraft,r
  const file=useRef<HTMLInputElement>(null);
  async function backup(){setBusy(true);try{await pauseDraft();const data={...await storage.backup(),draft:currentDraft};await exportFile('jeep-build-backup.json',JSON.stringify(data,null,2),'application/json');}catch(e){toast.error(e instanceof Error?e.message:'Backup could not be exported.');}finally{resumeDraft();setBusy(false);}}
  async function chooseBackup(selected:File|undefined){if(!selected)return;setBusy(true);try{if(selected.size>2000000)throw new Error('This file is too large to be a build backup.');const parsed=backupSchema.safeParse(JSON.parse(await selected.text()));if(!parsed.success)throw new Error('This backup is invalid or contains unsupported parts. Your current data is unchanged.');setRestore(parsed.data);}catch(e){toast.error(e instanceof Error?e.message:'Could not read the backup.');}finally{setBusy(false);if(file.current)file.current.value='';}}
- async function replaceData(){setBusy(true);try{await pauseDraft();if(restore)await storage.restore(restore);else await storage.erase();window.location.reload();}catch(e){resumeDraft();toast.error(e instanceof Error?e.message:'Your app data could not be updated.');setBusy(false);setErase(false);setRestore(null);}}
+ async function replaceData(){setBusy(true);try{await pauseDraft();if(restore)await storage.restore(restore);else await storage.erase();
+  // A shared build must not override the restored garage or reappear after erasure.
+  window.history.replaceState(null,'',window.location.pathname+window.location.search);
+  window.location.reload();
+ }catch(e){resumeDraft();toast.error(e instanceof Error?e.message:'Your app data could not be updated.');setBusy(false);setErase(false);setRestore(null);}}
  return <><Dialog open={open} onOpenChange={v=>!busy&&onOpenChange(v)}><DialogContent className="settings-dialog"><DialogHeader><DialogTitle>Settings & help</DialogTitle><DialogDescription>{storage.mode==='device'?'Your garage is saved on this device.':'Your cloud garage is private to your signed-in account.'} App 0.2.0</DialogDescription></DialogHeader>
  <Tabs value={tab} onValueChange={setTab}><TabsList className="settings-tabs"><TabsTrigger value="data">Your data</TabsTrigger><TabsTrigger value="privacy">Privacy</TabsTrigger><TabsTrigger value="support">Help</TabsTrigger></TabsList></Tabs>
  {tab==='privacy'?<PrivacyContent/>:tab==='support'?<SupportContent/>:<div className="settings-data">

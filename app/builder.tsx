@@ -80,7 +80,8 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
  const draft=useBuildDraft(storage,currentDraft,(value:Draft)=>{
   if(touched.current||window.location.hash.startsWith('#build='))return false;
   setState(value.state);setName(value.name);setNotes(value.notes);setId(value.buildId??undefined);setLastSavedTotal(value.lastSavedTotal);setDirty(true);toast.success('Your latest draft was restored.');return true;
- },dirty||!!id);
+ // A deliberate reset is still a draft change, even when the new build is empty.
+ },dirty||!!id||touched.current);
  const selected=useMemo(()=>selectedParts(state,parts),[state,parts]);
  const issues=useMemo(()=>buildIssues(state,parts),[state,parts]);
  const {subtotal,total}=totalFor(state,parts);

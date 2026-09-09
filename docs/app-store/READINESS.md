@@ -10,6 +10,7 @@ Status: source prepared for an initial iOS device build. Not submitted to App St
 - Native share sheet for build links, parts CSV and JSON backups; temporary exported files are removed from the app cache after sharing returns.
 - Restore validated backups, explicitly confirm replacement, and delete all selected-garage data. Draft writes are paused and settled around replacement/deletion.
 - Explicit New build resets remain eligible for autosave even when empty. Restore/erase reloads clear shared-build links so link data cannot override the chosen result. Native regression checks are still required.
+- Budget, vehicle price, quote and current-tire fields retain unfinished input until blur or Done/Enter. Valid values update totals and autosave without reformatting what is being typed. Empty money fields become zero; invalid or out-of-range entries return to the last valid amount with an explanation when editing finishes. Money is parsed to integer cents, and grouped dollar amounts such as `1,250.50` are accepted.
 - Retailer links open via the native Browser plugin; no in-app digital sales, ad SDKs, analytics SDKs, tracking or account requirement in the native application.
 - In-app support and privacy text; web routes `/support` and `/privacy` intended as the App Store metadata URLs after publication.
 - App icon derived from the project's JB monogram, dark launch screen, version 0.2.0 build 1, privacy manifest for Filesystem's app-owned file timestamp access.
@@ -18,7 +19,7 @@ The web version retains an optional ChatGPT cloud garage. Anonymous visitors use
 
 ## September 9 verification
 
-TypeScript, the production web build, the offline mobile bundle and Capacitor sync pass. All 14 existing automated tests pass, including device storage without network access, backup validation, draft revision conflicts and cloud owner isolation. The new reset/shared-link paths were reviewed in source; their interactive regression steps remain pending in TESTFLIGHT.md. Shell syntax validation passes for the updated compile-check script. These checks do not establish Xcode compilation, native share-sheet behavior or physical-device usability.
+TypeScript, the production web build, the offline mobile bundle and Capacitor sync pass. All 17 automated tests pass, including exact decimal-to-cent conversion, entry limits, price totals, device storage without network access, backup validation, draft revision conflicts and cloud owner isolation. The reset/shared-link and buffered-input paths were reviewed in source; their interactive regression steps remain pending in TESTFLIGHT.md. Shell syntax validation passes for the updated compile-check script. These checks do not establish Xcode compilation, native share-sheet behavior or physical-device usability.
 
 ## Remaining gates
 

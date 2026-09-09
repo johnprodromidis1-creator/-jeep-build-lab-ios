@@ -18,6 +18,7 @@ const drafts=await module("app/api/draft/route.ts","drafts");
 const planning=await module("lib/planning.ts","planning");
 const accountData=await module("app/api/data/route.ts","data");
 const catalog=await module("app/api/catalog/route.ts","catalog");
+const decimalInput=await module("lib/decimal-input.ts","decimal-input");
 const {initialState,baseCatalog,totalFor,buildIssues,stateSchema}=model;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
@@ -31,6 +32,33 @@ test("totals multiply individual wheels/tires, count kits once, and include allo
  assert.equal(totalFor(s).subtotal,36600*5+43200*5+69995);
  assert.equal(totalFor(s).total,36600*5+43200*5+69995+80000);
  s.quantity=4;assert.equal(totalFor(s).subtotal,36600*4+43200*4+69995);
+});
+test("price entry preserves exact cents and rejects ambiguous or malformed amounts",()=>{
+ for(const [text,cents] of [['0.29',29],['9.99',999],['.05',5],['1,234.56',123456],['100000.00',10000000],['12.',1200]]){
+  assert.equal(decimalInput.parseDecimalUnits(text,2),cents);
+  assert.equal(decimalInput.parseDecimalUnits(decimalInput.formatDecimalUnits(cents,2),2),cents);
+ }
+ for(const text of ['', '.', '-1', '1e4', '12,34', '1.234', 'Infinity', '12abc', '99999999999999999'])assert.equal(decimalInput.parseDecimalUnits(text,2),null);
+});
+test("finished tire and budget entries preserve valid previous values when input is incomplete or outside limits",()=>{
+ const tire={places:1,min:300,max:350};
+ assert.equal(decimalInput.finishDecimalInput('32.5',320,tire).value,325);
+ for(const raw of ['', '3', '36', '32.55']){
+  const result=decimalInput.finishDecimalInput(raw,320,tire);
+  assert.equal(result.value,320);assert.match(result.message,/Kept 32.0/);
+ }
+ const dollars={places:2,min:0,max:10000000,emptyAsZero:true};
+ assert.deepEqual(decimalInput.finishDecimalInput('',12999,dollars),{value:0,message:''});
+ assert.equal(decimalInput.finishDecimalInput('100000.01',12999,dollars).value,12999);
+ assert.deepEqual(decimalInput.finishDecimalInput('125.50',12999,dollars),{value:12550,message:''});
+});
+test("entered decimal allowances flow through the build total as integer cents",()=>{
+ const state=base();state.picks={tires:'nitto-217020'};
+ const options={places:2,min:0,max:10000000,emptyAsZero:true};
+ state.labor=decimalInput.finishDecimalInput('1,250.29',state.labor,options).value;
+ state.extras=decimalInput.finishDecimalInput('99.99',state.extras,options).value;
+ assert.ok(stateSchema.safeParse(state).success);
+ assert.equal(totalFor(state).total,43200*5+125029+9999);
 });
 test("18-inch tires on 17-inch wheels produce an explicit conflict",()=>{
  const s=base();s.picks={tires:"nitto-217130"};assert.ok(buildIssues(s).some(i=>i.level==="error"&&i.message.includes("diameter mismatch")));

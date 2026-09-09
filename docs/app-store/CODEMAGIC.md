@@ -2,6 +2,13 @@
 
 The owner uses Codemagic for existing apps. This repository contains manual `jeep-ios-verify` and `jeep-ios-testflight` workflows. No signed IPA or TestFlight build for Jeep Build Lab has been verified.
 
+## Current handoff — September 9, 2026
+
+- All 153 source files were transferred to GitHub, with an exact Git tree match against the saved Sites source. Subsequent workflow/documentation changes were also synchronized to both repositories.
+- [Unsigned iOS compile check, run 1](https://codemagic.io/app/6aa099218e0d886361fff68a/build/6aa099f29dd87df8a76864c9) started September 8 at 19:27 EDT from GitHub commit `ac43eb5f912ea8d1b2be23982f5e319d4f90041e`. The last observed status was **building**. The browser connection closed during the Apple sign-in step; the final compile result has **not** been verified. Inspect that run before starting another.
+- Codemagic's fetched Apple profile list contained the owner's other apps but no profile for `com.johnprodromidis.jeepbuildlab`. Apple Developer registration required a fresh sign-in. That sign-in was not verified, and this session did not create an Apple identifier, app record or signing profile.
+- Next: inspect run 1's result/logs. Then finish this app's Apple identifier, App Store Connect record and profile before using the TestFlight workflow. The compile-check run cannot be installed through TestFlight.
+
 ## Connect the source first
 
 The canonical source is saved in the existing Sites repository. That source credential is short-lived and is not suitable as a permanent Codemagic checkout credential. The website URL is not a source repository URL.

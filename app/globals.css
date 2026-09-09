@@ -136,6 +136,7 @@
 .cash-input{position:relative}
 .cash-input>span{position:absolute;left:11px;top:9px;color:#92a6af;font-size:14px}
 .cash-input>input{padding-left:25px;background:#171f22;border-color:#3d4b52;font-variant-numeric:tabular-nums}
+.number-entry-message{margin:7px 0 0;font-size:14px;line-height:1.5;color:#efca82;overflow-wrap:anywhere}
 .totals{border-top:1px solid #3b464b;padding-top:17px}
 .totals>div{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:#a0b3bd;margin:8px 0}
 .totals>div.grand-total{align-items:center;margin:16px 0 10px;color:#fff}

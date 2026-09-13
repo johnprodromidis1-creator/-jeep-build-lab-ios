@@ -39,6 +39,10 @@ workflows:
         script: npx tsc --noEmit
       - name: Bundle the offline app and sync iOS plugins
         script: npm run ios:sync
+      - name: Lint and run native-safe regression tests
+        script: |
+          npx eslint .
+          npm run test:native
       - name: Verify app identity and assign a unique build number
         script: python3 scripts/prepare-codemagic-ios.py
       - name: Apply this app's provisioning profile

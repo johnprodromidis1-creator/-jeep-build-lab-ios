@@ -10,6 +10,8 @@ xcodebuild -version
 npm ci
 npx tsc --noEmit
 npm run ios:sync
+npx eslint .
+npm run test:native
 mkdir -p build/ios/verify
 # Unique result bundles also support repeated local runs in the same checkout.
 result_path="build/ios/verify/compile-$(date +%Y%m%d-%H%M%S)-$$.xcresult"

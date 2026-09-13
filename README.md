@@ -50,7 +50,7 @@ Version 2 preserves the limited vehicle/catalog scope and illustrative preview. 
 
 ## iOS / App Store preparation (0.2.0)
 
-The native project is in `ios/App/App.xcodeproj`; the separately bundled React entry is `mobile/main.tsx`. `npm run ios:sync` builds the offline assets and updates Capacitor. The app targets iOS 17+ and requires Xcode 26+ for the current upload rules. No signed IPA or TestFlight upload has been produced.
+The native project is in `ios/App/App.xcodeproj`; the separately bundled React entry is `mobile/main.tsx`. `npm run ios:sync` builds the offline assets and updates Capacitor. The app targets iOS 17+ and requires Xcode 26+ for the current upload rules. Codemagic runs lint and native-safe regression tests before both unsigned iOS verification and signed TestFlight archive/upload. No signed IPA or TestFlight upload has been produced.
 
 Anonymous website visitors and the iOS app use `lib/storage/device.ts`; the website's authenticated cloud garage uses `lib/storage/cloud.ts` and the original owner-isolated APIs. Settings includes backup, device restore, data erasure, support and privacy. Do not expose cloud data to solve anonymous access. `/api/catalog` returns the public source catalog to guests, never another owner's quotes.
 

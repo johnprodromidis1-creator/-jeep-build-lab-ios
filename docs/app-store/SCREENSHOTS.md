@@ -8,7 +8,7 @@ Apple currently accepts one to 10 screenshots per device size in `.jpeg`, `.jpg`
 
 | Target | Use this device/path | Accepted portrait sizes |
 | --- | --- | --- |
-| iPhone 6.9-inch | iPhone 18 Pro Max/17 Pro Max simulator, or the owner's iPhone 17 Pro Max TestFlight install | `1260 x 2736`, `1290 x 2796`, or `1320 x 2868` |
+| iPhone 6.9-inch | 6.9-inch iPhone simulator/device family, or the owner's iPhone 17 Pro Max TestFlight install | `1260 x 2736`, `1290 x 2796`, or `1320 x 2868` |
 | iPad 13-inch | iPad simulator or physical iPad running the signed/TestFlight app | `2064 x 2752` or `2048 x 2732` |
 
 Apple says highest-resolution screenshots can scale down for smaller sizes when the UI is the same across device sizes and localizations. Use raw screenshots from the actual signed or TestFlight app first; do not submit browser captures or generated mockups as final App Store screenshots.

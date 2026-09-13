@@ -20,7 +20,8 @@ async function transaction<T>(write:boolean,operation:(data:DeviceData)=>T,repla
   const tx=db.transaction('garage',write?'readwrite':'readonly'),store=tx.objectStore('garage'),request=store.get('current');let value:T,failure:unknown;
   request.onsuccess=()=>{try{
    const data:DeviceData=replaceExisting?{...empty(),revision:Number.isSafeInteger(request.result?.revision)?request.result.revision:0}:request.result??empty();
-   backupSchema.parse({format:'jeep-build-lab',version:1,exportedAt:new Date().toISOString(),builds:data.builds,prices:data.prices,draft:data.draft});
+   const valid=backupSchema.parse({format:'jeep-build-lab',version:1,exportedAt:new Date().toISOString(),builds:data.builds,prices:data.prices,draft:data.draft});
+   data.builds=valid.builds;data.prices=valid.prices;data.draft=valid.draft;
    if(!Number.isSafeInteger(data.revision)||data.revision<0)throw new Error('Invalid revision.');
    value=operation(data);if(write)store.put(data,'current');
   }catch(e){failure=e;tx.abort();}};
@@ -33,7 +34,7 @@ export const deviceStorage:BuildStorage={
  mode:'device',
  catalog:()=>transaction(false,data=>applyPrices(data.prices)),
  list:()=>transaction(false,data=>data.builds.slice().sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt))),
- save:input=>transaction(true,data=>{const b=saveSchema.parse(input);let existing=b.id?data.builds.find(v=>v.id===b.id):undefined;
+ save:input=>transaction(true,data=>{const b=saveSchema.parse(input);const existing=b.id?data.builds.find(v=>v.id===b.id):undefined;
   if(b.id&&!existing)throw new StorageError('This build is no longer saved. Save it as a copy.',404);
   if(!b.id&&data.builds.length>=100)throw new StorageError('Garage limit reached. Remove an old build first.',400);
   const id=b.id??crypto.randomUUID(),savedTotal=totalFor(b.state,applyPrices(data.prices)).total;

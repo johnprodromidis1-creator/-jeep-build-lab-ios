@@ -1,8 +1,8 @@
-import {saveSchema,totalFor} from "@/lib/model";
+import {saveSchema,stateSchema,totalFor} from "@/lib/model";
 import {db,owner,sameOrigin,json,catalogFor} from "@/lib/server";
 export async function GET(request:Request){const id=owner(request);if(!id)return json({error:"Sign in to open your garage."},401);try{
  const rows=await db().prepare("SELECT id,name,notes,state,saved_total,updated_at FROM builds WHERE owner_id = ? ORDER BY updated_at DESC LIMIT 100").bind(id).all<{id:string;name:string;notes:string;state:string;saved_total:number;updated_at:string}>();
- return json({builds:rows.results.map(r=>({id:r.id,name:r.name,notes:r.notes,state:JSON.parse(r.state),savedTotal:r.saved_total,updatedAt:r.updated_at}))});
+ return json({builds:rows.results.map(r=>({id:r.id,name:r.name,notes:r.notes,state:stateSchema.parse(JSON.parse(r.state)),savedTotal:r.saved_total,updatedAt:r.updated_at}))});
  }catch{return json({error:"Your garage could not be loaded. Try again."},503);}}
 export async function POST(request:Request){const userId=owner(request);if(!userId)return json({error:"Sign in to save your build."},401);if(!sameOrigin(request))return json({error:"Invalid origin."},403);
  try{const parsed=saveSchema.safeParse(await request.json());if(!parsed.success)return json({error:"Please check your build details."},400);

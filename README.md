@@ -1,17 +1,17 @@
 # Jeep Build Lab
-Mobile-first Wrangler JL build planner. Initial scope: 2018–2023 JL Unlimited 4-door, Sport/Sahara/Rubicon, 3.6L gasoline, standard suspension. Not for 4xe, diesel, 392 or Xtreme Recon.
+Mobile-first Wrangler JL build planner. Initial scope: 2018–2023 JL Unlimited 4-door, Sport/Sahara/Rubicon, 3.6L gasoline, standard suspension, plus first-batch 2024 Sahara 4xe catalog support. Not for diesel, 392, Xtreme Recon, TJ, JK, JT or two-door builds.
 
 ## Build for TestFlight with Codemagic
 
 The iOS build destination is [johnprodromidis1-creator/-jeep-build-lab-ios](https://github.com/johnprodromidis1-creator/-jeep-build-lab-ios). The leading hyphen is part of the repository name. Add this repository to the owner's Codemagic team and select the `jeep-ios-testflight` workflow on `main`. Follow [the Codemagic setup guide](docs/app-store/CODEMAGIC.md) to connect this app's Apple record and provisioning profile before starting a build. No signed build has been verified yet.
 
 ## Implemented
-- 43 sourced product variants across wheels, tires, suspension, front bumpers, winches and side armor.
+- 51 sourced product variants across wheels, tires, suspension, front bumpers, winches and side armor.
 - Original illustrative PNG vehicle and wheel layers; tire diameter, wheel finish and lift change the preview. Accessories are list-only.
 - D1 garage with authenticated owner isolation, saved estimate snapshot, notes, save-as-copy, delete.
 - D1 personal price overrides; curated specifications remain immutable.
 - Quantity-aware totals, budget, labor and other allowances, CSV export, print sheet, URL configuration.
-- Explicit trim, diameter and listed tire-limit conflicts, plus unresolved installation dependencies.
+- Explicit year, trim, powertrain, diameter and listed tire-limit conflicts, plus unresolved installation dependencies.
 - Three-step navigation, grouped product families with variant selectors, quantity-inclusive card prices and replacement price deltas.
 - Side-by-side current/saved build comparison with differing-parts filter; both columns use the same catalog and personal quotes.
 - Buy now/later/owned/installed stages, remaining upgrade budget and optional user-entered vehicle price. All allowances are reserved in the first phase; installation sequence is not verified.
@@ -20,9 +20,11 @@ The iOS build destination is [johnprodromidis1-creator/-jeep-build-lab-ios](http
 - No affiliate tracking, paid APIs, scraping pipeline or checkout.
 
 ## Catalog
-lib/catalog.json contains variant records and dated source URLs. Facts were manually checked September 8, 2026. Prices are snapshots; no stock status promised. Descriptions are original. Generated illustrations are not branded product photographs.
-Vehicle fitment is deliberately limited. Tires are size-based; wheel width/load/offset/brake/spare fit is not automatically established.
+lib/catalog.json contains variant records and dated source URLs. Facts were manually checked September 8 and September 13, 2026. Prices are snapshots; no stock status promised. Descriptions are original. Generated illustrations are not branded product photographs. The September 13 update adds explicit powertrain fitment, seven 20-inch Ridge Grappler options for the 2024 Sahara 4xe path, a Mopar 4xe lift kit and documented Morphic wheel coverage through current JL Unlimited listings.
+Vehicle fitment is deliberately limited. Tires are size-based; wheel width/load/offset/brake/spare fit is not automatically established. 4xe support is limited to the records explicitly marked for that powertrain.
 No legal or mechanical fitment certification is represented.
+
+Source notes and competitor observations: `docs/catalog-expansion-2026-09-13.md`.
 
 ## Persistence
 db/schema.ts -> generated migrations in drizzle/.
@@ -38,7 +40,7 @@ For additional platforms introduce vehicle configurations and source-backed fitm
 Before public launch: finish catalog auditing and combinations with an experienced installer; obtain any needed image/feed licenses; add audience-appropriate privacy/affiliate disclosures and moderation/abuse controls if community features are introduced.
 
 ## Development
-Run npm run db:generate when schema changes. Build with Sites build helper. Run node --test tests/model.test.mjs for core price/fitment validation (model test bundles with esbuild).
+Run npm run db:generate when schema changes. Build with Sites build helper. Run node --test tests/*.test.mjs for core price, fitment, storage and rendered-HTML validation.
 
 ## Build & Price benchmark
 Official Jeep Build & Price (https://www.jeep.com/bmo.html) is the benchmark for clear vehicle configuration and pricing. This app focuses on aftermarket ownership planning: compatible combinations, staged purchases, owner-supplied quotes and comparison of saved options. No claim is made that Jeep lacks any particular feature or that its full interactive flow has been browser-tested.

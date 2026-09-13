@@ -1,6 +1,6 @@
 # Jeep Build Lab — App Store preparation
 
-Status: baseline unsigned iOS simulator compilation passed. Source prepared for an initial signed iOS device build; no signed IPA or TestFlight upload has been verified. The current source still requires a signed archive and physical-device tests.
+Status: baseline unsigned iOS simulator compilation passed. Source prepared for an initial signed iOS device build; no signed IPA or TestFlight upload has been verified. The current source now includes first-batch 2024 Sahara 4xe catalog support and still requires a signed archive and physical-device tests.
 
 ## Implemented for the first iOS candidate
 
@@ -17,6 +17,19 @@ Status: baseline unsigned iOS simulator compilation passed. Source prepared for 
 
 The web version retains an optional ChatGPT cloud garage. Anonymous visitors use a clearly labeled device garage. Cloud export and deletion require the authenticated site user ID. The native app does not present ChatGPT login or use the cloud APIs.
 
+## September 13 source update
+
+- Added explicit powertrain support to build state and catalog records. Legacy saved builds and drafts without a powertrain parse as 3.6L V6 gas.
+- Added first-batch 2024 Sahara 4xe vehicle selection, 20-inch starting wheel support, seven 20-inch Nitto Ridge Grappler variants, a Mopar 4xe lift kit and updated Morphic wheel fitment records.
+- The catalog now shows compatible and excluded variants deliberately. Excluded cards keep their detail/source links and explain the year, trim or powertrain reason before purchase.
+- The owner reports `com.johnprodromidis.jeepbuildlab` is registered with Apple. App Store Connect app record, Codemagic matching provisioning profile, signed archive and TestFlight upload remain unverified.
+
+## September 13 local verification
+
+TypeScript passes with `node node_modules/typescript/bin/tsc --noEmit`. ESLint exits successfully with warnings only for existing image tags and generated worker typing comments. Production `vinext build` passes. The offline mobile Vite bundle passes with the existing large main-chunk warning. `node --test tests/*.test.mjs` passes 18 tests, including device-garage isolation, cloud owner isolation, catalog count, 4xe powertrain fitment and rendered HTML metadata.
+
+Capacitor `sync ios` succeeded after a local-only monkeypatch for Node's `os.userInfo()` failing with `ENOMEM` in this Windows sandbox. The sync copied generated mobile assets, but those outputs are intentionally ignored and rebuilt in CI. Running the normal Codemagic/npm path on macOS remains the authoritative iOS sync/archive check.
+
 ## September 9 verification
 
 TypeScript, the production web build, the offline mobile bundle and Capacitor sync pass. All 17 automated tests pass, including exact decimal-to-cent conversion, entry limits, price totals, device storage without network access, backup validation, draft revision conflicts and cloud owner isolation. The reset/shared-link and buffered-input paths were reviewed in source; their interactive regression steps remain pending in TESTFLIGHT.md. Shell syntax validation passes for the updated compile-check script. These checks do not establish Xcode compilation, native share-sheet behavior or physical-device usability.
@@ -29,11 +42,11 @@ On September 10, the owner supplied a screenshot confirming Codemagic compile-ch
 | --- | --- |
 | Apple signing account | Not connected to this environment. Reuse the owner's existing enrolled Apple account if available. |
 | Codemagic | GitHub source transferred and app connected. First unsigned compile check passed; signed upload workflow is prepared. App-specific Apple registration/profile remains pending; see CODEMAGIC.md. |
-| Bundle registration | `com.johnprodromidis.jeepbuildlab` is a proposed bundle identifier in source; registration/availability has not been verified. Confirm it before uploading. |
+| Bundle registration | Owner-reported registered Bundle ID: `com.johnprodromidis.jeepbuildlab`. App Store Connect app record and matching provisioning profile are still unverified in this environment. |
 | Mac compilation | Baseline simulator compile passed at `ac43eb5`. Archive and sign the current `main` through the prepared Codemagic TestFlight workflow after signing setup. |
 | Native functionality | Test actual iPhone/iPad startup, airplane-mode relaunch, keyboard, share sheet, file picker, restore, deletion, retailer return and lifecycle. |
 | Brand/content rights | Final review of the app title and all catalog/image rights is still needed. The title uses Jeep; the independence notice is not a grant of trademark permission. An independent store name is an option. |
-| Product coverage | Listing must say 2018–2023 JL Unlimited 4-door 3.6L gas only. The owner's 2024 Sahara 4xe remains unsupported until sourced fitment is added. |
+| Product coverage | Listing must say 2018–2023 JL Unlimited 4-door 3.6L gas plus first-batch 2024 Sahara 4xe catalog support only. Do not imply blanket 4xe or all-2024 fitment. |
 | Data/fitment quality | Installer review of supported combinations and dated catalog claims remains necessary. No blanket compatibility or live-price promise. |
 | Metadata | Draft provided; final title availability, age rating, privacy questionnaire, export compliance, copyright, territory/trader status and support details need account-owner review. |
 | Screenshots | Capture the actual signed app in use. No generated UI screenshots have been prepared. |

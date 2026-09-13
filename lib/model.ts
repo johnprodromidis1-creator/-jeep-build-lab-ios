@@ -94,6 +94,11 @@ export const stateSchema = z.object({
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Unknown part or category", path: ["picks", cat] });
     }
   }
+  for (const category of categories) {
+    if (s.stages[category] && !s.picks[category]) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Purchase stage requires a selected part.", path: ["stages", category] });
+    }
+  }
 });
 
 export type BuildState = z.infer<typeof stateSchema>;

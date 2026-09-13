@@ -101,6 +101,7 @@ test("malformed or fabricated shared state is rejected",()=>{
  assert.equal(stateSchema.safeParse({...base(),year:2024,powertrain:"gas"}).success,false);
  assert.equal(stateSchema.safeParse({...base(),year:2024,trim:"Rubicon",powertrain:"4xe"}).success,false);
  assert.equal(stateSchema.safeParse({...base(),year:2023,trim:"Sahara",powertrain:"4xe"}).success,false);
+ assert.equal(stateSchema.safeParse({...base(),stages:{wheels:"owned"}}).success,false);
 });
 test("shared build payload exposes only public build state",()=>{
  const state={...base(),year:2024,trim:"Sahara",powertrain:"4xe",stockRim:20,stockTire:32,budget:625000,labor:12550,extras:9999,picks:{tires:"nitto-217310-4xe",lift:"mopar-77072522ae-4xe"},stages:{tires:"now",lift:"later"},name:"Private trail name",notes:"secret notes",ownerId:"owner-1",savedTotal:1,prices:[{partId:"nitto-217310-4xe",priceCents:1}],customPrice:true};
@@ -164,6 +165,7 @@ test("legacy saved configurations gain defaults and comparisons include quantity
  other.quantity=5;other.stages.tires="owned";assert.equal(planning.compareRows(restored,other,baseCatalog).find(r=>r.category==="tires").changed,true);
  assert.equal(planning.groupParts(baseCatalog).reduce((n,g)=>n+g.variants.length,0),51);
  assert.equal(stateSchema.safeParse({...base(),stages:{wheels:"free"}}).success,false);
+ assert.equal(stateSchema.safeParse({...base(),picks:{tires:"nitto-217020"},stages:{tires:"owned"}}).success,true);
 });
 test("draft recovery keeps owners isolated and rejects stale concurrent writes",async()=>{
  const draft={name:"Trail draft",notes:"Still choosing",state:base(),buildId:null,lastSavedTotal:null};

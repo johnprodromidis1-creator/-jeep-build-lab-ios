@@ -25,6 +25,7 @@ The web version retains an optional ChatGPT cloud garage. Anonymous visitors use
 - Added a first-time 2024 Sahara 4xe starter build that loads a sourced tire/lift sample on stock 20-inch wheels, with confirmation before replacing an unsaved draft.
 - Hardened Codemagic iOS verification so both the unsigned compile-check path and the signed TestFlight workflow run lint plus the native-safe regression tests after the offline bundle is synced.
 - Restricted build-link sharing to this app's public `#build=` URLs and normalized native export filenames before temporary Filesystem writes.
+- Shared links, backups, drafts and saves now reject purchase-stage entries that do not have a matching selected part.
 - The owner reports `com.johnprodromidis.jeepbuildlab` is registered with Apple. App Store Connect app record, Codemagic matching provisioning profile, signed archive and TestFlight upload remain unverified.
 
 ## September 13 local verification

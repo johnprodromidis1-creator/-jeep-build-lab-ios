@@ -50,15 +50,17 @@ On September 10, the owner supplied a screenshot confirming Codemagic compile-ch
 | Product coverage | Listing must say 2018–2023 JL Unlimited 4-door 3.6L gas plus first-batch 2024 Sahara 4xe catalog support only. Do not imply blanket 4xe or all-2024 fitment. |
 | Data/fitment quality | Installer review of supported combinations and dated catalog claims remains necessary. No blanket compatibility or live-price promise. |
 | Metadata | Draft provided; final title availability, age rating, privacy questionnaire, export compliance, copyright, territory/trader status and support details need account-owner review. |
-| Screenshots | Capture the actual signed app in use. The starter build gives a truthful 2024 Sahara 4xe scenario for capture, but no generated UI screenshots have been prepared. |
+| Screenshots | Capture the actual signed app in use. The starter build gives a truthful 2024 Sahara 4xe scenario; use the [screenshot plan](SCREENSHOTS.md) for required device sizes and capture order. |
 | Accessibility | Evaluate VoiceOver, Larger Text, contrast, reduced motion and touch targets on devices. Do not claim Apple accessibility labels based only on CSS. |
 | TestFlight | Upload a signed archive, finish processing/compliance, then add an internal tester. External testing may require Beta App Review. |
 | App Review | Submit only after device testing and metadata verification. Approval cannot be guaranteed. |
 
-## Current Apple references (checked September 8, 2026)
+## Current Apple references (checked September 8 and September 13, 2026)
 
 Apple requires Xcode 26 or later and the iOS 26 SDK or later for uploads since April 28, 2026. This is distinct from the app's iOS 17 minimum supported version. [SDK requirements](https://developer.apple.com/news/upcoming-requirements/)
 
 The App Review Guidelines address complete submissions, useful app functionality beyond a repackaged website, accurate metadata, privacy and applicable account deletion. This builder's offline planning and native exports are intended to provide useful app functionality; Apple makes the review decision. [Guidelines](https://developer.apple.com/app-store/review/guidelines/)
 
 [Privacy details](https://developer.apple.com/app-store/app-privacy-details/), [account deletion](https://developer.apple.com/support/offering-account-deletion-in-your-app/), [Capacitor iOS setup](https://capacitorjs.com/docs/ios), [Filesystem privacy manifest](https://capacitorjs.com/docs/apis/filesystem).
+
+Apple's App Store Connect screenshot help was rechecked September 13, 2026 for the current iPhone and iPad capture targets documented in [SCREENSHOTS.md](SCREENSHOTS.md).

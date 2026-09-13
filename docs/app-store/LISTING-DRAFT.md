@@ -25,7 +25,7 @@ Independent aftermarket planning software. Not affiliated with Jeep, Stellantis 
 
 ## Reviewer notes draft
 
-No account or demo credentials are required for the iOS app. The device garage and catalog operate locally. To test: add parts, switch the vehicle to 2024 Sahara 4xe, confirm excluded parts display with reasons, save a named build, create another configuration and compare; use Settings for backup, restore, data deletion, privacy and support. Retailer links open a browser; there is no in-app checkout or digital purchase. The optional signed-in cloud garage belongs to the separate browser website and is not available inside this iOS version.
+No account or demo credentials are required for the iOS app. The device garage and catalog operate locally. To test: tap Load starter for the included 2024 Sahara 4xe sample, confirm excluded parts display with reasons, save a named build, create another configuration and compare; use Settings for backup, restore, data deletion, privacy and support. Retailer links open a browser; there is no in-app checkout or digital purchase. The optional signed-in cloud garage belongs to the separate browser website and is not available inside this iOS version.
 
 The app includes planning calculations and fitment rules, a bundled illustrative preview, saved configurations, purchase stages, native file/link sharing and offline operation. It does not load the live website as the application UI.
 

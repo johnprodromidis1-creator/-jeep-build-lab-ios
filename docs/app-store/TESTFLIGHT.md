@@ -17,7 +17,7 @@ Use the owner's existing Codemagic account. The mobile GitHub repository is conn
 7. In Xcode select a generic iOS device destination, then Product → Archive. In Organizer validate and distribute to App Store Connect. Use Xcode's signed distribution flow. Increment the build number for subsequent uploads.
 8. Wait for processing. Complete export-compliance and beta information accurately. In TestFlight, create/select an internal testing group, add the processed build, and add the owner as an eligible internal tester. Install through the TestFlight invitation or app. [Apple internal-testing instructions](https://developer.apple.com/help/app-store-connect/test-a-beta-version/add-internal-testers/)
 
-Codemagic is the selected Mac build service. The first native simulator compile passed; a signed archive and TestFlight upload remain pending. The Sites web deployment does not create a TestFlight binary.
+Codemagic is the selected Mac build service. The first native simulator compile passed; a signed archive and TestFlight upload remain pending. The Sites web deployment does not create a TestFlight binary. After installing the signed build, complete the smoke tests below before capturing final App Store screenshots with [SCREENSHOTS.md](SCREENSHOTS.md).
 
 ## Test one task at a time
 
@@ -36,6 +36,7 @@ Codemagic is the selected Mac build service. The first native simulator compile 
 | 11 | Change the current build, choose New build and confirm, wait for draft saved, then close and reopen | Empty new build returns; the old draft does not reappear; named garage builds remain | Pending |
 | 12 | Clear Labor allowance, type 125.50, then tap another field; enter 32.5 as current tire diameter and finish editing | Labor becomes $125.50 and tire size 32.5; partial typing is preserved; an invalid or out-of-range entry keeps the previous value with a visible explanation | Pending |
 | 13 | Open vehicle settings, switch to 4xe, then review wheels, tires and suspension | Vehicle becomes 2024 Sahara 4xe with 20-inch starting wheels; 20-inch Ridge Grappler tires and the Mopar 4xe lift appear; gas-only parts remain excluded with reasons when Show excluded is on | Pending |
+| 14 | From a clean or saved draft, tap Load starter and confirm if prompted | 2024 Sahara 4xe starter loads with the sourced Nitto tire, Mopar 4xe lift, 20-inch starting wheels, matching spare and no fitment conflicts | Pending |
 
 On the web version, also open a shared build link before restoring a backup or deleting app data. After the confirmed action and reload, the old link must be cleared; the restored draft or an empty garage must appear as appropriate.
 

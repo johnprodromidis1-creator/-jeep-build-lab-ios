@@ -54,4 +54,4 @@ The native project is in `ios/App/App.xcodeproj`; the separately bundled React e
 
 Anonymous website visitors and the iOS app use `lib/storage/device.ts`; the website's authenticated cloud garage uses `lib/storage/cloud.ts` and the original owner-isolated APIs. Settings includes backup, device restore, data erasure, support and privacy. Do not expose cloud data to solve anonymous access. `/api/catalog` returns the public source catalog to guests, never another owner's quotes.
 
-Current preparation and test instructions: `docs/app-store/CODEMAGIC.md`, `READINESS.md`, `TESTFLIGHT.md`, `LISTING-DRAFT.md`. The native candidate uses device storage; existing web cloud records remain accessible on the website. The owner's existing Codemagic account is the selected build service. No paid plan change was made.
+Current preparation and test instructions: `docs/app-store/CODEMAGIC.md`, `READINESS.md`, `TESTFLIGHT.md`, `SCREENSHOTS.md`, `LISTING-DRAFT.md`. The native candidate uses device storage; existing web cloud records remain accessible on the website. The owner's existing Codemagic account is the selected build service. No paid plan change was made.

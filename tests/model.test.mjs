@@ -44,6 +44,8 @@ const decimalInput=await module("lib/decimal-input.ts","decimal-input");
 const {initialState,baseCatalog,totalFor,buildIssues,stateSchema,fitsVehicle,partCompatibility,publicBuildState,encodeSharedBuildState,decodeSharedBuildStatePayload}=model;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
+const badJson=(path,method="POST")=>new Request("https://test.local/api/"+path,{method,headers:{"oai-authenticated-user-id":"alice",origin:"https://test.local","Content-Type":"application/json"},body:"{"});
+const jsonBody=(path,method,body)=>new Request("https://test.local/api/"+path,{method,headers:{"oai-authenticated-user-id":"alice",origin:"https://test.local","Content-Type":"application/json"},body:JSON.stringify(body)});
 
 test("catalog has 51 unique variants with positive cent prices and HTTPS sources",()=>{
  assert.equal(baseCatalog.length,51);assert.equal(new Set(baseCatalog.map(p=>p.id)).size,51);
@@ -141,6 +143,13 @@ test("D1 route round-trip, price isolation, update ownership and delete ownershi
  assert.equal((await (await catalog.GET(req("alice"))).json()).parts.find(p=>p.id==="nitto-217020").priceCents,43200);
  await api.DELETE(req("alice","DELETE",undefined,undefined,"?id="+data.id));
  assert.deepEqual((await (await api.GET(req("alice"))).json()).builds,[]);
+});
+test("mutating API routes report malformed JSON as client errors",async()=>{
+ assert.equal((await api.POST(badJson("builds"))).status,400);
+ assert.equal((await catalog.PUT(badJson("catalog","PUT"))).status,400);
+ assert.equal((await drafts.PUT(badJson("draft","PUT"))).status,400);
+ assert.equal((await accountData.DELETE(badJson("data","DELETE"))).status,400);
+ assert.equal((await accountData.DELETE(jsonBody("data","DELETE",null))).status,400);
 });
 test("new 17-inch wheels conflict with retained 18-inch tires until matching tires are added",()=>{
  const state=base();state.trim="Sahara";state.stockRim=18;state.picks={wheels:"method-MR70178550900"};

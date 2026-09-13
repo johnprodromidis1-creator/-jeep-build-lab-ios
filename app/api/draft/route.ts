@@ -11,8 +11,9 @@ export async function GET(request:Request){
 export async function PUT(request:Request){
  const user=owner(request);if(!user)return json({error:'Sign in to protect your draft.'},401);
  if(!sameOrigin(request))return json({error:'Invalid origin.'},403);
+ let body:unknown;try{body=await request.json();}catch{return json({error:'Request body must be valid JSON.'},400);}
  try{
-  const parsed=draftSchema.safeParse(await request.json());if(!parsed.success)return json({error:'Draft contains unsupported data.'},400);
+  const parsed=draftSchema.safeParse(body);if(!parsed.success)return json({error:'Draft contains unsupported data.'},400);
   const {draft,revision}=parsed.data,updatedAt=new Date().toISOString(),payload=JSON.stringify(draft);
   const result=revision===0
    ?await db().prepare('INSERT INTO build_drafts (owner_id,payload,revision,updated_at) VALUES (?,?,1,?) ON CONFLICT(owner_id) DO NOTHING').bind(user,payload,updatedAt).run()

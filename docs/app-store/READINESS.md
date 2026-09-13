@@ -9,7 +9,7 @@ Status: baseline unsigned iOS simulator compilation passed. Source prepared for 
 - Device garage using IndexedDB: saved builds, price notes, automatic draft recovery, comparison and undo. Backups are important; app/browser storage and OS backups are not a guaranteed archival service.
 - Native share sheet for build links, parts CSV and JSON backups; temporary exported files are removed from the app cache after sharing returns.
 - Restore validated backups, explicitly confirm replacement, and delete all selected-garage data. Draft writes are paused and settled around replacement/deletion.
-- Explicit New build resets remain eligible for autosave even when empty. Restore/erase reloads clear shared-build links so link data cannot override the chosen result. Native regression checks are still required.
+- Explicit New build resets remain eligible for autosave even when empty. Restore/erase reloads clear shared-build links so link data cannot override the chosen result. Physical-device regression checks are still required.
 - Budget, vehicle price, quote and current-tire fields retain unfinished input until blur or Done/Enter. Valid values update totals and autosave without reformatting what is being typed. Empty money fields become zero; invalid or out-of-range entries return to the last valid amount with an explanation when editing finishes. Money is parsed to integer cents, and grouped dollar amounts such as `1,250.50` are accepted.
 - Retailer links open via the native Browser plugin; no in-app digital sales, ad SDKs, analytics SDKs, tracking or account requirement in the native application.
 - In-app support and privacy text; web routes `/support` and `/privacy` intended as the App Store metadata URLs after publication.
@@ -24,11 +24,12 @@ The web version retains an optional ChatGPT cloud garage. Anonymous visitors use
 - The catalog now shows compatible and excluded variants deliberately. Excluded cards keep their detail/source links and explain the year, trim or powertrain reason before purchase.
 - Added a first-time 2024 Sahara 4xe starter build that loads a sourced tire/lift sample on stock 20-inch wheels, with confirmation before replacing an unsaved draft.
 - Hardened Codemagic iOS verification so both the unsigned compile-check path and the signed TestFlight workflow run lint plus the native-safe regression tests after the offline bundle is synced.
+- Restricted build-link sharing to this app's public `#build=` URLs and normalized native export filenames before temporary Filesystem writes.
 - The owner reports `com.johnprodromidis.jeepbuildlab` is registered with Apple. App Store Connect app record, Codemagic matching provisioning profile, signed archive and TestFlight upload remain unverified.
 
 ## September 13 local verification
 
-TypeScript passes with `node node_modules/typescript/bin/tsc --noEmit`. ESLint exits successfully with no warnings after documenting the offline image strategy and ignoring generated worker typings. Production `vinext build` passes. The offline mobile Vite bundle passes with the existing large main-chunk warning. `node --test tests/*.test.mjs` passes 26 tests, including device-garage isolation, cloud owner isolation, catalog count, 4xe powertrain fitment, the starter build sample, rendered HTML metadata, shared-link privacy, native Bundle ID/version settings, privacy-manifest packaging, offline mobile shell CSP, Capacitor Swift Package Manager wiring and Codemagic iOS workflow guardrails.
+TypeScript passes with `node node_modules/typescript/bin/tsc --noEmit`. ESLint exits successfully with no warnings after documenting the offline image strategy and ignoring generated worker typings. Production `vinext build` passes. The offline mobile Vite bundle passes with the existing large main-chunk warning. `node --test tests/*.test.mjs` passes 30 tests, including device-garage isolation, cloud owner isolation, catalog count, 4xe powertrain fitment, the starter build sample, rendered HTML metadata, shared-link privacy, native Bundle ID/version settings, privacy-manifest packaging, offline mobile shell CSP, Capacitor Swift Package Manager wiring, platform link/export handling and Codemagic iOS workflow guardrails.
 
 Capacitor `sync ios` succeeded after a local-only monkeypatch for Node's `os.userInfo()` failing with `ENOMEM` in this Windows sandbox. The sync copied generated mobile assets, but those outputs are intentionally ignored and rebuilt in CI. Running the normal Codemagic/npm path on macOS remains the authoritative iOS sync/archive check.
 

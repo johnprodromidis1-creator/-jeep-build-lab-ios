@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const nativeSafeTests =
-  "node --test tests/model.test.mjs tests/device-storage.test.mjs tests/ios-metadata.test.mjs";
+  "node --test tests/model.test.mjs tests/device-storage.test.mjs tests/ios-metadata.test.mjs tests/platform.test.mjs";
 const nativeSafeScript = "npm run test:native";
 
 async function source(file) {

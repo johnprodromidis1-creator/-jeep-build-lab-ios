@@ -16,7 +16,7 @@
     "build:mobile": "vite build --config vite.mobile.config.ts",
     "ios:sync": "npm run build:mobile && cap sync ios",
     "ios:open": "cap open ios",
-    "test:native": "node --test tests/model.test.mjs tests/device-storage.test.mjs tests/ios-metadata.test.mjs"
+    "test:native": "node --test tests/model.test.mjs tests/device-storage.test.mjs tests/ios-metadata.test.mjs tests/platform.test.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

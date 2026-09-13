@@ -14,8 +14,17 @@ const eslintConfig = defineConfig([
     "dist/**",
     "mobile-dist/**",
     "ios/App/App/public/**",
+    "worker-configuration.d.ts",
     "next-env.d.ts",
   ]),
+  {
+    files: ["app/builder.tsx", "app/components/part-family.tsx"],
+    rules: {
+      // The offline Capacitor bundle uses local PNG layers directly; Next's
+      // image optimizer route is not part of the native packaged app.
+      "@next/next/no-img-element": "off",
+    },
+  },
   {
     files: ["components/ui/**/*.{ts,tsx}", "hooks/use-mobile.ts"],
     rules: {

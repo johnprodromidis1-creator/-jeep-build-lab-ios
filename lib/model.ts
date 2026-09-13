@@ -115,6 +115,31 @@ export const saveSchema = z.object({
 export type SavedBuild = { id: string; name: string; notes: string; state: BuildState; updatedAt: string; savedTotal: number };
 export type Issue = { level: "error" | "note"; message: string; category?: Category };
 
+export function publicBuildState(s: BuildState): BuildState {
+  return stateSchema.parse({
+    year: s.year,
+    trim: s.trim,
+    powertrain: s.powertrain ?? "gas",
+    stockRim: s.stockRim,
+    stockTire: s.stockTire,
+    vehicleCost: s.vehicleCost ?? 0,
+    stages: { ...(s.stages ?? {}) },
+    quantity: s.quantity,
+    budget: s.budget,
+    labor: s.labor,
+    extras: s.extras,
+    picks: { ...(s.picks ?? {}) },
+  });
+}
+
+export function encodeSharedBuildState(s: BuildState) {
+  return encodeURIComponent(JSON.stringify(publicBuildState(s)));
+}
+
+export function decodeSharedBuildStatePayload(payload: string) {
+  return stateSchema.parse(JSON.parse(decodeURIComponent(payload)));
+}
+
 function partPowertrains(p: Part): Powertrain[] {
   return p.powertrains ?? ["gas"];
 }

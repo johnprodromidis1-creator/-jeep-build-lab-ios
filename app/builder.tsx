@@ -10,7 +10,7 @@ import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogDescription,DialogFo
 import {AlertDialog,AlertDialogContent,AlertDialogHeader,AlertDialogTitle,AlertDialogDescription,AlertDialogFooter,AlertDialogCancel,AlertDialogAction} from "@/components/ui/alert-dialog";
 import {Textarea} from "@/components/ui/textarea";
 import {toast,Toaster} from "sonner";
-import {baseCatalog,categories,categoryNames,initialState,stateSchema,selectedParts,totalFor,quantityFor,fitsVehicle,buildIssues,partCompatibility,partCoverage,defaultEquipment,vehicleDescription,powertrainNames,money,type BuildState,type Part,type Category,type SavedBuild,type Trim,type Powertrain} from "@/lib/model";
+import {baseCatalog,categories,categoryNames,initialState,stateSchema,selectedParts,totalFor,quantityFor,fitsVehicle,buildIssues,partCompatibility,partCoverage,defaultEquipment,vehicleDescription,powertrainNames,money,encodeSharedBuildState,decodeSharedBuildStatePayload,type BuildState,type Part,type Category,type SavedBuild,type Trim,type Powertrain} from "@/lib/model";
 
 import {costPlan,groupParts,stageFor,stageNames,type Stage} from '@/lib/planning';
 import {useBuildDraft,type Draft} from './components/use-build-draft';
@@ -120,7 +120,7 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
  useEffect(()=>{
  storage.catalog().then(setParts).catch((e:Error)=>setCatalogWarning(e.message));
  if(window.location.hash.startsWith("#build=")){
-   try{const raw=decodeURIComponent(window.location.hash.slice(7));if(raw.length>5000)throw new Error();const parsed=stateSchema.safeParse(JSON.parse(raw));if(!parsed.success)throw new Error();queueMicrotask(()=>{setState(parsed.data);setName("Linked JL build");setDirty(true);toast.success("Build loaded from link.");});}catch{toast.error("This build link is invalid or uses unsupported parts.");}
+   try{const raw=window.location.hash.slice(7);if(raw.length>5000)throw new Error();const parsed=decodeSharedBuildStatePayload(raw);queueMicrotask(()=>{setState(parsed);setName("Linked JL build");setDirty(true);toast.success("Build loaded from link.");});}catch{toast.error("This build link is invalid or uses unsupported parts.");}
   }
  },[storage]);
  useEffect(()=>{if(!dirty||draft.status==="saved")return;const handler=(e:BeforeUnloadEvent)=>{e.preventDefault();};window.addEventListener("beforeunload",handler);return()=>window.removeEventListener("beforeunload",handler);},[dirty,draft.status]);
@@ -136,7 +136,7 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
   if(confirm?.kind==="delete"&&confirm.build){setBusyDelete(true);try{await storage.remove(confirm.build.id);if(id===confirm.build.id){setId(undefined);setDirty(true);}setGarage(v=>v.filter(b=>b.id!==confirm.build!.id));toast.success("Build deleted.");}catch(e){toast.error(e instanceof Error?e.message:"Could not delete build.");}finally{setBusyDelete(false);setConfirm(null);}}
   else{if(confirm?.kind==="load"&&confirm.build)loadBuild(confirm.build);else if(confirm?.kind==="starter")loadStarterBuild();else reset();setConfirm(null);}
  }
- async function share(){const url=publicOrigin+'/#build='+encodeURIComponent(JSON.stringify(state));setShareUrl(url);setLinkOpen(true);}
+ async function share(){const url=publicOrigin+'/#build='+encodeSharedBuildState(state);setShareUrl(url);setLinkOpen(true);}
  async function savePrice(resetPrice=false){if(!detail)return;setPriceBusy(true);try{const updated=await storage.price(detail.id,resetPrice?null:price);setParts(updated);setDetail(updated.find(p=>p.id===detail.id)??null);setDirty(true);toast.success(resetPrice?'Source price restored.':'Your price note was saved.');}catch(e){toast.error(e instanceof Error?e.message:'Could not save price.');}finally{setPriceBusy(false);}}
  function openDetail(p:Part){setDetail(p);setPrice(p.priceCents);}
  async function exportCSV(){

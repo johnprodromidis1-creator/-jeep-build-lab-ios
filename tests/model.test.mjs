@@ -41,7 +41,7 @@ const planning=await module("lib/planning.ts","planning");
 const accountData=await module("app/api/data/route.ts","data");
 const catalog=await module("app/api/catalog/route.ts","catalog");
 const decimalInput=await module("lib/decimal-input.ts","decimal-input");
-const {initialState,baseCatalog,totalFor,buildIssues,stateSchema,fitsVehicle,partCompatibility}=model;
+const {initialState,baseCatalog,totalFor,buildIssues,stateSchema,fitsVehicle,partCompatibility,publicBuildState,encodeSharedBuildState,decodeSharedBuildStatePayload}=model;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
 
@@ -98,6 +98,13 @@ test("malformed or fabricated shared state is rejected",()=>{
  assert.equal(stateSchema.safeParse({...base(),picks:{lift:"nitto-217050"}}).success,false);
  assert.equal(stateSchema.safeParse({...base(),labor:-1}).success,false);
  assert.equal(stateSchema.safeParse({...base(),quantity:999}).success,false);
+});
+test("shared build payload exposes only public build state",()=>{
+ const state={...base(),year:2024,trim:"Sahara",powertrain:"4xe",stockRim:20,stockTire:32,budget:625000,labor:12550,extras:9999,picks:{tires:"nitto-217310-4xe",lift:"mopar-77072522ae-4xe"},stages:{tires:"now",lift:"later"},name:"Private trail name",notes:"secret notes",ownerId:"owner-1",savedTotal:1,prices:[{partId:"nitto-217310-4xe",priceCents:1}],customPrice:true};
+ const payload=encodeSharedBuildState(state),json=decodeURIComponent(payload),parsed=JSON.parse(json);
+ assert.deepEqual(Object.keys(parsed).sort(),["budget","extras","labor","picks","powertrain","quantity","stages","stockRim","stockTire","trim","vehicleCost","year"].sort());
+ assert.doesNotMatch(json,/Private trail name|secret notes|ownerId|savedTotal|prices|customPrice/);
+ assert.deepEqual(decodeSharedBuildStatePayload(payload),publicBuildState(state));
 });
 test("2024 Sahara 4xe keeps powertrain fitment explicit and supports 20-inch starting wheels",()=>{
  const s={...base(),year:2024,trim:"Sahara",powertrain:"4xe",stockRim:20,stockTire:32,picks:{}};

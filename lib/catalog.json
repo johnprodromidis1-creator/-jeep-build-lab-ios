@@ -1,0 +1,1041 @@
+[
+  {
+    "id": "nitto-217180",
+    "category": "tires",
+    "brand": "Nitto",
+    "name": "Ridge Grappler",
+    "variant": "33×12.50R17LT",
+    "reference": "MPN 217180",
+    "priceCents": 38000,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/nitto/ridge-grappler-tire",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "diameter": 33,
+      "rim": 17
+    },
+    "notes": "Nominal size only. Confirm approved rim width, load rating, clearance and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "nitto-217020",
+    "category": "tires",
+    "brand": "Nitto",
+    "name": "Ridge Grappler",
+    "variant": "35×12.50R17LT",
+    "reference": "MPN 217020",
+    "priceCents": 43200,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/nitto/ridge-grappler-tire",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "diameter": 35,
+      "rim": 17
+    },
+    "notes": "Nominal size only. Confirm approved rim width, load rating, clearance and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "nitto-217050",
+    "category": "tires",
+    "brand": "Nitto",
+    "name": "Ridge Grappler",
+    "variant": "37×12.50R17LT",
+    "reference": "MPN 217050",
+    "priceCents": 46700,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/nitto/ridge-grappler-tire",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "diameter": 37,
+      "rim": 17
+    },
+    "notes": "Nominal size only. Confirm approved rim width, load rating, clearance and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "nitto-217100",
+    "category": "tires",
+    "brand": "Nitto",
+    "name": "Ridge Grappler",
+    "variant": "LT265/70R17",
+    "reference": "MPN 217100",
+    "priceCents": 31600,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/nitto/ridge-grappler-tire",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "diameter": 31.6,
+      "rim": 17
+    },
+    "notes": "Nominal size only. Confirm approved rim width, load rating, clearance and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "nitto-217010",
+    "category": "tires",
+    "brand": "Nitto",
+    "name": "Ridge Grappler",
+    "variant": "LT285/70R17 · C",
+    "reference": "MPN 217010",
+    "priceCents": 33400,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/nitto/ridge-grappler-tire",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "diameter": 32.7,
+      "rim": 17
+    },
+    "notes": "Nominal size only. Confirm approved rim width, load rating, clearance and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "nitto-217000",
+    "category": "tires",
+    "brand": "Nitto",
+    "name": "Ridge Grappler",
+    "variant": "LT285/70R17 · E",
+    "reference": "MPN 217000",
+    "priceCents": 36400,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/nitto/ridge-grappler-tire",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "diameter": 32.7,
+      "rim": 17
+    },
+    "notes": "Nominal size only. Confirm approved rim width, load rating, clearance and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "nitto-217210",
+    "category": "tires",
+    "brand": "Nitto",
+    "name": "Ridge Grappler",
+    "variant": "LT285/75R17 · C",
+    "reference": "MPN 217210",
+    "priceCents": 35300,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/nitto/ridge-grappler-tire",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "diameter": 33.8,
+      "rim": 17
+    },
+    "notes": "Nominal size only. Confirm approved rim width, load rating, clearance and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "nitto-217200",
+    "category": "tires",
+    "brand": "Nitto",
+    "name": "Ridge Grappler",
+    "variant": "LT285/75R17 · E",
+    "reference": "MPN 217200",
+    "priceCents": 37800,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/nitto/ridge-grappler-tire",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "diameter": 33.8,
+      "rim": 17
+    },
+    "notes": "Nominal size only. Confirm approved rim width, load rating, clearance and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "nitto-217070",
+    "category": "tires",
+    "brand": "Nitto",
+    "name": "Ridge Grappler",
+    "variant": "LT295/70R17",
+    "reference": "MPN 217070",
+    "priceCents": 37500,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/nitto/ridge-grappler-tire",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "diameter": 33.3,
+      "rim": 17
+    },
+    "notes": "Nominal size only. Confirm approved rim width, load rating, clearance and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "nitto-217530",
+    "category": "tires",
+    "brand": "Nitto",
+    "name": "Ridge Grappler",
+    "variant": "LT315/70R17",
+    "reference": "MPN 217530",
+    "priceCents": 39200,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/nitto/ridge-grappler-tire",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "diameter": 34.4,
+      "rim": 17
+    },
+    "notes": "Nominal size only. Confirm approved rim width, load rating, clearance and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "nitto-217190",
+    "category": "tires",
+    "brand": "Nitto",
+    "name": "Ridge Grappler",
+    "variant": "33×12.50R18LT",
+    "reference": "MPN 217190",
+    "priceCents": 42300,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/nitto/ridge-grappler-tire",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "diameter": 33,
+      "rim": 18
+    },
+    "notes": "Nominal size only. Confirm approved rim width, load rating, clearance and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "nitto-217130",
+    "category": "tires",
+    "brand": "Nitto",
+    "name": "Ridge Grappler",
+    "variant": "35×12.50R18LT",
+    "reference": "MPN 217130",
+    "priceCents": 47200,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/nitto/ridge-grappler-tire",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "diameter": 35,
+      "rim": 18
+    },
+    "notes": "Nominal size only. Confirm approved rim width, load rating, clearance and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "bfg-68284",
+    "category": "tires",
+    "brand": "BFGoodrich",
+    "name": "All-Terrain T/A KO3",
+    "variant": "LT315/70R17/12 · 128S",
+    "reference": "MPN 68284",
+    "priceCents": 38899,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/bfgoodrich/all-terrain-t-a-ko3-tires",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "diameter": 34.4,
+      "rim": 17
+    },
+    "notes": "Nominal size only. Confirm approved rim width, load rating, clearance and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "bfg-30398",
+    "category": "tires",
+    "brand": "BFGoodrich",
+    "name": "All-Terrain T/A KO3",
+    "variant": "LT285/75R17/10 · 128/125S",
+    "reference": "MPN 30398",
+    "priceCents": 38499,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/bfgoodrich/all-terrain-t-a-ko3-tires",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "diameter": 33.8,
+      "rim": 17
+    },
+    "notes": "Nominal size only. Confirm approved rim width, load rating, clearance and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "bfg-18380",
+    "category": "tires",
+    "brand": "BFGoodrich",
+    "name": "All-Terrain T/A KO3",
+    "variant": "LT275/70R17/10 · 124/121S",
+    "reference": "MPN 18380",
+    "priceCents": 31899,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/bfgoodrich/all-terrain-t-a-ko3-tires",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "diameter": 32.2,
+      "rim": 17
+    },
+    "notes": "Nominal size only. Confirm approved rim width, load rating, clearance and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "bfg-19795",
+    "category": "tires",
+    "brand": "BFGoodrich",
+    "name": "All-Terrain T/A KO3",
+    "variant": "LT285/70R17/10 · 126/123S",
+    "reference": "MPN 19795",
+    "priceCents": 33099,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/bfgoodrich/all-terrain-t-a-ko3-tires",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "diameter": 32.7,
+      "rim": 17
+    },
+    "notes": "Nominal size only. Confirm approved rim width, load rating, clearance and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "bfg-62187",
+    "category": "tires",
+    "brand": "BFGoodrich",
+    "name": "All-Terrain T/A KO3",
+    "variant": "LT285/70R17/6 · 116/113S",
+    "reference": "MPN 62187",
+    "priceCents": 32899,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/bfgoodrich/all-terrain-t-a-ko3-tires",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "diameter": 32.7,
+      "rim": 17
+    },
+    "notes": "Nominal size only. Confirm approved rim width, load rating, clearance and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "bfg-86520",
+    "category": "tires",
+    "brand": "BFGoodrich",
+    "name": "All-Terrain T/A KO3",
+    "variant": "LT305/70R17/12 · 128S",
+    "reference": "MPN 86520",
+    "priceCents": 36899,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/bfgoodrich/all-terrain-t-a-ko3-tires",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "diameter": 33.8,
+      "rim": 17
+    },
+    "notes": "Nominal size only. Confirm approved rim width, load rating, clearance and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "bfg-23161",
+    "category": "tires",
+    "brand": "BFGoodrich",
+    "name": "All-Terrain T/A KO3",
+    "variant": "LT295/70R17/10 · 128/125S",
+    "reference": "MPN 23161",
+    "priceCents": 36899,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/bfgoodrich/all-terrain-t-a-ko3-tires",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "diameter": 33.3,
+      "rim": 17
+    },
+    "notes": "Nominal size only. Confirm approved rim width, load rating, clearance and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "bfg-6434",
+    "category": "tires",
+    "brand": "BFGoodrich",
+    "name": "All-Terrain T/A KO3",
+    "variant": "33×12.50R17/E · 120S",
+    "reference": "MPN 6434",
+    "priceCents": 39499,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/bfgoodrich/all-terrain-t-a-ko3-tires",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "diameter": 33,
+      "rim": 17
+    },
+    "notes": "Nominal size only. Confirm approved rim width, load rating, clearance and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "bfg-82837",
+    "category": "tires",
+    "brand": "BFGoodrich",
+    "name": "All-Terrain T/A KO3",
+    "variant": "35×11.50R17LT · 118R",
+    "reference": "MPN 82837",
+    "priceCents": 34699,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/bfgoodrich/all-terrain-t-a-ko3-tires",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "diameter": 35,
+      "rim": 17
+    },
+    "notes": "Nominal size only. Confirm approved rim width, load rating, clearance and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "bfg-41725",
+    "category": "tires",
+    "brand": "BFGoodrich",
+    "name": "All-Terrain T/A KO3",
+    "variant": "37×12.50R17/C · 116R",
+    "reference": "MPN 41725",
+    "priceCents": 45899,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/bfgoodrich/all-terrain-t-a-ko3-tires",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "diameter": 37,
+      "rim": 17
+    },
+    "notes": "Nominal size only. Confirm approved rim width, load rating, clearance and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "method-MR70178550500",
+    "category": "wheels",
+    "brand": "Method Race Wheels",
+    "name": "701 Trail Series",
+    "variant": "17×8.5 · Matte black",
+    "reference": "MPN MR70178550500",
+    "priceCents": 32940,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/method-race-wheels/trail-series-701-wheel-wrangler-jl-jk",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "rim": 17,
+      "width": 8.5,
+      "offset": 0,
+      "backspacing": 4.75,
+      "finish": "charcoal"
+    },
+    "notes": "Retailer lists Wrangler JL. Verify brake, hub, lug-seat and tire-width clearance. Preview uses a generic wheel illustration."
+  },
+  {
+    "id": "method-MR70178550900",
+    "category": "wheels",
+    "brand": "Method Race Wheels",
+    "name": "701 Trail Series",
+    "variant": "17×8.5 · Matte bronze",
+    "reference": "MPN MR70178550900",
+    "priceCents": 36600,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/method-race-wheels/trail-series-701-wheel-wrangler-jl-jk",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "rim": 17,
+      "width": 8.5,
+      "offset": 0,
+      "backspacing": 4.75,
+      "finish": "bronze"
+    },
+    "notes": "Retailer lists Wrangler JL. Verify brake, hub, lug-seat and tire-width clearance. Preview uses a generic wheel illustration."
+  },
+  {
+    "id": "method-MR70179050512N",
+    "category": "wheels",
+    "brand": "Method Race Wheels",
+    "name": "701 Trail Series",
+    "variant": "17×9 · Matte black",
+    "reference": "MPN MR70179050512N",
+    "priceCents": 34830,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/method-race-wheels/trail-series-701-wheel-wrangler-jl-jk",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "rim": 17,
+      "width": 9,
+      "offset": -12,
+      "backspacing": 4.6,
+      "finish": "charcoal"
+    },
+    "notes": "Retailer lists Wrangler JL. Verify brake, hub, lug-seat and tire-width clearance. Preview uses a generic wheel illustration."
+  },
+  {
+    "id": "method-MR70179050912N",
+    "category": "wheels",
+    "brand": "Method Race Wheels",
+    "name": "701 Trail Series",
+    "variant": "17×9 · Matte bronze",
+    "reference": "MPN MR70179050912N",
+    "priceCents": 34830,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/method-race-wheels/trail-series-701-wheel-wrangler-jl-jk",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "rim": 17,
+      "width": 9,
+      "offset": -12,
+      "backspacing": 4.6,
+      "finish": "bronze"
+    },
+    "notes": "Retailer lists Wrangler JL. Verify brake, hub, lug-seat and tire-width clearance. Preview uses a generic wheel illustration."
+  },
+  {
+    "id": "method-MR70178550300",
+    "category": "wheels",
+    "brand": "Method Race Wheels",
+    "name": "701 Trail Series",
+    "variant": "17×8.5 · Machined clear",
+    "reference": "MPN MR70178550300",
+    "priceCents": 32940,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/method-race-wheels/trail-series-701-wheel-wrangler-jl-jk",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "rim": 17,
+      "width": 8.5,
+      "offset": 0,
+      "backspacing": 4.75,
+      "finish": "charcoal"
+    },
+    "notes": "Retailer lists Wrangler JL. Verify brake, hub, lug-seat and tire-width clearance. Preview uses a generic wheel illustration."
+  },
+  {
+    "id": "method-MR70179050612N",
+    "category": "wheels",
+    "brand": "Method Race Wheels",
+    "name": "701 Trail Series",
+    "variant": "17×9 · Bahia blue",
+    "reference": "MPN MR70179050612N",
+    "priceCents": 34830,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/method-race-wheels/trail-series-701-wheel-wrangler-jl-jk",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "rim": 17,
+      "width": 9,
+      "offset": -12,
+      "backspacing": 4.6,
+      "finish": "charcoal"
+    },
+    "notes": "Retailer lists Wrangler JL. Verify brake, hub, lug-seat and tire-width clearance. Preview uses a generic wheel illustration."
+  },
+  {
+    "id": "morphic-92615-3835",
+    "category": "wheels",
+    "brand": "Quadratec",
+    "name": "Morphic II",
+    "variant": "17×8.5 · Black / machined",
+    "reference": "Catalog 92615-3835",
+    "priceCents": 24999,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/quadratec/morphic-ii-wheel-wrangler-jl-jk-gladiator-jt",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "rim": 17,
+      "width": 8.5,
+      "backspacing": 5.2,
+      "finish": "charcoal"
+    },
+    "notes": "Retailer lists Wrangler JL. Confirm backspacing meets your lift and tire requirements. Preview uses a generic wheel illustration."
+  },
+  {
+    "id": "morphic-92615-3570",
+    "category": "wheels",
+    "brand": "Quadratec",
+    "name": "Morphic II",
+    "variant": "17×8.5 · Gunmetal gray",
+    "reference": "Catalog 92615-3570",
+    "priceCents": 24999,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/quadratec/morphic-ii-wheel-wrangler-jl-jk-gladiator-jt",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "rim": 17,
+      "width": 8.5,
+      "backspacing": 5.2,
+      "finish": "charcoal"
+    },
+    "notes": "Retailer lists Wrangler JL. Confirm backspacing meets your lift and tire requirements. Preview uses a generic wheel illustration."
+  },
+  {
+    "id": "morphic-92615-3830",
+    "category": "wheels",
+    "brand": "Quadratec",
+    "name": "Morphic II",
+    "variant": "17×8.5 · Satin black",
+    "reference": "Catalog 92615-3830",
+    "priceCents": 24999,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/quadratec/morphic-ii-wheel-wrangler-jl-jk-gladiator-jt",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "rim": 17,
+      "width": 8.5,
+      "backspacing": 5.2,
+      "finish": "charcoal"
+    },
+    "notes": "Retailer lists Wrangler JL. Confirm backspacing meets your lift and tire requirements. Preview uses a generic wheel illustration."
+  },
+  {
+    "id": "lift-16400-0071",
+    "category": "lift",
+    "brand": "Quadratec",
+    "name": "Maximum Duty 2.5″",
+    "variant": "Rubicon · Hydro 7.0 shocks",
+    "reference": "Catalog 16400-0071",
+    "priceCents": 69995,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/quadratec/maximum-duty-2.5-inch-suspension-lift-kit-wrangler-jl-unlimited",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Rubicon"
+    ],
+    "specs": {
+      "lift": 2.5,
+      "maxTire": 37
+    },
+    "notes": "For the specified trim. Retailer lists up to 35-inch tires on Sport/Sahara, 37-inch on Rubicon. Factory-wheel and full-travel clearance still require checking."
+  },
+  {
+    "id": "lift-16400-0171",
+    "category": "lift",
+    "brand": "Quadratec",
+    "name": "Maximum Duty 2.5″",
+    "variant": "Rubicon · Nitro 8.0 shocks",
+    "reference": "Catalog 16400-0171",
+    "priceCents": 73995,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/quadratec/maximum-duty-2.5-inch-suspension-lift-kit-wrangler-jl-unlimited",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Rubicon"
+    ],
+    "specs": {
+      "lift": 2.5,
+      "maxTire": 37
+    },
+    "notes": "For the specified trim. Retailer lists up to 35-inch tires on Sport/Sahara, 37-inch on Rubicon. Factory-wheel and full-travel clearance still require checking."
+  },
+  {
+    "id": "lift-16400-0073",
+    "category": "lift",
+    "brand": "Quadratec",
+    "name": "Maximum Duty 2.5″",
+    "variant": "Sport/Sahara · Hydro 7.0 shocks",
+    "reference": "Catalog 16400-0073",
+    "priceCents": 69995,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/quadratec/maximum-duty-2.5-inch-suspension-lift-kit-wrangler-jl-unlimited",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara"
+    ],
+    "specs": {
+      "lift": 2.5,
+      "maxTire": 35
+    },
+    "notes": "For the specified trim. Retailer lists up to 35-inch tires on Sport/Sahara, 37-inch on Rubicon. Factory-wheel and full-travel clearance still require checking."
+  },
+  {
+    "id": "lift-16400-0173",
+    "category": "lift",
+    "brand": "Quadratec",
+    "name": "Maximum Duty 2.5″",
+    "variant": "Sport/Sahara · Nitro 8.0 shocks",
+    "reference": "Catalog 16400-0173",
+    "priceCents": 73995,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/quadratec/maximum-duty-2.5-inch-suspension-lift-kit-wrangler-jl-unlimited",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara"
+    ],
+    "specs": {
+      "lift": 2.5,
+      "maxTire": 35
+    },
+    "notes": "For the specified trim. Retailer lists up to 35-inch tires on Sport/Sahara, 37-inch on Rubicon. Factory-wheel and full-travel clearance still require checking."
+  },
+  {
+    "id": "lift-16400-0331",
+    "category": "lift",
+    "brand": "Quadratec",
+    "name": "Maximum Duty 2.5″",
+    "variant": "Rubicon · Fox 2.0 shocks",
+    "reference": "Catalog 16400-0331",
+    "priceCents": 141979,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/quadratec/maximum-duty-2.5-inch-suspension-lift-kit-wrangler-jl-unlimited",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Rubicon"
+    ],
+    "specs": {
+      "lift": 2.5,
+      "maxTire": 37
+    },
+    "notes": "For the specified trim. Retailer lists up to 35-inch tires on Sport/Sahara, 37-inch on Rubicon. Factory-wheel and full-travel clearance still require checking."
+  },
+  {
+    "id": "lift-16400-0333",
+    "category": "lift",
+    "brand": "Quadratec",
+    "name": "Maximum Duty 2.5″",
+    "variant": "Sport/Sahara · Fox 2.0 shocks",
+    "reference": "Catalog 16400-0333",
+    "priceCents": 141979,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/quadratec/maximum-duty-2.5-inch-suspension-lift-kit-wrangler-jl-unlimited",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara"
+    ],
+    "specs": {
+      "lift": 2.5,
+      "maxTire": 35
+    },
+    "notes": "For the specified trim. Retailer lists up to 35-inch tires on Sport/Sahara, 37-inch on Rubicon. Factory-wheel and full-travel clearance still require checking."
+  },
+  {
+    "id": "aev-spacer",
+    "category": "lift",
+    "brand": "AEV",
+    "name": "2″ Spacer Suspension System",
+    "variant": "Reuses factory shocks · ProCal Snap",
+    "reference": "MPN N0721000AE",
+    "priceCents": 48900,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/aev/2in-spacer-suspension-system-wrangler-jl-n0721000ab",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "lift": 2,
+      "maxTire": 35,
+      "maxTireRubicon": 37
+    },
+    "notes": "Retailer lists 35-inch Sport/Sahara or 37-inch Rubicon with aftermarket wheels. This planner excludes Xtreme Recon, 4xe, diesel and 392."
+  },
+  {
+    "id": "qrc-12057-0140",
+    "category": "bumpers",
+    "brand": "Quadratec",
+    "name": "QRC Winch Ready Bumper",
+    "variant": "Stubby",
+    "reference": "Catalog 12057-0140",
+    "priceCents": 59999,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/quadratec/qrc-front-winch-ready-bumper-jeep-wrangler-jl-gladiator-jt",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "winchMount": true
+    },
+    "notes": "Integrated winch plate. Does not accept factory Rubicon steel-bumper fog lights. Check exact winch/grille clearance. Not rendered in preview."
+  },
+  {
+    "id": "qrc-12057-0141",
+    "category": "bumpers",
+    "brand": "Quadratec",
+    "name": "QRC Winch Ready Bumper",
+    "variant": "Full width",
+    "reference": "Catalog 12057-0141",
+    "priceCents": 59999,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/quadratec/qrc-front-winch-ready-bumper-jeep-wrangler-jl-gladiator-jt",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "winchMount": true
+    },
+    "notes": "Integrated winch plate. Does not accept factory Rubicon steel-bumper fog lights. Check exact winch/grille clearance. Not rendered in preview."
+  },
+  {
+    "id": "tactik-hd",
+    "category": "bumpers",
+    "brand": "TACTIK",
+    "name": "HD Front Bumper",
+    "variant": "Hoop · D-rings included",
+    "reference": "Catalog 12052-0140",
+    "priceCents": 42999,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/tactik/hd-front-bumper-hoop-jeep-wrangler-jl",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {
+      "winchMount": true
+    },
+    "notes": "10×4.5-inch mount, up to 10,000 lb winch. Sport fog lights need Mopar 68298651AA brackets (extra cost). Verify winch clearance. Not rendered in preview."
+  },
+  {
+    "id": "warn-evo",
+    "category": "winches",
+    "brand": "WARN",
+    "name": "VR EVO 10-S",
+    "variant": "10,000 lb · Synthetic rope",
+    "reference": "MPN 103253",
+    "priceCents": 94999,
+    "retailer": "WARN",
+    "url": "https://www.warn.com/products/vr-evo-10-s-winch-103253",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {},
+    "notes": "Requires a rated winch mount, electrical installation and physical clearance check. Mount pattern 10×4.5 inches. Not rendered in preview."
+  },
+  {
+    "id": "qrc-armor",
+    "category": "armor",
+    "brand": "Quadratec",
+    "name": "QRC Side Armor with Step",
+    "variant": "JL four-door · Pair",
+    "reference": "Catalog 12004-3214",
+    "priceCents": 54999,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/quadratec/qrc-side-armor-step-jeep-wrangler-jl-unlimited",
+    "checkedAt": "2026-09-08",
+    "yearFrom": 2018,
+    "yearTo": 2023,
+    "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon"
+    ],
+    "specs": {},
+    "notes": "Driver and passenger sides included. Remove factory Rubicon rock rails before installation. Not rendered in preview."
+  }
+]

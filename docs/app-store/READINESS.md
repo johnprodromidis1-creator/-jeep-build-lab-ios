@@ -27,7 +27,7 @@ The web version retains an optional ChatGPT cloud garage. Anonymous visitors use
 
 ## September 13 local verification
 
-TypeScript passes with `node node_modules/typescript/bin/tsc --noEmit`. ESLint exits successfully with warnings only for existing image tags and generated worker typing comments. Production `vinext build` passes. The offline mobile Vite bundle passes with the existing large main-chunk warning. `node --test tests/*.test.mjs` passes 18 tests, including device-garage isolation, cloud owner isolation, catalog count, 4xe powertrain fitment, the starter build sample and rendered HTML metadata.
+TypeScript passes with `node node_modules/typescript/bin/tsc --noEmit`. ESLint exits successfully with no warnings after documenting the offline image strategy and ignoring generated worker typings. Production `vinext build` passes. The offline mobile Vite bundle passes with the existing large main-chunk warning. `node --test tests/*.test.mjs` passes 18 tests, including device-garage isolation, cloud owner isolation, catalog count, 4xe powertrain fitment, the starter build sample and rendered HTML metadata.
 
 Capacitor `sync ios` succeeded after a local-only monkeypatch for Node's `os.userInfo()` failing with `ENOMEM` in this Windows sandbox. The sync copied generated mobile assets, but those outputs are intentionally ignored and rebuilt in CI. Running the normal Codemagic/npm path on macOS remains the authoritative iOS sync/archive check.
 

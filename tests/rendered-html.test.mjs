@@ -39,6 +39,7 @@ test("serves the builder with production metadata and the initial catalog", asyn
   assert.doesNotMatch(html, developmentPreviewMeta);
   assert.match(html, /<title>Jeep Build Lab/);
   assert.match(html, /Choose your upgrades/);
+  assert.match(html, /Load a 2024 Sahara 4xe sample/);
   assert.match(html, /Save to my garage/);
   assert.match(html, /assets\/jeep-body\.png/);
   assert.match(html, /701 Trail Series/);

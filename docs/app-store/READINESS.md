@@ -22,11 +22,12 @@ The web version retains an optional ChatGPT cloud garage. Anonymous visitors use
 - Added explicit powertrain support to build state and catalog records. Legacy saved builds and drafts without a powertrain parse as 3.6L V6 gas.
 - Added first-batch 2024 Sahara 4xe vehicle selection, 20-inch starting wheel support, seven 20-inch Nitto Ridge Grappler variants, a Mopar 4xe lift kit and updated Morphic wheel fitment records.
 - The catalog now shows compatible and excluded variants deliberately. Excluded cards keep their detail/source links and explain the year, trim or powertrain reason before purchase.
+- Added a first-time 2024 Sahara 4xe starter build that loads a sourced tire/lift sample on stock 20-inch wheels, with confirmation before replacing an unsaved draft.
 - The owner reports `com.johnprodromidis.jeepbuildlab` is registered with Apple. App Store Connect app record, Codemagic matching provisioning profile, signed archive and TestFlight upload remain unverified.
 
 ## September 13 local verification
 
-TypeScript passes with `node node_modules/typescript/bin/tsc --noEmit`. ESLint exits successfully with warnings only for existing image tags and generated worker typing comments. Production `vinext build` passes. The offline mobile Vite bundle passes with the existing large main-chunk warning. `node --test tests/*.test.mjs` passes 18 tests, including device-garage isolation, cloud owner isolation, catalog count, 4xe powertrain fitment and rendered HTML metadata.
+TypeScript passes with `node node_modules/typescript/bin/tsc --noEmit`. ESLint exits successfully with warnings only for existing image tags and generated worker typing comments. Production `vinext build` passes. The offline mobile Vite bundle passes with the existing large main-chunk warning. `node --test tests/*.test.mjs` passes 18 tests, including device-garage isolation, cloud owner isolation, catalog count, 4xe powertrain fitment, the starter build sample and rendered HTML metadata.
 
 Capacitor `sync ios` succeeded after a local-only monkeypatch for Node's `os.userInfo()` failing with `ENOMEM` in this Windows sandbox. The sync copied generated mobile assets, but those outputs are intentionally ignored and rebuilt in CI. Running the normal Codemagic/npm path on macOS remains the authoritative iOS sync/archive check.
 
@@ -49,7 +50,7 @@ On September 10, the owner supplied a screenshot confirming Codemagic compile-ch
 | Product coverage | Listing must say 2018–2023 JL Unlimited 4-door 3.6L gas plus first-batch 2024 Sahara 4xe catalog support only. Do not imply blanket 4xe or all-2024 fitment. |
 | Data/fitment quality | Installer review of supported combinations and dated catalog claims remains necessary. No blanket compatibility or live-price promise. |
 | Metadata | Draft provided; final title availability, age rating, privacy questionnaire, export compliance, copyright, territory/trader status and support details need account-owner review. |
-| Screenshots | Capture the actual signed app in use. No generated UI screenshots have been prepared. |
+| Screenshots | Capture the actual signed app in use. The starter build gives a truthful 2024 Sahara 4xe scenario for capture, but no generated UI screenshots have been prepared. |
 | Accessibility | Evaluate VoiceOver, Larger Text, contrast, reduced motion and touch targets on devices. Do not claim Apple accessibility labels based only on CSS. |
 | TestFlight | Upload a signed archive, finish processing/compliance, then add an internal tester. External testing may require Beta App Review. |
 | App Review | Submit only after device testing and metadata verification. Approval cannot be guaranteed. |

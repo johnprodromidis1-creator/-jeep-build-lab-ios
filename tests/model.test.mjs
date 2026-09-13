@@ -106,7 +106,8 @@ test("2024 Sahara 4xe keeps powertrain fitment explicit and supports 20-inch sta
  assert.equal(fitsVehicle(baseCatalog.find(p=>p.id==="mopar-77072522ae-4xe"),s),true);
  assert.equal(fitsVehicle(baseCatalog.find(p=>p.id==="method-MR70178550900"),s),false);
  assert.match(partCompatibility(baseCatalog.find(p=>p.id==="method-MR70178550900"),s),/2024/);
- const build={...s,picks:{tires:"nitto-217330-4xe",lift:"mopar-77072522ae-4xe"}};
+ const build={...s,picks:{tires:"nitto-217310-4xe",lift:"mopar-77072522ae-4xe"},stages:{tires:"now",lift:"later"}};
+ assert.equal(totalFor(build).subtotal,46300*5+183540);
  assert.ok(!buildIssues(build).some(issue=>issue.level==="error"));
 });
 test("D1 route round-trip, price isolation, update ownership and delete ownership",async()=>{

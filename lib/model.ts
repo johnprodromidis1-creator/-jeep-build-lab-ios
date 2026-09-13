@@ -83,6 +83,12 @@ export const stateSchema = z.object({
   extras: z.number().int().min(0).max(10000000),
   picks: picksSchema,
 }).strict().superRefine((s, ctx) => {
+  if (s.powertrain === "gas" && s.year > 2023) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "3.6L gas support is limited to 2018-2023.", path: ["year"] });
+  }
+  if (s.powertrain === "4xe" && (s.year !== 2024 || s.trim !== "Sahara")) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "4xe support is limited to 2024 Sahara.", path: ["powertrain"] });
+  }
   for (const [cat, id] of Object.entries(s.picks)) {
     if (!baseCatalog.some(p => p.id === id && p.category === cat)) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Unknown part or category", path: ["picks", cat] });

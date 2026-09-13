@@ -98,6 +98,9 @@ test("malformed or fabricated shared state is rejected",()=>{
  assert.equal(stateSchema.safeParse({...base(),picks:{lift:"nitto-217050"}}).success,false);
  assert.equal(stateSchema.safeParse({...base(),labor:-1}).success,false);
  assert.equal(stateSchema.safeParse({...base(),quantity:999}).success,false);
+ assert.equal(stateSchema.safeParse({...base(),year:2024,powertrain:"gas"}).success,false);
+ assert.equal(stateSchema.safeParse({...base(),year:2024,trim:"Rubicon",powertrain:"4xe"}).success,false);
+ assert.equal(stateSchema.safeParse({...base(),year:2023,trim:"Sahara",powertrain:"4xe"}).success,false);
 });
 test("shared build payload exposes only public build state",()=>{
  const state={...base(),year:2024,trim:"Sahara",powertrain:"4xe",stockRim:20,stockTire:32,budget:625000,labor:12550,extras:9999,picks:{tires:"nitto-217310-4xe",lift:"mopar-77072522ae-4xe"},stages:{tires:"now",lift:"later"},name:"Private trail name",notes:"secret notes",ownerId:"owner-1",savedTotal:1,prices:[{partId:"nitto-217310-4xe",priceCents:1}],customPrice:true};

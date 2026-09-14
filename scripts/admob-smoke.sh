@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 mkdir -p build/admob
+xcrun swiftc -parse-as-library NativePackages/TestFlightAds/Sources/TestFlightAds/AdEligibility.swift \
+  scripts/test-ad-eligibility.swift -o build/admob/ad-eligibility-check
+build/admob/ad-eligibility-check
 if [[ -f project.yml && -d LineLab ]]; then
   command -v xcodegen >/dev/null || brew install xcodegen
   xcodegen generate

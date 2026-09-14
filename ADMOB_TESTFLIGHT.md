@@ -4,8 +4,11 @@ This branch adds a fixed Google AdMob test banner to Debug and TestFlight builds
 The SDK and its sample IDs are pinned in `NativePackages/TestFlightAds`.
 The package is referenced directly by Xcode so Capacitor synchronization does not remove it.
 
-Release builds initialize ads only when Apple's receipt is `sandboxReceipt`.
-An App Store receipt or a missing Release receipt leaves advertising off.
+Release builds use Apple's sandbox receipt, or (when it is missing) verified
+StoreKit app-transaction information on iOS 16 and later. A verified sandbox
+transaction enables test ads on a fresh TestFlight install without a receipt.
+Production receipts/transactions and unverified transactions keep ads off.
+An unavailable lookup keeps ads off and can retry on the next foreground event.
 There is no production ad-unit ID, remote switch, or live-ad request path in this integration.
 These banners do not generate advertising revenue.
 
@@ -20,7 +23,8 @@ Personalization and publisher first-party IDs are disabled. No ATT request is ad
 
 Use `--disable-test-ads` when a Debug UI regression needs a stable layout.
 XCTest-hosted processes also leave ads off. Ad validation should separately run
-`bash scripts/admob-smoke.sh`: it compiles the real app, launches an iPhone
+`bash scripts/admob-smoke.sh`: it checks fresh-install and offline eligibility,
+compiles the real app, launches an iPhone
 simulator, requires the Google load callback, and saves logs plus a screenshot.
 Physical TestFlight testing remains necessary for receipt detection, layout,
 keyboard, scanning/sharing, background/foreground, ad taps and offline behavior.
@@ -33,3 +37,5 @@ References:
 - https://developers.google.com/admob/ios/test-ads
 - https://developers.google.com/admob/ios/quick-start
 - https://developers.google.com/admob/ios/privacy/data-disclosure
+- https://developer.apple.com/documentation/storekit/apptransaction/shared
+- https://developer.apple.com/documentation/foundation/bundle/appstorereceipturl

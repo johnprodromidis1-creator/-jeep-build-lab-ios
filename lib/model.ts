@@ -126,6 +126,19 @@ export const saveSchema = z.object({
 export type SavedBuild = { id: string; name: string; notes: string; state: BuildState; updatedAt: string; savedTotal: number };
 export type Issue = { level: "error" | "note"; message: string; category?: Category };
 
+const relatedConflictCategories: Record<Category, readonly Category[]> = {
+  wheels: ["wheels", "tires"],
+  tires: ["wheels", "tires", "lift"],
+  lift: ["lift", "tires", "wheels"],
+  bumpers: ["bumpers"],
+  winches: ["winches", "bumpers"],
+  armor: ["armor"],
+};
+
+function issueKey(issue: Issue) {
+  return `${issue.category ?? "build"}:${issue.message}`;
+}
+
 export function publicBuildState(s: BuildState): BuildState {
   return stateSchema.parse({
     year: s.year,
@@ -234,6 +247,18 @@ export function buildIssues(s: BuildState, parts: Part[] = baseCatalog): Issue[]
   if (bumper?.id.startsWith("qrc-") && s.trim === "Rubicon") issues.push({ level: "note", message: "QRC bumper does not accept fog lights from the factory Rubicon steel bumper; check your original bumper option." });
   if (selected.some(p => p.category === "armor") && s.trim === "Rubicon") issues.push({ level: "note", message: "Factory Rubicon rock rails must be removed for the selected QRC side armor." });
   return issues;
+}
+
+export function buildErrorsForOption(p: Part, s: BuildState, parts: Part[] = baseCatalog) {
+  const related = new Set(relatedConflictCategories[p.category]);
+  const next = { ...s, picks: { ...s.picks, [p.category]: p.id } };
+  return buildIssues(next, parts).filter(issue => issue.level === "error" && (!issue.category || related.has(issue.category)));
+}
+
+export function optionAddsBuildError(p: Part, s: BuildState, parts: Part[] = baseCatalog) {
+  if (s.picks[p.category] === p.id) return buildErrorsForOption(p, s, parts).length > 0;
+  const currentErrors = new Set(buildIssues(s, parts).filter(issue => issue.level === "error").map(issueKey));
+  return buildErrorsForOption(p, s, parts).some(issue => !currentErrors.has(issueKey(issue)));
 }
 
 export const money = (cents: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 }).format(cents / 100);

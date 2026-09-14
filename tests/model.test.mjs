@@ -41,7 +41,7 @@ const planning=await module("lib/planning.ts","planning");
 const accountData=await module("app/api/data/route.ts","data");
 const catalog=await module("app/api/catalog/route.ts","catalog");
 const decimalInput=await module("lib/decimal-input.ts","decimal-input");
-const {initialState,baseCatalog,totalFor,buildIssues,stateSchema,fitsVehicle,partCompatibility,publicBuildState,encodeSharedBuildState,decodeSharedBuildStatePayload}=model;
+const {initialState,baseCatalog,totalFor,buildIssues,stateSchema,fitsVehicle,partCompatibility,publicBuildState,encodeSharedBuildState,decodeSharedBuildStatePayload,buildErrorsForOption,optionAddsBuildError}=model;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
 const badJson=(path,method="POST")=>new Request("https://test.local/api/"+path,{method,headers:{"oai-authenticated-user-id":"alice",origin:"https://test.local","Content-Type":"application/json"},body:"{"});
@@ -122,6 +122,15 @@ test("2024 Sahara 4xe keeps powertrain fitment explicit and supports 20-inch sta
  const build={...s,picks:{tires:"nitto-217310-4xe",lift:"mopar-77072522ae-4xe"},stages:{tires:"now",lift:"later"}};
  assert.equal(totalFor(build).subtotal,46300*5+183540);
  assert.ok(!buildIssues(build).some(issue=>issue.level==="error"));
+});
+test("catalog recommendations distinguish vehicle fit from current-build conflicts",()=>{
+ const state={...base(),year:2024,trim:"Sahara",powertrain:"4xe",stockRim:20,stockTire:32,picks:{tires:"nitto-217310-4xe",lift:"mopar-77072522ae-4xe"},stages:{tires:"now",lift:"later"}};
+ const wheel17=baseCatalog.find(p=>p.id==="morphic-92615-3835");
+ const tire20=baseCatalog.find(p=>p.id==="nitto-217330-4xe");
+ assert.equal(fitsVehicle(wheel17,state),true);
+ assert.equal(optionAddsBuildError(wheel17,state,baseCatalog),true);
+ assert.match(buildErrorsForOption(wheel17,state,baseCatalog)[0].message,/Wheel diameter mismatch/);
+ assert.equal(optionAddsBuildError(tire20,state,baseCatalog),false);
 });
 test("D1 route round-trip, price isolation, update ownership and delete ownership",async()=>{
  assert.equal((await api.GET(req(null))).status,401);

@@ -10,7 +10,7 @@ import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogDescription,DialogFo
 import {AlertDialog,AlertDialogContent,AlertDialogHeader,AlertDialogTitle,AlertDialogDescription,AlertDialogFooter,AlertDialogCancel,AlertDialogAction} from "@/components/ui/alert-dialog";
 import {Textarea} from "@/components/ui/textarea";
 import {toast,Toaster} from "sonner";
-import {baseCatalog,categories,categoryNames,initialState,stateSchema,selectedParts,totalFor,quantityFor,fitsVehicle,buildIssues,partCompatibility,partCoverage,defaultEquipment,vehicleDescription,powertrainNames,money,encodeSharedBuildState,decodeSharedBuildStatePayload,type BuildState,type Part,type Category,type SavedBuild,type Trim,type Powertrain} from "@/lib/model";
+import {baseCatalog,categories,categoryNames,initialState,stateSchema,selectedParts,totalFor,quantityFor,fitsVehicle,buildIssues,partCompatibility,partCoverage,defaultEquipment,vehicleDescription,powertrainNames,money,encodeSharedBuildState,decodeSharedBuildStatePayload,optionAddsBuildError,type BuildState,type Part,type Category,type SavedBuild,type Trim,type Powertrain} from "@/lib/model";
 
 import {costPlan,groupParts,stageFor,stageNames,type Stage} from '@/lib/planning';
 import {useBuildDraft,type Draft} from './components/use-build-draft';
@@ -62,6 +62,7 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
  const [view,setView]=useState("builder");
  const [query,setQuery]=useState("");
  const [sort,setSort]=useState("curated");
+ const [showBuildConflicts,setShowBuildConflicts]=useState(false);
  const [showExcluded,setShowExcluded]=useState(false);
  const [name,setName]=useState("My JL build");
  const [notes,setNotes]=useState("");
@@ -102,8 +103,11 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
  const matchesQuery=(p:Part)=>!normalizedQuery||`${p.brand} ${p.name} ${p.variant} ${p.reference} ${p.retailer} ${p.notes} ${p.powertrains?.join(" ")??"gas"}`.toLowerCase().includes(normalizedQuery);
  const categoryMatches=parts.filter(p=>p.category===category&&matchesQuery(p));
  const compatible=categoryMatches.filter(p=>fitsVehicle(p,state));
+ const pickedIds=new Set(Object.values(state.picks));
+ const buildConflicting=compatible.filter(p=>!pickedIds.has(p.id)&&optionAddsBuildError(p,state,parts));
+ const buildReady=compatible.filter(p=>pickedIds.has(p.id)||!optionAddsBuildError(p,state,parts));
  const excluded=categoryMatches.filter(p=>!fitsVehicle(p,state));
- const filtered=[...(showExcluded?categoryMatches:compatible)].sort((a,b)=>sort==="low"?a.priceCents-b.priceCents:sort==="high"?b.priceCents-a.priceCents:0);
+ const filtered=[...(showExcluded?categoryMatches:showBuildConflicts?compatible:buildReady)].sort((a,b)=>sort==="low"?a.priceCents-b.priceCents:sort==="high"?b.priceCents-a.priceCents:0);
  const families=groupParts(filtered);
  function markTouched(){touched.current=true;setTouchedDraft(true);}
  const modified=(next:BuildState)=>{markTouched();undoHistory.current=[...undoHistory.current.slice(-19),state];setUndoCount(undoHistory.current.length);setState(next);setDirty(true);setCompare(false);};
@@ -174,12 +178,12 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
  <section id="parts-section" className="parts-section" aria-labelledby="parts-heading">
  <div className="section-heading"><div><span className="eyebrow">AFTERMARKET PARTS</span><h2 id="parts-heading" tabIndex={-1}>Choose your upgrades</h2></div><span className="catalog-count">{parts.length} curated variants</span></div>
  <Tabs value={category} onValueChange={v=>{setCategory(v as Category);setQuery("");}}><TabsList className="category-tabs">{categories.map(c=>{const Icon=icons[c];return <TabsTrigger key={c} value={c}><Icon size={16}/>{categoryNames[c]}{state.picks[c]&&<span className="tab-dot"/>}</TabsTrigger>;})}</TabsList></Tabs>
- <div className="catalog-toolbar"><div className="search-box"><Search size={17}/><Input aria-label="Search parts" placeholder={`Search ${categoryNames[category].toLowerCase()}…`} value={query} onChange={e=>setQuery(e.target.value)}/></div><Select value={sort} onValueChange={setSort}><SelectTrigger aria-label="Sort parts"><SlidersHorizontal size={14}/><SelectValue/></SelectTrigger><SelectContent><SelectItem value="curated">Curated order</SelectItem><SelectItem value="low">Price: low to high</SelectItem><SelectItem value="high">Price: high to low</SelectItem></SelectContent></Select><label className="catalog-toggle"><input type="checkbox" checked={showExcluded} onChange={e=>setShowExcluded(e.target.checked)}/><span>Show excluded</span>{excluded.length>0&&<strong>{excluded.length}</strong>}</label></div>
- <div className="catalog-subtitle"><span>{families.length} products · {compatible.length} compatible variants for your {state.trim} {powertrainNames[state.powertrain]}</span><span>{showExcluded?`${excluded.length} excluded variants shown with reasons`:`${excluded.length} excluded by fitment`} · USD · Selection prices include quantity</span></div>
+ <div className="catalog-toolbar"><div className="search-box"><Search size={17}/><Input aria-label="Search parts" placeholder={`Search ${categoryNames[category].toLowerCase()}…`} value={query} onChange={e=>setQuery(e.target.value)}/></div><Select value={sort} onValueChange={setSort}><SelectTrigger aria-label="Sort parts"><SlidersHorizontal size={14}/><SelectValue/></SelectTrigger><SelectContent><SelectItem value="curated">Curated order</SelectItem><SelectItem value="low">Price: low to high</SelectItem><SelectItem value="high">Price: high to low</SelectItem></SelectContent></Select><label className="catalog-toggle"><input type="checkbox" checked={showBuildConflicts} onChange={e=>setShowBuildConflicts(e.target.checked)}/><span>Show conflicts</span>{buildConflicting.length>0&&<strong>{buildConflicting.length}</strong>}</label><label className="catalog-toggle"><input type="checkbox" checked={showExcluded} onChange={e=>setShowExcluded(e.target.checked)}/><span>Show excluded</span>{excluded.length>0&&<strong>{excluded.length}</strong>}</label></div>
+ <div className="catalog-subtitle"><span>{families.length} products · {buildReady.length} fit your current build</span><span>{buildConflicting.length} need another build change · {excluded.length} excluded by vehicle fitment · USD · Selection prices include quantity</span></div>
  {catalogWarning&&<div className="inline-warning"><TriangleAlert size={16}/>{catalogWarning}</div>}
  {category==="tires"&&<p className="category-note">Choose a tire with the same wheel diameter as your build: <strong>{wheel?.specs.rim??state.stockRim} inches.</strong></p>}
  <div className="parts-grid">{families.map(family=><PartFamily key={family.key} variants={family.variants} state={state} parts={parts} onSelect={selectPart} onDetail={openDetail} compatibilityReason={p=>partCompatibility(p,state)}/>)}</div>
- {!filtered.length&&<div className="empty-state"><Search/><h3>No matching parts</h3><p>{categoryMatches.length&&!compatible.length?'All matching parts are excluded for this vehicle. Turn on Show excluded to see why.':'Try a brand, size or part number.'}</p><Button variant="outline" onClick={()=>setQuery("")}>Clear search</Button></div>}
+ {!filtered.length&&<div className="empty-state"><Search/><h3>No matching parts</h3><p>{categoryMatches.length&&!compatible.length?'All matching parts are excluded for this vehicle. Turn on Show excluded to see why.':compatible.length&&!buildReady.length&&!showBuildConflicts?'Matching parts fit this vehicle, but they create a current-build conflict. Turn on Show conflicts to review them.':'Try a brand, size or part number.'}</p><Button variant="outline" onClick={()=>setQuery("")}>Clear search</Button></div>}
  <p className="catalog-footnote">Source prices checked September 8 and September 13, 2026. Prices and availability may change. Product artwork is illustrative. Lighting, tops and interior parts are planned for a later catalog.</p>
  </section>
  </div>

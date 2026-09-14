@@ -1,9 +1,10 @@
 'use client';
 import {useState} from 'react';
-import {Check,Plus,ArrowUpRight,CircleDot,MoveVertical,PanelTop,Anchor,Shield} from 'lucide-react';
+import {Check,Plus,ArrowUpRight,CircleDot,MoveVertical,PanelTop,Anchor,Shield,Handshake} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue} from '@/components/ui/select';
 import {buildErrorsForOption,money,quantityFor,type Part,type BuildState} from '@/lib/model';
+import {partnerProgramsForPart} from '@/lib/commerce';
 const icons={wheels:CircleDot,tires:CircleDot,lift:MoveVertical,bumpers:PanelTop,winches:Anchor,armor:Shield};
 export function PartFamily({variants,state,parts,onSelect,onDetail,compatibilityReason}:{variants:Part[];state:BuildState;parts:Part[];onSelect:(p:Part)=>void;onDetail:(p:Part)=>void;compatibilityReason?:(p:Part)=>string|null}){
  const [choice,setChoice]=useState<string>();
@@ -13,6 +14,7 @@ export function PartFamily({variants,state,parts,onSelect,onDetail,compatibility
  const delta=(p.priceCents-(current?.priceCents??0))*qty;
  const excludedReason=compatibilityReason?.(p)??null;
  const conflicts=buildErrorsForOption(p,state,parts);
+ const partnerCount=partnerProgramsForPart(p).length;
  const actionLabel=active?'Added':excludedReason?'Excluded':conflicts.length?current?'Replace anyway':'Add anyway':current?'Replace':'Add';
  return <article className={`part-card ${active?'selected':''} ${excludedReason&&!active?'excluded':''}`}>
   <div className="part-card-top"><span className="part-brand">{p.brand}</span><span className="part-type">{excludedReason&&!active?'Excluded':conflicts.length&&!active?'Build conflict':variants.length===1?'1 option':`${variants.length} options`}</span></div>
@@ -20,7 +22,8 @@ export function PartFamily({variants,state,parts,onSelect,onDetail,compatibility
   {variants.length>1?<Select value={p.id} onValueChange={setChoice}><SelectTrigger className="variant-select" aria-label={`${p.brand} ${p.name} variant`}><SelectValue/></SelectTrigger><SelectContent>{variants.map(v=><SelectItem key={v.id} value={v.id}>{v.variant} · {money(v.priceCents)} / {v.category==='tires'||v.category==='wheels'?'each':v.category==='armor'?'pair':'kit'}{compatibilityReason?.(v)?' · Excluded':''}</SelectItem>)}</SelectContent></Select>:<p className="single-variant">{p.variant}</p>}
   <button type="button" className="details-link" onClick={()=>onDetail(p)}>Specs & fitment notes<ArrowUpRight size={13}/></button>
   {excludedReason&&!active?<p className="option-conflict">Excluded for your Jeep: {excludedReason}</p>:conflicts.length>0&&<p className="option-conflict">With your current build: {conflicts.length} conflict{conflicts.length===1?'':'s'}. Review before buying.</p>}
-  <div className="part-bottom"><div><strong>{money(p.priceCents*qty)}</strong><span> / {qty>1?`${qty} ${p.category}`:p.category==='armor'?'pair':'kit'}</span><small>{qty>1?`${money(p.priceCents)} each · `:''}{p.customPrice?'Your price note':'Source snapshot'}</small></div><Button size="sm" variant={active?'secondary':'outline'} disabled={!!excludedReason&&!active} onClick={()=>onSelect(p)}>{active?<><Check size={15}/>{actionLabel}</>:<><Plus size={15}/>{actionLabel}</>}</Button></div>
+  <div className="part-bottom"><div><strong>{money(p.priceCents*qty)}</strong><span> / {qty>1?`${qty} ${p.category}`:p.category==='armor'?'pair':'kit'}</span><small>{qty>1?`${money(p.priceCents)} each · `:''}{p.customPrice?'Your price note':'Source snapshot'} · {partnerCount+1} commerce paths</small></div><Button size="sm" variant={active?'secondary':'outline'} disabled={!!excludedReason&&!active} onClick={()=>onSelect(p)}>{active?<><Check size={15}/>{actionLabel}</>:<><Plus size={15}/>{actionLabel}</>}</Button></div>
+  <p className="commerce-hint"><Handshake size={13}/>{partnerCount} partner programs ready for this category</p>
   {!active&&current&&<p className="price-change">Selection value {delta<0?'decreases':'increases'} by {money(Math.abs(delta))}</p>}
  </article>;
 }

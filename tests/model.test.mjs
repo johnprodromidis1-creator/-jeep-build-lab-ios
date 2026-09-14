@@ -41,7 +41,9 @@ const planning=await module("lib/planning.ts","planning");
 const accountData=await module("app/api/data/route.ts","data");
 const catalog=await module("app/api/catalog/route.ts","catalog");
 const decimalInput=await module("lib/decimal-input.ts","decimal-input");
+const catalogFilters=await module("lib/catalog-filters.ts","catalog-filters");
 const {initialState,baseCatalog,totalFor,buildIssues,stateSchema,fitsVehicle,partCompatibility,publicBuildState,encodeSharedBuildState,decodeSharedBuildStatePayload,buildErrorsForOption,optionAddsBuildError}=model;
+const {dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
 const badJson=(path,method="POST")=>new Request("https://test.local/api/"+path,{method,headers:{"oai-authenticated-user-id":"alice",origin:"https://test.local","Content-Type":"application/json"},body:"{"});
@@ -131,6 +133,17 @@ test("catalog recommendations distinguish vehicle fit from current-build conflic
  assert.equal(optionAddsBuildError(wheel17,state,baseCatalog),true);
  assert.match(buildErrorsForOption(wheel17,state,baseCatalog)[0].message,/Wheel diameter mismatch/);
  assert.equal(optionAddsBuildError(tire20,state,baseCatalog),false);
+});
+test("catalog filters combine brand, line price, search terms and dimensions",()=>{
+ const state={...base(),year:2024,trim:"Sahara",powertrain:"4xe",stockRim:20,stockTire:32,quantity:5,picks:{}};
+ const tire=baseCatalog.find(p=>p.id==="nitto-217310-4xe");
+ assert.equal(hasCatalogFilter({query:"ridge 217310",brand:"Nitto",price:"1000-2500",dimension:"rim:20"}),true);
+ assert.equal(matchesCatalogFilters(tire,state,{category:"tires",query:"ridge 217310",brand:"Nitto",price:"1000-2500",dimension:"rim:20"}),true);
+ assert.equal(matchesCatalogFilters(tire,state,{category:"tires",query:"ridge",brand:"BFGoodrich",price:"1000-2500",dimension:"rim:20"}),false);
+ assert.equal(matchesCatalogFilters(tire,state,{category:"tires",query:"ridge",brand:"Nitto",price:"under-500",dimension:"rim:20"}),false);
+ assert.equal(matchesCatalogFilters(tire,state,{category:"tires",query:"ridge",brand:"Nitto",price:"1000-2500",dimension:"rim:17"}),false);
+ const options=dimensionFilterOptions(baseCatalog.filter(p=>p.category==="tires"),"tires");
+ assert.ok(options.some(option=>option.value==="rim:20"&&/20-inch/.test(option.label)));
 });
 test("D1 route round-trip, price isolation, update ownership and delete ownership",async()=>{
  assert.equal((await api.GET(req(null))).status,401);

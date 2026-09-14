@@ -35,6 +35,8 @@ workflows:
     scripts:
       - name: Install locked dependencies
         script: npm ci
+      - name: Run release preflight
+        script: npm run release:preflight
       - name: Check TypeScript
         script: npx tsc --noEmit
       - name: Bundle the offline app and sync iOS plugins

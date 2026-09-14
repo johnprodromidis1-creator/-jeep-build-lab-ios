@@ -8,6 +8,7 @@ command -v xcodebuild >/dev/null
 node -e "if(Number(process.versions.node.split('.')[0])<22)process.exit(1)"
 xcodebuild -version
 npm ci
+npm run release:preflight
 npx tsc --noEmit
 npm run ios:sync
 npx eslint .

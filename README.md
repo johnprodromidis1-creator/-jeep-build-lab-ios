@@ -3,7 +3,7 @@ Mobile-first Wrangler JL build planner. Initial scope: 2018–2023 JL Unlimited 
 
 ## Build for TestFlight with Codemagic
 
-The iOS build destination is [johnprodromidis1-creator/-jeep-build-lab-ios](https://github.com/johnprodromidis1-creator/-jeep-build-lab-ios). The leading hyphen is part of the repository name. Add this repository to the owner's Codemagic team and select the `jeep-ios-testflight` workflow on `main`. Before spending build minutes, confirm GitHub `main` contains the current source from this checkout/Sites repository; publishing the website does not update the GitHub mobile build branch. Follow [the Codemagic setup guide](docs/app-store/CODEMAGIC.md) to connect this app's Apple record and provisioning profile before starting a build. No signed build has been verified yet.
+The iOS build destination is [johnprodromidis1-creator/-jeep-build-lab-ios](https://github.com/johnprodromidis1-creator/-jeep-build-lab-ios). The leading hyphen is part of the repository name. Add this repository to the owner's Codemagic team and select the `jeep-ios-testflight` workflow on `main`. Before spending build minutes, run `npm run release:preflight`, then confirm GitHub `main` contains the current source from this checkout/Sites repository; publishing the website does not update the GitHub mobile build branch. Follow [the Codemagic setup guide](docs/app-store/CODEMAGIC.md) to connect this app's Apple record and provisioning profile before starting a build. No signed build has been verified yet.
 
 ## Implemented
 - 51 sourced product variants across wheels, tires, suspension, front bumpers, winches and side armor.
@@ -50,8 +50,8 @@ Version 2 preserves the limited vehicle/catalog scope and illustrative preview. 
 
 ## iOS / App Store preparation (0.2.0)
 
-The native project is in `ios/App/App.xcodeproj`; the separately bundled React entry is `mobile/main.tsx`. `npm run ios:sync` builds the offline assets and updates Capacitor. The app targets iOS 17+ and requires Xcode 26+ for the current upload rules. Codemagic runs lint and native-safe regression tests before both unsigned iOS verification and signed TestFlight archive/upload. No signed IPA or TestFlight upload has been produced.
+The native project is in `ios/App/App.xcodeproj`; the separately bundled React entry is `mobile/main.tsx`. `npm run ios:sync` builds the offline assets and updates Capacitor. The app targets iOS 17+ and requires Xcode 26+ for the current upload rules. Codemagic runs release preflight, lint and native-safe regression tests before both unsigned iOS verification and signed TestFlight archive/upload. No signed IPA or TestFlight upload has been produced.
 
 Anonymous website visitors and the iOS app use `lib/storage/device.ts`; the website's authenticated cloud garage uses `lib/storage/cloud.ts` and the original owner-isolated APIs. Settings includes backup, device restore, data erasure, support and privacy. Do not expose cloud data to solve anonymous access. `/api/catalog` returns the public source catalog to guests, never another owner's quotes.
 
-Current preparation and test instructions: `docs/app-store/CODEMAGIC.md`, `READINESS.md`, `TESTFLIGHT.md`, `SCREENSHOTS.md`, `LISTING-DRAFT.md`. The native candidate uses device storage; existing web cloud records remain accessible on the website. The owner's existing Codemagic account is the selected build service. No paid plan change was made.
+Current preparation and test instructions: `docs/app-store/CODEMAGIC.md`, `READINESS.md`, `TESTFLIGHT.md`, `SCREENSHOTS.md`, `LISTING-DRAFT.md`. Run `npm run release:preflight` before starting the signed workflow to verify the source-side release guardrails still line up. The native candidate uses device storage; existing web cloud records remain accessible on the website. The owner's existing Codemagic account is the selected build service. No paid plan change was made.

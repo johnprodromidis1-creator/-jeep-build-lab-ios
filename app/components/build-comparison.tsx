@@ -5,7 +5,7 @@ import {Button} from '@/components/ui/button';
 import {Checkbox} from '@/components/ui/checkbox';
 import {useState} from 'react';
 import {compareRows,costPlan} from '@/lib/planning';
-import {buildIssues,money,type BuildState,type Part,type SavedBuild} from '@/lib/model';
+import {buildIssues,money,vehicleDescription,type BuildState,type Part,type SavedBuild} from '@/lib/model';
 export function BuildComparison({open,onOpenChange,current,name,parts,builds,busy,error,onRetry,onSaveCopy}:{open:boolean;onOpenChange:(open:boolean)=>void;current:BuildState;name:string;parts:Part[];builds:SavedBuild[];busy:boolean;error:string;onRetry:()=>void;onSaveCopy:()=>void}){
  const [selected,setSelected]=useState(''),[differences,setDifferences]=useState(false);
  const target=builds.find(b=>b.id===selected)??builds[0];
@@ -16,7 +16,7 @@ export function BuildComparison({open,onOpenChange,current,name,parts,builds,bus
  <Select value={target.id} onValueChange={setSelected}><SelectTrigger aria-label="Saved build to compare"><SelectValue/></SelectTrigger><SelectContent>{builds.map(build=><SelectItem key={build.id} value={build.id}>{build.name}</SelectItem>)}</SelectContent></Select>
  <label className="comparison-filter"><Checkbox checked={differences} onCheckedChange={v=>setDifferences(v===true)}/>Show only different parts</label>
  <div className="comparison-scroll"><table className="comparison-table"><thead><tr><th scope="col">Build detail</th><th scope="col">{name}<small>Current plan</small></th><th scope="col">{target.name}<small>Saved option · current catalog prices</small></th></tr></thead><tbody>
- <tr><th scope="row">Vehicle</th><td>{current.year} JL {current.trim}</td><td>{target.state.year} JL {target.state.trim}</td></tr>
+ <tr><th scope="row">Vehicle</th><td>{vehicleDescription(current)}</td><td>{vehicleDescription(target.state)}</td></tr>
  <tr><th scope="row">Current equipment</th><td>{current.stockRim}″ wheels · {current.stockTire}″ tires</td><td>{target.state.stockRim}″ wheels · {target.state.stockTire}″ tires</td></tr>
  {rows.filter(row=>!differences||row.changed).map(row=><tr key={row.category} className={row.changed?'changed':''}><th scope="row">{row.label}{row.changed&&<small>Different</small>}</th><td>{row.left}{row.leftCost>0&&<strong>{money(row.leftCost)}</strong>}</td><td>{row.right}{row.rightCost>0&&<strong>{money(row.rightCost)}</strong>}</td></tr>)}
  <tr><th scope="row">Labor + other allowances</th><td>{money(a.allowances)}</td><td>{money(b!.allowances)}</td></tr>

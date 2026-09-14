@@ -5,7 +5,7 @@ The owner uses Codemagic for existing apps. This repository contains manual `jee
 ## Current handoff — September 14, 2026
 
 - The public Sites deployment is live at https://jeep-build-lab.johnprodromidis1.chatgpt.site and was smoke-tested in-browser for the 2024 Sahara 4xe starter build, fitment summary, privacy page and support page. This deployment does not create an iOS binary.
-- The current local/Sites source includes the September 13-14 4xe catalog, platform/API guards and 32-test regression suite. The GitHub mobile build branch must be confirmed or updated to this source before starting a new Codemagic build; Codemagic builds from GitHub `main`, not from the public website URL.
+- The current local/Sites source includes the September 13-14 4xe catalog, platform/API guards, mobile toast placement fix and 33-test regression suite. The GitHub mobile build branch must be confirmed or updated to this source before starting a new Codemagic build; Codemagic builds from GitHub `main`, not from the public website URL.
 
 ## Prior handoff — September 10, 2026
 

@@ -49,7 +49,7 @@ const {initialState,baseCatalog,totalFor,buildIssues,stateSchema,fitsVehicle,par
 const {dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
 const {buildShopBrief}=shopBrief;
-const {partnerPrograms,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure}=commerce;
+const {partnerPrograms,partnerProgramsForParts,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildCommerceApplicationPack,commerceApplicationChecklist}=commerce;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
 const badJson=(path,method="POST")=>new Request("https://test.local/api/"+path,{method,headers:{"oai-authenticated-user-id":"alice",origin:"https://test.local","Content-Type":"application/json"},body:"{"});
@@ -83,6 +83,25 @@ test("commerce offers keep exact source links first and mark monetized paths pen
  assert.match(commerceDisclosure,/Paid links/);
  assert.match(noActiveCommerceDisclosure,/no affiliate tracking/);
  assert.throws(()=>safeCommerceUrl("http://example.com"),/HTTPS/);
+});
+test("commerce application pack exports selected partner paths and prep checklist",()=>{
+ const state=base();state.picks={tires:"nitto-217020",lift:"aev-spacer"};state.stages={tires:"now",lift:"later"};
+ const selected=[baseCatalog.find(p=>p.id==="nitto-217020"),baseCatalog.find(p=>p.id==="aev-spacer")];
+ const programs=partnerProgramsForParts(selected);
+ assert.ok(programs.some(program=>program.name==="Tire Rack"));
+ assert.ok(programs.some(program=>program.name==="ARB distributor network"));
+ assert.ok(!programs.some(program=>program.name==="MORryde Jeep"));
+ assert.ok(commerceApplicationChecklist.length>=5);
+ const pack=buildCommerceApplicationPack({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z"});
+ assert.match(pack,/Jeep Build Lab partner application pack/);
+ assert.match(pack,/Generated: 2026-09-14/);
+ assert.match(pack,/Selected build source links/);
+ assert.match(pack,/Source: Quadratec - https:\/\/www\.quadratec\.com\/p\/nitto\/ridge-grappler-tire/);
+ assert.match(pack,/Application link: https:\/\/www\.tirerack\.com\/affiliate/);
+ assert.match(pack,/Application prep checklist/);
+ assert.match(pack,/1\. Confirm the legal business name/);
+ assert.match(pack,/Owner notes\nApply before linking\./);
+ assert.doesNotMatch(pack,/MORryde Jeep/);
 });
 test("totals multiply individual wheels/tires, count kits once, and include allowances",()=>{
  const s=base();s.picks={wheels:"method-MR70178550900",tires:"nitto-217020",lift:"lift-16400-0073"};s.labor=50000;s.extras=30000;

@@ -147,7 +147,7 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
  const confirmDescription=confirm?.kind==="delete"?`“${confirm.build?.name}” will be removed from your garage.`:confirm?.kind==="starter"?"This replaces your current draft with a sample 2024 Sahara 4xe plan. Save a named version first if you want to keep your current draft. Other saved builds stay in your garage.":"Continuing replaces your current draft. Save a named version first if you want to keep it. Other saved builds stay in your garage.";
  const confirmAction=busyDelete?"Deleting…":confirm?.kind==="delete"?"Delete build":confirm?.kind==="starter"?"Load starter build":"Continue";
  return <div className="app-shell">
- <Toaster theme="dark" position="bottom-center" richColors/>
+ <Toaster theme="dark" position="bottom-center" richColors mobileOffset={{bottom:"calc(92px + env(safe-area-inset-bottom))",left:"16px",right:"16px"}}/>
  <header className="topbar"><button className="brand" type="button" aria-label="Jeep Build Lab home" onClick={()=>setView("builder")}><span className="brand-mark"><Wrench size={21}/></span><span>JEEP<span className="brand-light">BUILD LAB</span></span><span className="alpha-tag">JL PLANNER</span></button>
  <Tabs value={view} onValueChange={v=>{setView(v);if(v==="garage")void loadGarage();}}><TabsList className="nav-tabs"><TabsTrigger value="builder"><Wrench size={15}/>Builder</TabsTrigger><TabsTrigger value="garage"><FolderOpen size={15}/>My garage</TabsTrigger></TabsList></Tabs>
  <Button variant="ghost" className="settings-button" onClick={()=>setSettingsOpen(true)} aria-label="Settings, privacy and support"><Settings2 size={18}/><span>Settings</span></Button></header>

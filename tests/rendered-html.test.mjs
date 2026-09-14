@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { registerHooks } from "node:module";
 // Node render tests do not execute D1 routes. The separate model/API test supplies SQLite.
@@ -65,4 +66,13 @@ test("serves App Store support and privacy pages from the production worker", as
   assert.match(support.html, /Support/);
   assert.match(support.html, /For help, email/);
   assert.match(support.html, /Offline use/);
+});
+
+test("mobile toast notifications stay above the sticky build sheet bar", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(source, /<Toaster\b[^>]*position="bottom-center"[^>]*mobileOffset=\{\{/s);
+  assert.match(source, /bottom:"calc\(92px \+ env\(safe-area-inset-bottom\)\)"/);
+  assert.match(css, /\.mobile-total\{display:flex;position:fixed;bottom:0;/);
 });

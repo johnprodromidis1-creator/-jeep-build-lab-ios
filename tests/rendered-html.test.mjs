@@ -107,6 +107,8 @@ test("builder surfaces the shop brief export", async () => {
   const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
 
   assert.match(source, /buildShopBrief/);
+  assert.match(source, /exportSavedShopBrief/);
   assert.match(source, /Download shop brief/);
   assert.match(source, /Share shop brief/);
+  assert.match(source, /Export shop brief for/);
 });

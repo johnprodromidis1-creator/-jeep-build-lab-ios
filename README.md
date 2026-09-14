@@ -8,9 +8,9 @@ The iOS build destination is [johnprodromidis1-creator/-jeep-build-lab-ios](http
 ## Implemented
 - 51 sourced product variants across wheels, tires, suspension, front bumpers, winches and side armor.
 - Original illustrative PNG vehicle and wheel layers; tire diameter, wheel finish and lift change the preview. Accessories are list-only.
-- D1 garage with authenticated owner isolation, saved estimate snapshot, notes, save-as-copy, delete, search, sort and fitment-status filters.
+- D1 garage with authenticated owner isolation, saved estimate snapshot, notes, save-as-copy, saved-build shop brief export, delete, search, sort and fitment-status filters.
 - D1 personal price overrides; curated specifications remain immutable.
-- Quantity-aware totals, budget, labor and other allowances, shop brief export, CSV export, print sheet, URL configuration.
+- Quantity-aware totals, budget, labor and other allowances, current-build shop brief export, CSV export, print sheet, URL configuration.
 - Explicit year, trim, powertrain, diameter and listed tire-limit conflicts, plus unresolved installation dependencies.
 - Three-step navigation, grouped product families with variant selectors, quantity-inclusive card prices and replacement price deltas.
 - First-time 2024 Sahara 4xe starter build that loads a sourced tire/lift plan on stock 20-inch wheels while preserving saved garage entries.

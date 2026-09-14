@@ -3,7 +3,7 @@ Mobile-first Wrangler JL build planner. Initial scope: 2018–2023 JL Unlimited 
 
 ## Build for TestFlight with Codemagic
 
-The iOS build destination is [johnprodromidis1-creator/-jeep-build-lab-ios](https://github.com/johnprodromidis1-creator/-jeep-build-lab-ios). The leading hyphen is part of the repository name. Add this repository to the owner's Codemagic team and select the `jeep-ios-testflight` workflow on `main`. Follow [the Codemagic setup guide](docs/app-store/CODEMAGIC.md) to connect this app's Apple record and provisioning profile before starting a build. No signed build has been verified yet.
+The iOS build destination is [johnprodromidis1-creator/-jeep-build-lab-ios](https://github.com/johnprodromidis1-creator/-jeep-build-lab-ios). The leading hyphen is part of the repository name. Add this repository to the owner's Codemagic team and select the `jeep-ios-testflight` workflow on `main`. Before spending build minutes, confirm GitHub `main` contains the current source from this checkout/Sites repository; publishing the website does not update the GitHub mobile build branch. Follow [the Codemagic setup guide](docs/app-store/CODEMAGIC.md) to connect this app's Apple record and provisioning profile before starting a build. No signed build has been verified yet.
 
 ## Implemented
 - 51 sourced product variants across wheels, tires, suspension, front bumpers, winches and side armor.
@@ -46,7 +46,7 @@ Run npm run db:generate when schema changes. Build with Sites build helper. Run 
 ## Build & Price benchmark
 Official Jeep Build & Price (https://www.jeep.com/bmo.html) is the benchmark for clear vehicle configuration and pricing. This app focuses on aftermarket ownership planning: compatible combinations, staged purchases, owner-supplied quotes and comparison of saved options. No claim is made that Jeep lacks any particular feature or that its full interactive flow has been browser-tested.
 
-Version 2 preserves the limited vehicle/catalog scope and illustrative preview. Pricing, compatibility and owner-isolation tests cover the new planning features; no browser interaction or visual QA was performed for this revision. No paid service was added.
+Version 2 preserves the limited vehicle/catalog scope and illustrative preview. Pricing, compatibility and owner-isolation tests cover the planning features. The September 14 public Sites deployment was smoke-tested in-browser for the starter 4xe flow, fitment summary, support page and privacy page. No paid service was added.
 
 ## iOS / App Store preparation (0.2.0)
 

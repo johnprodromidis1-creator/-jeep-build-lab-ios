@@ -2,7 +2,12 @@
 
 The owner uses Codemagic for existing apps. This repository contains manual `jeep-ios-verify` and `jeep-ios-testflight` workflows. No signed IPA or TestFlight build for Jeep Build Lab has been verified.
 
-## Current handoff — September 10, 2026
+## Current handoff — September 14, 2026
+
+- The public Sites deployment is live at https://jeep-build-lab.johnprodromidis1.chatgpt.site and was smoke-tested in-browser for the 2024 Sahara 4xe starter build, fitment summary, privacy page and support page. This deployment does not create an iOS binary.
+- The current local/Sites source includes the September 13-14 4xe catalog, platform/API guards and 32-test regression suite. The GitHub mobile build branch must be confirmed or updated to this source before starting a new Codemagic build; Codemagic builds from GitHub `main`, not from the public website URL.
+
+## Prior handoff — September 10, 2026
 
 - All 153 source files were transferred to GitHub, with an exact Git tree match against the saved Sites source. Subsequent workflow/documentation changes were also synchronized to both repositories.
 - [Unsigned iOS compile check, run 1](https://codemagic.io/app/6aa099218e0d886361fff68a/build/6aa099f29dd87df8a76864c9) **passed**, confirmed by the owner's September 10 screenshot: green check, status **finished**, duration **2m 24s**, Mac mini M2, branch `main`, commit `ac43eb5f912ea8d1b2be23982f5e319d4f90041e`. This establishes native simulator compilation at that revision. Later draft/input fixes and compiler-log retention were not part of this run; the current source still needs a successful signed archive and device testing.

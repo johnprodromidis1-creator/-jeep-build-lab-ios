@@ -31,7 +31,7 @@ The web version retains an optional ChatGPT cloud garage. Anonymous visitors use
 
 ## September 13-14 verification
 
-TypeScript passes with `node node_modules/typescript/bin/tsc --noEmit`. ESLint exits successfully with no warnings after documenting the offline image strategy and ignoring generated worker typings. Production `vinext build` passes. The offline mobile Vite bundle passes with the existing large main-chunk warning. `node --test tests/*.test.mjs` passes 33 tests, including device-garage isolation, cloud owner isolation, catalog count, 4xe powertrain fitment, the starter build sample, rendered HTML metadata, support/privacy page rendering, shared-link privacy, API malformed-request handling, native Bundle ID/version settings, privacy-manifest packaging, offline mobile shell CSP, Capacitor Swift Package Manager wiring, platform link/export handling, mobile toast placement above the sticky build-sheet bar and Codemagic iOS workflow guardrails.
+TypeScript passes with `node node_modules/typescript/bin/tsc --noEmit`. ESLint exits successfully with no warnings after documenting the offline image strategy and ignoring generated worker typings. Production `vinext build` passes. The offline mobile Vite bundle passes with the existing large main-chunk warning. `node --test tests/*.test.mjs` passes 34 tests, including device-garage isolation, cloud owner isolation, catalog count, 4xe powertrain fitment, the starter build sample, rendered HTML metadata, support/privacy page rendering, shared-link privacy, API malformed-request handling, native Bundle ID/version settings, privacy-manifest packaging, offline mobile shell CSP, Capacitor Swift Package Manager wiring, platform link/export handling, mobile toast placement above the sticky build-sheet bar, app-owned non-submit button declarations and Codemagic iOS workflow guardrails.
 
 Capacitor `sync ios` succeeded after a local-only monkeypatch for Node's `os.userInfo()` failing with `ENOMEM` in this Windows sandbox. The sync copied generated mobile assets, but those outputs are intentionally ignored and rebuilt in CI. Running the normal Codemagic/npm path on macOS remains the authoritative iOS sync/archive check.
 
@@ -39,7 +39,7 @@ On September 14, the public Sites deployment succeeded and the live URL was smok
 
 ## September 9 verification
 
-At that point, TypeScript, the production web build, the offline mobile bundle and Capacitor sync passed. The then-current 17 automated tests covered exact decimal-to-cent conversion, entry limits, price totals, device storage without network access, backup validation, draft revision conflicts and cloud owner isolation. Later September 13-14 work expanded the suite to 33 tests and added 4xe, platform, API, mobile layout and iOS workflow guardrails. These checks do not establish Xcode compilation, native share-sheet behavior or physical-device usability.
+At that point, TypeScript, the production web build, the offline mobile bundle and Capacitor sync passed. The then-current 17 automated tests covered exact decimal-to-cent conversion, entry limits, price totals, device storage without network access, backup validation, draft revision conflicts and cloud owner isolation. Later September 13-14 work expanded the suite to 34 tests and added 4xe, platform, API, mobile layout, app-owned button and iOS workflow guardrails. These checks do not establish Xcode compilation, native share-sheet behavior or physical-device usability.
 
 ## Remaining gates
 

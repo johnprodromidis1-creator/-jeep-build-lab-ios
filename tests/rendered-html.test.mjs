@@ -76,3 +76,18 @@ test("mobile toast notifications stay above the sticky build sheet bar", async (
   assert.match(source, /bottom:"calc\(92px \+ env\(safe-area-inset-bottom\)\)"/);
   assert.match(css, /\.mobile-total\{display:flex;position:fixed;bottom:0;/);
 });
+
+test("app-owned plain buttons declare non-submit behavior", async () => {
+  const sources = [
+    ["app/builder.tsx", await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8")],
+    ["app/components/part-family.tsx", await readFile(new URL("../app/components/part-family.tsx", import.meta.url), "utf8")],
+  ];
+  const missingTypes = sources.flatMap(([file, source]) =>
+    [...source.matchAll(/<button\b[^>]*>/g)]
+      .map(match => match[0])
+      .filter(tag => !/\btype=/.test(tag))
+      .map(tag => `${file}: ${tag}`),
+  );
+
+  assert.deepEqual(missingTypes, []);
+});

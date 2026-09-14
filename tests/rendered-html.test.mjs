@@ -140,15 +140,22 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
   const partFamily = await readFile(new URL("../app/components/part-family.tsx", import.meta.url), "utf8");
   const privacy = await readFile(new URL("../app/components/privacy-content.tsx", import.meta.url), "utf8");
+  const commerce = await readFile(new URL("../lib/commerce.ts", import.meta.url), "utf8");
 
   assert.match(source, /Partner commerce/);
   assert.match(source, /Partner-ready offers/);
+  assert.match(source, /buildCommerceApplicationPack/);
+  assert.match(source, /Download commerce pack/);
+  assert.match(source, /Export commerce pack for/);
+  assert.match(source, /ClipboardList/);
   assert.match(source, /partnerPrograms\.length/);
   assert.match(source, /Application links do not create a sale, commission or dealer order/);
   assert.match(partFamily, /commerce paths/);
   assert.match(partFamily, /partner programs ready for this category/);
   assert.match(privacy, /Commerce and affiliate disclosure/);
   assert.match(privacy, /no affiliate tracking, wholesale checkout or dropship fulfillment is active/);
+  assert.match(commerce, /Jeep Build Lab partner application pack/);
+  assert.match(commerce, /Application prep checklist/);
 });
 
 test("comparison dialog can open the selected saved build", async () => {

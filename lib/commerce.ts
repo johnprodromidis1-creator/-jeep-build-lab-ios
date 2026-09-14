@@ -1,4 +1,14 @@
-import { categories, type Category, type Part } from "./model";
+import {
+  categories,
+  categoryNames,
+  money,
+  quantityFor,
+  selectedParts,
+  vehicleDescription,
+  type BuildState,
+  type Category,
+  type Part,
+} from "./model";
 
 export type CommerceRelationship = "source" | "affiliate" | "dealer" | "distributor" | "reseller";
 export type CommerceStatus = "active-source" | "application-needed";
@@ -24,6 +34,14 @@ export type CommerceOffer = {
   paid: boolean;
 };
 
+export type CommerceApplicationPackInput = {
+  name: string;
+  notes: string;
+  state: BuildState;
+  parts: Part[];
+  generatedAt?: string;
+};
+
 const allCategories = [...categories];
 const offRoadCategories: Category[] = ["lift", "bumpers", "winches", "armor"];
 
@@ -45,6 +63,15 @@ export const commerceStatusNames: Record<CommerceStatus, string> = {
   "active-source": "Source link",
   "application-needed": "Application needed",
 };
+
+export const commerceApplicationChecklist = [
+  "Confirm the legal business name, mailing address, phone, support email, website and social channels you want partners to review.",
+  "Gather requested tax, resale, banking and vendor documents before applying; each program sets its own requirements.",
+  "Decide whether each path is an affiliate referral, authorized reseller, dealer account, distributor account or future checkout source.",
+  "Prepare a short audience description, Jeep content plan and expected traffic or sales channels for partner applications.",
+  "Do not show paid claims, dealer pricing, stock status, shipping promises or checkout until the program has approved the account terms.",
+  "Confirm sales-tax, warranty, return, shipping-liability and dropship terms with the partner and your professional advisors before taking orders.",
+] as const;
 
 export const partnerPrograms = [
   {
@@ -176,6 +203,15 @@ export function partnerProgramsForPart(part: Pick<Part, "category">) {
   return partnerPrograms.filter(program => (program.categories as readonly Category[]).includes(part.category));
 }
 
+export function partnerProgramsForParts(parts: readonly Pick<Part, "category">[]): PartnerProgram[] {
+  const seen = new Set<string>();
+  return parts.flatMap(partnerProgramsForPart).filter(program => {
+    if (seen.has(program.id)) return false;
+    seen.add(program.id);
+    return true;
+  });
+}
+
 export function sourceOfferForPart(part: Part): CommerceOffer {
   return {
     id: `source-${part.id}`,
@@ -209,4 +245,59 @@ export function commerceSummaryForPart(part: Part) {
   return commerceOffersForPart(part)
     .map(offer => `${offer.partnerName} (${relationshipNames[offer.relationship]}, ${commerceStatusNames[offer.status]})`)
     .join("; ");
+}
+
+function programCategories(program: PartnerProgram) {
+  return program.categories.map(category => categoryNames[category]).join(", ");
+}
+
+function selectedPartCommerceLine(part: Part, state: BuildState) {
+  const programs = partnerProgramsForPart(part).map(program => program.name).join(", ") || "No matching partner program listed yet.";
+  return [
+    `- ${categoryNames[part.category]}: ${part.brand} ${part.name} - ${part.variant}`,
+    `  Reference: ${part.reference}`,
+    `  Quantity: ${quantityFor(part, state)} at ${money(part.priceCents)} each`,
+    `  Source: ${part.retailer} - ${safeCommerceUrl(part.url)}`,
+    `  Matching programs: ${programs}`,
+  ].join("\n");
+}
+
+function partnerProgramApplicationLine(program: PartnerProgram) {
+  return [
+    `- ${program.name} (${relationshipNames[program.relationship]})`,
+    `  Status: ${commerceStatusNames[program.status]}`,
+    `  Categories: ${programCategories(program)}`,
+    `  Application link: ${safeCommerceUrl(program.url)}`,
+    `  Prep note: ${program.note}`,
+  ].join("\n");
+}
+
+export function buildCommerceApplicationPack({ name, notes, state, parts, generatedAt = new Date().toISOString() }: CommerceApplicationPackInput) {
+  const selected = selectedParts(state, parts);
+  const programs = selected.length ? partnerProgramsForParts(selected) : [...partnerPrograms];
+  return [
+    "Jeep Build Lab partner application pack",
+    `Build: ${name.trim() || "Untitled build"}`,
+    `Generated: ${new Date(generatedAt).toISOString().slice(0, 10)}`,
+    `Vehicle: ${vehicleDescription(state)}`,
+    "",
+    "Commerce status",
+    `- ${commerceDisclosure}`,
+    `- ${noActiveCommerceDisclosure}`,
+    "",
+    "Selected build source links",
+    selected.length ? selected.map(part => selectedPartCommerceLine(part, state)).join("\n") : "- No parts are selected yet. The program directory below is not narrowed to a build.",
+    "",
+    "Relevant application links",
+    programs.map(partnerProgramApplicationLine).join("\n"),
+    "",
+    "Application prep checklist",
+    commerceApplicationChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    "Owner notes",
+    notes.trim() || "No notes provided.",
+    "",
+    "Disclosure reminder",
+    "Keep paid links clearly labeled and keep source snapshots separate from live pricing, inventory or checkout claims.",
+  ].join("\n");
 }

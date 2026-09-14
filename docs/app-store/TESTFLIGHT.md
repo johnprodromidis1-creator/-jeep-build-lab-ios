@@ -4,7 +4,7 @@ Use the owner's Apple Developer account. Do not paste signing certificates, priv
 
 ## Preferred route: Codemagic
 
-Use the owner's existing Codemagic account. The mobile GitHub repository is connected, and the repository includes a manual iOS archive/upload workflow and [Codemagic setup instructions](CODEMAGIC.md). The first unsigned compile check passed in **2m 24s** at `ac43eb5`, confirmed by the owner's September 10 screenshot. This app's Apple record and provisioning profile remain unverified. Complete signing setup, then use the TestFlight workflow on current `main` to include the newer draft/input fixes. No personal Mac is required for that route.
+Use the owner's existing Codemagic account. The mobile GitHub repository is connected, and the repository includes a manual iOS archive/upload workflow and [Codemagic setup instructions](CODEMAGIC.md). The first unsigned compile check passed in **2m 24s** at `ac43eb5`, confirmed by the owner's September 10 screenshot. This app's Apple record and provisioning profile remain unverified in this environment; a September 14 TestFlight attempt from current GitHub `main` failed before archive because Codemagic had no matching App Store provisioning profile for `com.johnprodromidis.jeepbuildlab`. Complete signing setup, then retry the TestFlight workflow on current `main`. No personal Mac is required for that route.
 
 ## Alternative: on a Mac
 
@@ -17,7 +17,7 @@ Use the owner's existing Codemagic account. The mobile GitHub repository is conn
 7. In Xcode select a generic iOS device destination, then Product → Archive. In Organizer validate and distribute to App Store Connect. Use Xcode's signed distribution flow. Increment the build number for subsequent uploads.
 8. Wait for processing. Complete export-compliance and beta information accurately. In TestFlight, create/select an internal testing group, add the processed build, and add the owner as an eligible internal tester. Install through the TestFlight invitation or app. [Apple internal-testing instructions](https://developer.apple.com/help/app-store-connect/test-a-beta-version/add-internal-testers/)
 
-Codemagic is the selected Mac build service. The first native simulator compile passed; a signed archive and TestFlight upload remain pending. The Sites web deployment does not create a TestFlight binary. After installing the signed build, complete the smoke tests below before capturing final App Store screenshots with [SCREENSHOTS.md](SCREENSHOTS.md).
+Codemagic is the selected Mac build service. The first native simulator compile passed; the first TestFlight workflow attempt proved the profile gate is still missing. A signed archive and TestFlight upload remain pending. The Sites web deployment does not create a TestFlight binary. After installing the signed build, complete the smoke tests below before capturing final App Store screenshots with [SCREENSHOTS.md](SCREENSHOTS.md).
 
 ## Test one task at a time
 

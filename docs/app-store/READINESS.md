@@ -37,6 +37,8 @@ Capacitor `sync ios` succeeded after a local-only monkeypatch for Node's `os.use
 
 On September 14, the public Sites deployment succeeded and the live URL was smoke-tested in the in-app browser. The builder rendered the 51-variant catalog, loaded the 2024 Sahara 4xe starter build, showed the Nitto tire and Mopar lift with $4,150.40 left to fund, reported no fitment conflicts while retaining three shop-confirmation checks, and served the live `/privacy` and `/support` pages without console errors.
 
+On September 14, TestFlight build attempt 1 started from GitHub `main` at `c8e787c` and failed before archive/signing because Codemagic found no matching App Store provisioning profile for `com.johnprodromidis.jeepbuildlab`.
+
 ## September 9 verification
 
 At that point, TypeScript, the production web build, the offline mobile bundle and Capacitor sync passed. The then-current 17 automated tests covered exact decimal-to-cent conversion, entry limits, price totals, device storage without network access, backup validation, draft revision conflicts and cloud owner isolation. Later September 13-14 work expanded the suite to 34 tests and added 4xe, platform, API, mobile layout, app-owned button and iOS workflow guardrails. These checks do not establish Xcode compilation, native share-sheet behavior or physical-device usability.
@@ -48,7 +50,7 @@ On September 10, the owner supplied a screenshot confirming Codemagic compile-ch
 | Gate | Status / next action |
 | --- | --- |
 | Apple signing account | Not connected to this environment. Reuse the owner's existing enrolled Apple account if available. |
-| Codemagic | GitHub source transferred and app connected. First unsigned compile check passed; signed upload workflow is prepared. Before starting a new build, run `npm run release:preflight` and confirm GitHub `main` has the current local/Sites source. App-specific Apple registration/profile remains pending; see CODEMAGIC.md. |
+| Codemagic | GitHub source transferred and app connected. First unsigned compile check passed; signed upload workflow is prepared and now confirmed to run from current `main`. The latest TestFlight attempt failed before archive because the matching App Store provisioning profile is missing. Add the app-specific profile, then retry; see CODEMAGIC.md. |
 | Bundle registration | Owner-reported registered Bundle ID: `com.johnprodromidis.jeepbuildlab`. App Store Connect app record and matching provisioning profile are still unverified in this environment. |
 | Mac compilation | Baseline simulator compile passed at `ac43eb5`. Archive and sign the current `main` through the prepared Codemagic TestFlight workflow after signing setup. |
 | Native functionality | Test actual iPhone/iPad startup, airplane-mode relaunch, keyboard, share sheet, file picker, restore, deletion, retailer return and lifecycle. |

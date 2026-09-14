@@ -17,7 +17,7 @@ Choose wheels, tires, suspension, bumpers, winches and side armor. Compare two b
 
 Save builds on your iPhone without an account. The bundled catalog, preview, calculations and device garage work offline. Export a parts list, back up your garage, or share a configuration link when you are ready.
 
-Coverage: 2018–2023 Wrangler JL Unlimited four-door, 3.6L gasoline, Sport/Sahara/Rubicon with standard factory suspension as the starting point. TJ, JK, JT, two-door, 4xe, diesel, 392 and Xtreme Recon are not supported in this release.
+Coverage: 2018–2023 Wrangler JL Unlimited four-door, 3.6L gasoline, Sport/Sahara/Rubicon with standard factory suspension as the starting point, plus first-batch 2024 Sahara 4xe catalog support. TJ, JK, JT, two-door, diesel, 392, Xtreme Recon and other 4xe trims are not supported in this release.
 
 Prices are dated snapshots or your own quotes, not live retailer inventory. The preview uses generic wheel illustrations; some accessories appear in the parts list only. Automated checks do not certify fitment. Have a qualified installer confirm the complete combination and installation sequence.
 
@@ -25,7 +25,7 @@ Independent aftermarket planning software. Not affiliated with Jeep, Stellantis 
 
 ## Reviewer notes draft
 
-No account or demo credentials are required for the iOS app. The device garage and catalog operate locally. To test: add parts, save a named build, create another configuration and compare; use Settings for backup, restore, data deletion, privacy and support. Retailer links open a browser; there is no in-app checkout or digital purchase. The optional signed-in cloud garage belongs to the separate browser website and is not available inside this iOS version.
+No account or demo credentials are required for the iOS app. The device garage and catalog operate locally. To test: tap Load starter for the included 2024 Sahara 4xe sample, confirm excluded parts display with reasons, save a named build, create another configuration and compare; use Settings for backup, restore, data deletion, privacy and support. Retailer links open a browser; there is no in-app checkout or digital purchase. The optional signed-in cloud garage belongs to the separate browser website and is not available inside this iOS version.
 
 The app includes planning calculations and fitment rules, a bundled illustrative preview, saved configurations, purchase stages, native file/link sharing and offline operation. It does not load the live website as the application UI.
 

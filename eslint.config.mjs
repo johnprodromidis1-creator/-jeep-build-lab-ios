@@ -13,6 +13,8 @@ const eslintConfig = defineConfig([
     "build/**",
     "dist/**",
     "mobile-dist/**",
+    "work/**",
+    ".sites-runtime/**",
     "ios/App/App/public/**",
     "worker-configuration.d.ts",
     "next-env.d.ts",

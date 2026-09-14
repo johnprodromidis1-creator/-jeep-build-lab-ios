@@ -38,6 +38,7 @@ test("Codemagic iOS compile check runs offline sync, app regressions and unsigne
 
   assertInOrder(verifyScript, [
     "npm ci",
+    "npm run release:preflight",
     "npx tsc --noEmit",
     "npm run ios:sync",
     "npx eslint .",
@@ -59,6 +60,7 @@ test("Codemagic TestFlight workflow validates app code before signing and upload
 
   assertInOrder(config, [
     "script: npm ci",
+    "script: npm run release:preflight",
     "script: npx tsc --noEmit",
     "script: npm run ios:sync",
     "npx eslint .",

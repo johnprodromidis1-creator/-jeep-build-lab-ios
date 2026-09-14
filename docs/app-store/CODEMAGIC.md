@@ -5,7 +5,7 @@ The owner uses Codemagic for existing apps. This repository contains manual `jee
 ## Current handoff — September 14, 2026
 
 - The public Sites deployment is live at https://jeep-build-lab.johnprodromidis1.chatgpt.site and was smoke-tested in-browser for the 2024 Sahara 4xe starter build, fitment summary, privacy page and support page. This deployment does not create an iOS binary.
-- The current local/Sites source includes the September 13-14 4xe catalog, platform/API guards, mobile toast placement fix, explicit app-owned button behavior and 34-test regression suite. The GitHub mobile build branch must be confirmed or updated to this source before starting a new Codemagic build; Codemagic builds from GitHub `main`, not from the public website URL.
+- The current local/Sites source includes the September 13-14 4xe catalog, platform/API guards, mobile toast placement fix, explicit app-owned button behavior, App Store preflight and 35-test regression suite. Run `npm run release:preflight`, then confirm the GitHub mobile build branch is at this source before starting a new Codemagic build; Codemagic builds from GitHub `main`, not from the public website URL.
 
 ## Prior handoff — September 10, 2026
 
@@ -24,7 +24,7 @@ The owner created [johnprodromidis1-creator/-jeep-build-lab-ios](https://github.
 
 The repository is connected in the owner's existing Codemagic personal account as an Ionic/Capacitor app. [Open its Codemagic settings](https://codemagic.io/app/6aa099218e0d886361fff68a/settings). Codemagic loaded `codemagic.yaml` from `main` successfully.
 
-The **Jeep Build Lab — iOS compile check** workflow checks TypeScript, bundles the offline app, syncs Capacitor, runs lint plus the native-safe regression tests, then runs an unsigned simulator compilation. It needs no Apple signing profile and produces no installable TestFlight build. Future runs retain the compiler log and Xcode result bundle under the build's artifacts, including when compilation fails. The script uses `pipefail` so retaining a log cannot turn a failed compile into a successful result. Use it to resolve native compilation errors while setting up signing.
+The **Jeep Build Lab — iOS compile check** workflow runs release preflight, checks TypeScript, bundles the offline app, syncs Capacitor, runs lint plus the native-safe regression tests, then runs an unsigned simulator compilation. It needs no Apple signing profile and produces no installable TestFlight build. Future runs retain the compiler log and Xcode result bundle under the build's artifacts, including when compilation fails. The script uses `pipefail` so retaining a log cannot turn a failed compile into a successful result. Use it to resolve native compilation errors while setting up signing.
 
 ## Reuse the Apple account, with a profile for this app
 
@@ -36,9 +36,9 @@ The **Jeep Build Lab — iOS compile check** workflow checks TypeScript, bundles
 
 ## First build
 
-1. Verify the Apple app record, integration and matching provisioning profile exist before spending build minutes.
+1. Run `npm run release:preflight`, then verify the Apple app record, integration and matching provisioning profile exist before spending build minutes.
 2. In the Codemagic app, choose **Start new build**, branch **main**, workflow **Jeep Build Lab — TestFlight**.
-3. The workflow installs locked packages, checks TypeScript, bundles the offline app, syncs Capacitor's Swift packages, runs lint plus the native-safe regression tests, validates the app identity and sets a new build number. It then archives, signs and uploads the IPA using Codemagic's App Store Connect integration. Xcode 26.6 and Node 24.19.0 match the owner's existing iOS workflow; adjust only if Codemagic retires that image.
+3. The workflow installs locked packages, runs release preflight, checks TypeScript, bundles the offline app, syncs Capacitor's Swift packages, runs lint plus the native-safe regression tests, validates the app identity and sets a new build number. It then archives, signs and uploads the IPA using Codemagic's App Store Connect integration. Xcode 26.6 and Node 24.19.0 match the owner's existing iOS workflow; adjust only if Codemagic retires that image.
 4. Open the build details. A successful archive alone is insufficient: confirm the App Store Connect publishing step also succeeded. Downloadable IPA and Xcode logs remain build artifacts. No emails or external tester invitations are configured in this workflow.
 5. In App Store Connect → this app → TestFlight, wait for Apple processing, answer any missing compliance questions, and add the build to the owner's **internal** group. Enable automatic distribution for that internal group if desired. The workflow uploads but deliberately leaves beta-review and App Store-review submission disabled. `submit_to_testflight` is Codemagic's beta-review option; setting it false does not disable the binary upload. [Publishing reference](https://docs.codemagic.io/yaml-publishing/app-store-connect/)
 6. Install through TestFlight and perform **test 1 only** in [TESTFLIGHT.md](TESTFLIGHT.md), then continue one task at a time.

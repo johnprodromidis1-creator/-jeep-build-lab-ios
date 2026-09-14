@@ -23,7 +23,7 @@ The web version retains an optional ChatGPT cloud garage. Anonymous visitors use
 - Added first-batch 2024 Sahara 4xe vehicle selection, 20-inch starting wheel support, seven 20-inch Nitto Ridge Grappler variants, a Mopar 4xe lift kit and updated Morphic wheel fitment records.
 - The catalog now shows compatible and excluded variants deliberately. Excluded cards keep their detail/source links and explain the year, trim or powertrain reason before purchase.
 - Added a first-time 2024 Sahara 4xe starter build that loads a sourced tire/lift sample on stock 20-inch wheels, with confirmation before replacing an unsaved draft.
-- Hardened Codemagic iOS verification so both the unsigned compile-check path and the signed TestFlight workflow run lint plus the native-safe regression tests after the offline bundle is synced.
+- Hardened Codemagic iOS verification so both the unsigned compile-check path and the signed TestFlight workflow run release preflight, lint and the native-safe regression tests before archive/upload.
 - Restricted build-link sharing to this app's public `#build=` URLs and normalized native export filenames before temporary Filesystem writes.
 - Shared links, backups, drafts and saves now reject purchase-stage entries that do not have a matching selected part.
 - Mutating API routes now return explicit client errors for malformed JSON instead of treating bad request bodies like server failures.
@@ -31,7 +31,7 @@ The web version retains an optional ChatGPT cloud garage. Anonymous visitors use
 
 ## September 13-14 verification
 
-TypeScript passes with `node node_modules/typescript/bin/tsc --noEmit`. ESLint exits successfully with no warnings after documenting the offline image strategy and ignoring generated worker typings. Production `vinext build` passes. The offline mobile Vite bundle passes with the existing large main-chunk warning. `node --test tests/*.test.mjs` passes 34 tests, including device-garage isolation, cloud owner isolation, catalog count, 4xe powertrain fitment, the starter build sample, rendered HTML metadata, support/privacy page rendering, shared-link privacy, API malformed-request handling, native Bundle ID/version settings, privacy-manifest packaging, offline mobile shell CSP, Capacitor Swift Package Manager wiring, platform link/export handling, mobile toast placement above the sticky build-sheet bar, app-owned non-submit button declarations and Codemagic iOS workflow guardrails.
+TypeScript passes with `node node_modules/typescript/bin/tsc --noEmit`. ESLint exits successfully with no warnings after documenting the offline image strategy and ignoring generated worker typings. Production `vinext build` passes. The offline mobile Vite bundle passes with the existing large main-chunk warning. `npm run release:preflight` passes the source-side App Store guardrails. `node --test tests/*.test.mjs` passes 35 tests, including device-garage isolation, cloud owner isolation, catalog count, 4xe powertrain fitment, the starter build sample, rendered HTML metadata, support/privacy page rendering, shared-link privacy, API malformed-request handling, native Bundle ID/version settings, privacy-manifest packaging, offline mobile shell CSP, Capacitor Swift Package Manager wiring, platform link/export handling, mobile toast placement above the sticky build-sheet bar, app-owned non-submit button declarations, App Store preflight and Codemagic iOS workflow guardrails.
 
 Capacitor `sync ios` succeeded after a local-only monkeypatch for Node's `os.userInfo()` failing with `ENOMEM` in this Windows sandbox. The sync copied generated mobile assets, but those outputs are intentionally ignored and rebuilt in CI. Running the normal Codemagic/npm path on macOS remains the authoritative iOS sync/archive check.
 
@@ -48,7 +48,7 @@ On September 10, the owner supplied a screenshot confirming Codemagic compile-ch
 | Gate | Status / next action |
 | --- | --- |
 | Apple signing account | Not connected to this environment. Reuse the owner's existing enrolled Apple account if available. |
-| Codemagic | GitHub source transferred and app connected. First unsigned compile check passed; signed upload workflow is prepared. Before starting a new build, confirm GitHub `main` has the current local/Sites source. App-specific Apple registration/profile remains pending; see CODEMAGIC.md. |
+| Codemagic | GitHub source transferred and app connected. First unsigned compile check passed; signed upload workflow is prepared. Before starting a new build, run `npm run release:preflight` and confirm GitHub `main` has the current local/Sites source. App-specific Apple registration/profile remains pending; see CODEMAGIC.md. |
 | Bundle registration | Owner-reported registered Bundle ID: `com.johnprodromidis.jeepbuildlab`. App Store Connect app record and matching provisioning profile are still unverified in this environment. |
 | Mac compilation | Baseline simulator compile passed at `ac43eb5`. Archive and sign the current `main` through the prepared Codemagic TestFlight workflow after signing setup. |
 | Native functionality | Test actual iPhone/iPad startup, airplane-mode relaunch, keyboard, share sheet, file picker, restore, deletion, retailer return and lifecycle. |

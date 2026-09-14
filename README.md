@@ -8,7 +8,7 @@ The iOS build destination is [johnprodromidis1-creator/-jeep-build-lab-ios](http
 ## Implemented
 - 51 sourced product variants across wheels, tires, suspension, front bumpers, winches and side armor.
 - Original illustrative PNG vehicle and wheel layers; tire diameter, wheel finish and lift change the preview. Accessories are list-only.
-- D1 garage with authenticated owner isolation, saved estimate snapshot, notes, save-as-copy, saved-build shop brief export, compare-to-open action, delete, search, sort and fitment-status filters.
+- D1 garage with authenticated owner isolation, saved estimate snapshot, notes, save-as-copy, saved-build duplication, saved-build shop brief/CSV export, compare-to-open action, delete, search, sort and fitment-status filters.
 - D1 personal price overrides; curated specifications remain immutable.
 - Quantity-aware totals, budget, labor and other allowances, current-build shop brief export, CSV export, print sheet, URL configuration.
 - Explicit year, trim, powertrain, diameter and listed tire-limit conflicts, plus unresolved installation dependencies.
@@ -18,7 +18,7 @@ The iOS build destination is [johnprodromidis1-creator/-jeep-build-lab-ios](http
 - Buy now/later/owned/installed stages, remaining upgrade budget and optional user-entered vehicle price. All allowances are reserved in the first phase; installation sequence is not verified.
 - Owner-scoped D1 draft recovery with debounced writes and revision checks to prevent stale tab/device overwrites; explicit failure/retry states. Named garage snapshots remain separate.
 - Twenty configuration undo steps per session. Fitment conflicts appear above the preview with review links, including retained-tire/new-wheel mismatches.
-- No affiliate tracking, paid APIs, scraping pipeline or checkout.
+- Partner-commerce directory for source, affiliate, reseller, dealer and distributor paths. No active affiliate tracking, paid APIs, scraping pipeline, wholesale checkout or dropship fulfillment.
 
 ## Catalog
 lib/catalog.json contains variant records and dated source URLs. Facts were manually checked September 8 and September 13, 2026. Prices are snapshots; no stock status promised. Descriptions are original. Generated illustrations are not branded product photographs. The September 13 update adds explicit powertrain fitment, seven 20-inch Ridge Grappler options for the 2024 Sahara 4xe path, a Mopar 4xe lift kit and documented Morphic wheel coverage through current JL Unlimited listings.
@@ -36,9 +36,9 @@ API writes reject mismatched Origin. Zod validates client state and catalog refe
 Sharing serializes only supported BuildState, omitting private name, notes and custom prices. The website is public; anonymous visitors use device storage, and cloud records require their authenticated owner.
 
 ## Extending
-Keep product identity/specifications separate from offers. Current source and personal quote are a minimal offer layer. Add retailer offer records keyed by part ID, then an affiliate link resolver, without changing selections.
+Keep product identity/specifications separate from offers. `lib/commerce.ts` maps source, affiliate, reseller, dealer and distributor paths without changing selections. Add approved affiliate IDs, feed/API licenses, dealer terms or Stripe/Shopify checkout only after the business account is ready, and keep paid links clearly labeled.
 For additional platforms introduce vehicle configurations and source-backed fitment rules; do not infer compatibility from the generation string alone.
-Before public launch: finish catalog auditing and combinations with an experienced installer; obtain any needed image/feed licenses; add audience-appropriate privacy/affiliate disclosures and moderation/abuse controls if community features are introduced.
+Before public launch: finish catalog auditing and combinations with an experienced installer; obtain any needed image/feed licenses; review privacy/affiliate disclosures, sales-tax/trader obligations and moderation/abuse controls if community or commerce features are introduced.
 
 ## Development
 Run npm run db:generate when schema changes. Build with Sites build helper. Run node --test tests/*.test.mjs for core price, fitment, storage and rendered-HTML validation.

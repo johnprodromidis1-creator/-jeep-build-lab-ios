@@ -103,6 +103,17 @@ test("garage management includes search and fitment filters", async () => {
   assert.match(source, /Clear garage filters/);
 });
 
+test("garage cards can duplicate a saved build without opening the current draft", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+
+  assert.match(source, /function duplicateSavedBuild\(build:SavedBuild\)/);
+  assert.match(source, /copiedBuildName\(build\.name\)/);
+  assert.match(source, /state:structuredClone\(build\.state\)/);
+  assert.match(source, /setGarage\(v=>\[\{\.\.\.build,id:saved\.id,name:copyName,updatedAt:new Date\(\)\.toISOString\(\),savedTotal:saved\.savedTotal\},\.\.\.v\]\)/);
+  assert.match(source, /Duplicate saved build/);
+  assert.match(source, /CopyPlus/);
+});
+
 test("builder surfaces the shop brief export", async () => {
   const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
 
@@ -111,6 +122,33 @@ test("builder surfaces the shop brief export", async () => {
   assert.match(source, /Download shop brief/);
   assert.match(source, /Share shop brief/);
   assert.match(source, /Export shop brief for/);
+});
+
+test("garage cards can export saved-build parts CSV files", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+
+  assert.match(source, /function buildPartsCsv\(\{name,notes,state,parts\}/);
+  assert.match(source, /function exportSavedCSV\(build:SavedBuild\)/);
+  assert.match(source, /buildPartsCsv\(\{name:build\.name,notes:build\.notes,state:build\.state,parts\}\)/);
+  assert.match(source, /Commerce options/);
+  assert.match(source, /commerceSummaryForPart\(p\)/);
+  assert.match(source, /Export parts CSV for/);
+  assert.match(source, /FileSpreadsheet/);
+  assert.match(source, /text\/csv;charset=utf-8/);
+});
+test("builder surfaces partner commerce disclosure and program links", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const partFamily = await readFile(new URL("../app/components/part-family.tsx", import.meta.url), "utf8");
+  const privacy = await readFile(new URL("../app/components/privacy-content.tsx", import.meta.url), "utf8");
+
+  assert.match(source, /Partner commerce/);
+  assert.match(source, /Partner-ready offers/);
+  assert.match(source, /partnerPrograms\.length/);
+  assert.match(source, /Application links do not create a sale, commission or dealer order/);
+  assert.match(partFamily, /commerce paths/);
+  assert.match(partFamily, /partner programs ready for this category/);
+  assert.match(privacy, /Commerce and affiliate disclosure/);
+  assert.match(privacy, /no affiliate tracking, wholesale checkout or dropship fulfillment is active/);
 });
 
 test("comparison dialog can open the selected saved build", async () => {

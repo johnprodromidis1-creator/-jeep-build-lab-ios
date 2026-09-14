@@ -1,4 +1,5 @@
 import { buildIssues, categoryNames, money, quantityFor, selectedParts, vehicleDescription, type BuildState, type Part } from "./model";
+import { commerceDisclosure, commerceSummaryForPart, noActiveCommerceDisclosure } from "./commerce";
 import { costPlan, stageFor, stageNames, type Stage } from "./planning";
 
 export type ShopBriefInput = {
@@ -26,6 +27,7 @@ function partLine(part: Part, state: BuildState) {
     `  Reference: ${part.reference}`,
     `  Price: ${money(part.priceCents)} x ${quantity} = ${money(lineTotal)} (${priceType})`,
     `  Source: ${part.retailer} - ${part.url}`,
+    `  Commerce options: ${commerceSummaryForPart(part)}`,
   ].join("\n");
 }
 
@@ -53,6 +55,10 @@ export function buildShopBrief({ name, notes, state, parts, generatedAt }: ShopB
     `- Upgrades left to fund: ${money(plan.remaining)}`,
     `- Entered vehicle price: ${money(state.vehicleCost ?? 0)}`,
     `- Vehicle plus unfunded upgrades: ${money(plan.project)}`,
+    "",
+    "Commerce disclosure",
+    `- ${commerceDisclosure}`,
+    `- ${noActiveCommerceDisclosure}`,
     "",
     "Selected parts",
   ];

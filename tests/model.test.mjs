@@ -44,10 +44,12 @@ const decimalInput=await module("lib/decimal-input.ts","decimal-input");
 const catalogFilters=await module("lib/catalog-filters.ts","catalog-filters");
 const garageFilters=await module("lib/garage-filters.ts","garage-filters");
 const shopBrief=await module("lib/shop-brief.ts","shop-brief");
+const commerce=await module("lib/commerce.ts","commerce");
 const {initialState,baseCatalog,totalFor,buildIssues,stateSchema,fitsVehicle,partCompatibility,publicBuildState,encodeSharedBuildState,decodeSharedBuildStatePayload,buildErrorsForOption,optionAddsBuildError}=model;
 const {dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
 const {buildShopBrief}=shopBrief;
+const {partnerPrograms,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure}=commerce;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
 const badJson=(path,method="POST")=>new Request("https://test.local/api/"+path,{method,headers:{"oai-authenticated-user-id":"alice",origin:"https://test.local","Content-Type":"application/json"},body:"{"});
@@ -56,6 +58,31 @@ const jsonBody=(path,method,body)=>new Request("https://test.local/api/"+path,{m
 test("catalog has 51 unique variants with positive cent prices and HTTPS sources",()=>{
  assert.equal(baseCatalog.length,51);assert.equal(new Set(baseCatalog.map(p=>p.id)).size,51);
  for(const p of baseCatalog){assert.ok(Number.isInteger(p.priceCents)&&p.priceCents>0);assert.equal(new URL(p.url).protocol,"https:");}
+});
+test("commerce partner directory covers all affiliate reseller dealer and distributor paths",()=>{
+ assert.equal(partnerPrograms.length,13);
+ const names=partnerPrograms.map(p=>p.name);
+ for(const name of ["Tire Rack","RealTruck","CARiD","4 Wheel Parts","CJ Pony Parts","MORryde Jeep","American Modified","Quadratec Wholesale","ExtremeTerrain","Turn 14 Distribution","Meyer Distributing","Premier Performance","ARB distributor network"])assert.ok(names.includes(name),name);
+ for(const program of partnerPrograms){assert.equal(program.status,"application-needed");assert.equal(new URL(program.url).protocol,"https:");assert.ok(program.categories.length>0);}
+ assert.ok(partnerPrograms.some(p=>p.relationship==="affiliate"));
+ assert.ok(partnerPrograms.some(p=>p.relationship==="reseller"));
+ assert.ok(partnerPrograms.some(p=>p.relationship==="dealer"));
+ assert.ok(partnerPrograms.some(p=>p.relationship==="distributor"));
+});
+test("commerce offers keep exact source links first and mark monetized paths pending",()=>{
+ const tire=baseCatalog.find(p=>p.id==="nitto-217020");
+ const offers=commerceOffersForPart(tire);
+ assert.equal(offers[0].partnerName,"Quadratec");
+ assert.equal(offers[0].url,tire.url);
+ assert.equal(offers[0].status,"active-source");
+ assert.equal(offers[0].paid,false);
+ assert.ok(offers.some(o=>o.partnerName==="Tire Rack"&&o.relationship==="affiliate"&&o.status==="application-needed"));
+ assert.ok(offers.some(o=>o.partnerName==="Quadratec Wholesale"&&o.relationship==="dealer"));
+ assert.ok(offers.every(o=>new URL(o.url).protocol==="https:"));
+ assert.match(commerceSummaryForPart(tire),/Application needed/);
+ assert.match(commerceDisclosure,/Paid links/);
+ assert.match(noActiveCommerceDisclosure,/no affiliate tracking/);
+ assert.throws(()=>safeCommerceUrl("http://example.com"),/HTTPS/);
 });
 test("totals multiply individual wheels/tires, count kits once, and include allowances",()=>{
  const s=base();s.picks={wheels:"method-MR70178550900",tires:"nitto-217020",lift:"lift-16400-0073"};s.labor=50000;s.extras=30000;
@@ -178,6 +205,8 @@ test("shop brief export groups staged parts, totals, source links and fitment no
  assert.match(brief,/Price: \$432.00 x 5 = \$2,160.00/);
  assert.match(brief,/Upgrades left to fund: \$2,335.00/);
  assert.match(brief,/Source: Quadratec - https:\/\/www\.quadratec\.com\/p\/nitto\/ridge-grappler-tire/);
+ assert.match(brief,/Commerce disclosure/);
+ assert.match(brief,/Commerce options: Quadratec \(Product source, Source link\); Tire Rack \(Affiliate, Application needed\)/);
  assert.match(brief,/Fitment conflicts \(0\)/);
  assert.match(brief,/No blocking fitment conflicts detected/);
  assert.match(brief,/Shop confirmation checks \([1-9]/);

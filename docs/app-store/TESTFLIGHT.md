@@ -25,7 +25,7 @@ Codemagic is the selected Mac build service. The first native simulator compile 
 | --- | --- | --- | --- |
 | 1 | Start a build, add a wheel option, save as “Test A,” close and reopen | Same build available in My garage without login | Pending on iPhone |
 | 2 | Turn on airplane mode, fully close and reopen, change tire/lift, save “Test B” | Preview, catalog, prices, fitment and save work offline | Pending |
-| 3 | Compare Test B with Test A, switch differing-parts filter | Correct option and cost differences | Pending |
+| 3 | Compare Test B with Test A, switch differing-parts filter, then open Test A from the comparison | Correct option and cost differences; Test A opens through the same unsaved-draft confirmation used by My garage | Pending |
 | 4 | Mark one part owned and another buy later | Owned excluded from amount left to fund; later still included in final fitment checks | Pending |
 | 5 | Share build link | Share sheet opens; copied/shared link contains chosen configuration and no build name or private notes | Pending |
 | 6 | Export current and saved-build shop briefs, parts CSV and backup JSON to Files | All files open and contain the intended quantities, notes and records | Pending |

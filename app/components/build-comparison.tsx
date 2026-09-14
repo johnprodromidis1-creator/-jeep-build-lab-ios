@@ -1,12 +1,13 @@
 'use client';
-import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogDescription} from '@/components/ui/dialog';
+import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogDescription,DialogFooter} from '@/components/ui/dialog';
 import {Select,SelectTrigger,SelectContent,SelectItem,SelectValue} from '@/components/ui/select';
 import {Button} from '@/components/ui/button';
 import {Checkbox} from '@/components/ui/checkbox';
 import {useState} from 'react';
+import {Check,CopyPlus,FolderOpen} from 'lucide-react';
 import {compareRows,costPlan} from '@/lib/planning';
 import {buildIssues,money,vehicleDescription,type BuildState,type Part,type SavedBuild} from '@/lib/model';
-export function BuildComparison({open,onOpenChange,current,name,parts,builds,busy,error,onRetry,onSaveCopy}:{open:boolean;onOpenChange:(open:boolean)=>void;current:BuildState;name:string;parts:Part[];builds:SavedBuild[];busy:boolean;error:string;onRetry:()=>void;onSaveCopy:()=>void}){
+export function BuildComparison({open,onOpenChange,current,name,parts,builds,busy,error,onRetry,onSaveCopy,onOpenBuild}:{open:boolean;onOpenChange:(open:boolean)=>void;current:BuildState;name:string;parts:Part[];builds:SavedBuild[];busy:boolean;error:string;onRetry:()=>void;onSaveCopy:()=>void;onOpenBuild:(build:SavedBuild)=>void}){
  const [selected,setSelected]=useState(''),[differences,setDifferences]=useState(false);
  const target=builds.find(b=>b.id===selected)??builds[0];
  const a=costPlan(current,parts),b=target?costPlan(target.state,parts):null;
@@ -31,6 +32,7 @@ export function BuildComparison({open,onOpenChange,current,name,parts,builds,bus
  {differences&&!rows.some(r=>r.changed)&&<p>The selected parts, quantities and purchase stages match.</p>}
  <p className="comparison-delta">Your current plan needs <strong>{money(Math.abs(a.remaining-b!.remaining))} {a.remaining>=b!.remaining?'more':'less'}</strong> for upgrades.</p>
  <p className="dialog-note">Unentered costs are excluded. Stages describe your purchase plan; they do not verify installation order. All selected parts are included in the final-build fitment checks.</p>
+ <DialogFooter className="comparison-actions"><Button variant="outline" onClick={onSaveCopy}><CopyPlus size={15}/>Save current as copy</Button><Button variant="outline" onClick={()=>onOpenBuild(target)}><FolderOpen size={15}/>Open saved build</Button><Button onClick={()=>onOpenChange(false)}><Check size={15}/>Done</Button></DialogFooter>
  </>}
  </DialogContent></Dialog>;
 }

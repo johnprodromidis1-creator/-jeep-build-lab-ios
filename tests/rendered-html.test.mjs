@@ -112,3 +112,14 @@ test("builder surfaces the shop brief export", async () => {
   assert.match(source, /Share shop brief/);
   assert.match(source, /Export shop brief for/);
 });
+
+test("comparison dialog can open the selected saved build", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const dialog = await readFile(new URL("../app/components/build-comparison.tsx", import.meta.url), "utf8");
+
+  assert.match(dialog, /onOpenBuild:\(build:SavedBuild\)=>void/);
+  assert.match(dialog, /Open saved build/);
+  assert.match(dialog, /FolderOpen/);
+  assert.match(source, /function requestOpenBuild\(b:SavedBuild\)\{setCompareOpen\(false\);if\(dirty\)setConfirm\(\{kind:"load",build:b\}\);else loadBuild\(b\);\}/);
+  assert.match(source, /onOpenBuild=\{requestOpenBuild\}/);
+});

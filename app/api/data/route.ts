@@ -14,8 +14,9 @@ export async function GET(request:Request){
 export async function DELETE(request:Request){
  const user=owner(request);if(!user)return json({error:'Sign in to delete your cloud garage.'},401);
  if(!sameOrigin(request))return json({error:'Invalid origin.'},403);
+ let body:unknown;try{body=await request.json();}catch{return json({error:'Request body must be valid JSON.'},400);}
  try{
-  const body=await request.json() as {confirm?:string};if(body.confirm!=='DELETE MY APP DATA')return json({error:'Confirm deletion in Settings.'},400);
+  if(!body||typeof body!=='object'||(body as {confirm?:string}).confirm!=='DELETE MY APP DATA')return json({error:'Confirm deletion in Settings.'},400);
   await db().batch(['builds','price_notes','build_drafts'].map(table=>db().prepare(`DELETE FROM ${table} WHERE owner_id=?`).bind(user)));
   return json({ok:true});
  }catch{return json({error:'Your app data could not be deleted. Try again.'},503);}

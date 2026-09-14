@@ -1,17 +1,39 @@
 import assert from "node:assert/strict";
 import test, {after} from "node:test";
+import {existsSync} from "node:fs";
 import {readFile,readdir,mkdir,rm} from "node:fs/promises";
+import {fileURLToPath,pathToFileURL} from "node:url";
+import path from "node:path";
 import {build} from "esbuild";
 import {DatabaseSync} from "node:sqlite";
-const root=new URL("..",import.meta.url).pathname;
-const output=root+"/.sites-runtime/unit/";
+const root=fileURLToPath(new URL("..",import.meta.url));
+const output=path.join(root,".sites-runtime","unit");
 await mkdir(output,{recursive:true});
 const sql=new DatabaseSync(":memory:");
-for(const file of (await readdir(root+"/drizzle")).filter(f=>f.endsWith(".sql")).sort())sql.exec(await readFile(root+"/drizzle/"+file,"utf8"));
+for(const file of (await readdir(path.join(root,"drizzle"))).filter(f=>f.endsWith(".sql")).sort())sql.exec(await readFile(path.join(root,"drizzle",file),"utf8"));
 const DB={prepare(query){const stmt=sql.prepare(query);const bound=(args=[])=>({bind(...a){return bound(a);},async all(){return{results:stmt.all(...args),success:true};},async first(){return stmt.get(...args)??null;},async run(){const r=stmt.run(...args);return{success:true,meta:{changes:Number(r.changes)}};}});return bound();}};
 DB.batch=async(statements)=>{sql.exec('BEGIN');try{const result=[];for(const stmt of statements)result.push(await stmt.run());sql.exec('COMMIT');return result;}catch(error){sql.exec('ROLLBACK');throw error;}};
 globalThis.__testEnv={DB};
-async function module(file,name){await build({entryPoints:[root+"/"+file],outfile:output+name+".mjs",bundle:true,format:"esm",platform:"node",plugins:[{name:"test-binding",setup(b){b.onResolve({filter:/^cloudflare:workers$/},()=>({path:"env",namespace:"binding"}));b.onLoad({filter:/.*/,namespace:"binding"},()=>({contents:"export const env = globalThis.__testEnv;"}));}}]});return import(output+name+".mjs");}
+function resolveLocal(specifier,resolveDir){
+ const base=specifier.startsWith("@/")?path.join(root,specifier.slice(2)):path.resolve(resolveDir,specifier);
+ for(const candidate of [base,base+".ts",base+".tsx",base+".json",path.join(base,"index.ts"),path.join(base,"index.tsx")]){
+  if(existsSync(candidate))return candidate;
+ }
+ throw new Error(`Could not resolve ${specifier} from ${resolveDir}`);
+}
+async function module(file,name){
+ const entry=path.join(root,file),outfile=path.join(output,name+".mjs");
+ await build({absWorkingDir:root,stdin:{contents:await readFile(entry,"utf8"),sourcefile:path.basename(file),resolveDir:path.dirname(entry),loader:file.endsWith(".tsx")?"tsx":"ts"},outfile,bundle:true,format:"esm",platform:"node",plugins:[{name:"test-resolver",setup(b){
+  b.onResolve({filter:/^cloudflare:workers$/},()=>({path:"env",namespace:"binding"}));
+  b.onResolve({filter:/^@\//},args=>({path:resolveLocal(args.path,root)}));
+  b.onResolve({filter:/^\./},args=>({path:resolveLocal(args.path,args.resolveDir)}));
+  b.onResolve({filter:/^[^./]/},args=>({path:args.path,external:true}));
+  b.onLoad({filter:/.*/,namespace:"binding"},()=>({contents:"export const env = globalThis.__testEnv;"}));
+  b.onLoad({filter:/\.(ts|tsx)$/},async args=>({contents:await readFile(args.path,"utf8"),loader:args.path.endsWith(".tsx")?"tsx":"ts"}));
+  b.onLoad({filter:/\.json$/},async args=>({contents:await readFile(args.path,"utf8"),loader:"json"}));
+ }}]});
+ return import(pathToFileURL(outfile).href);
+}
 const model=await module("lib/model.ts","model");
 const api=await module("app/api/builds/route.ts","builds");
 const drafts=await module("app/api/draft/route.ts","drafts");
@@ -19,12 +41,14 @@ const planning=await module("lib/planning.ts","planning");
 const accountData=await module("app/api/data/route.ts","data");
 const catalog=await module("app/api/catalog/route.ts","catalog");
 const decimalInput=await module("lib/decimal-input.ts","decimal-input");
-const {initialState,baseCatalog,totalFor,buildIssues,stateSchema}=model;
+const {initialState,baseCatalog,totalFor,buildIssues,stateSchema,fitsVehicle,partCompatibility,publicBuildState,encodeSharedBuildState,decodeSharedBuildStatePayload}=model;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
+const badJson=(path,method="POST")=>new Request("https://test.local/api/"+path,{method,headers:{"oai-authenticated-user-id":"alice",origin:"https://test.local","Content-Type":"application/json"},body:"{"});
+const jsonBody=(path,method,body)=>new Request("https://test.local/api/"+path,{method,headers:{"oai-authenticated-user-id":"alice",origin:"https://test.local","Content-Type":"application/json"},body:JSON.stringify(body)});
 
-test("catalog has 43 unique variants with positive cent prices and HTTPS sources",()=>{
- assert.equal(baseCatalog.length,43);assert.equal(new Set(baseCatalog.map(p=>p.id)).size,43);
+test("catalog has 51 unique variants with positive cent prices and HTTPS sources",()=>{
+ assert.equal(baseCatalog.length,51);assert.equal(new Set(baseCatalog.map(p=>p.id)).size,51);
  for(const p of baseCatalog){assert.ok(Number.isInteger(p.priceCents)&&p.priceCents>0);assert.equal(new URL(p.url).protocol,"https:");}
 });
 test("totals multiply individual wheels/tires, count kits once, and include allowances",()=>{
@@ -65,7 +89,7 @@ test("18-inch tires on 17-inch wheels produce an explicit conflict",()=>{
  s.stockRim=18;assert.ok(!buildIssues(s).some(i=>i.message.includes("diameter mismatch")));
 });
 test("changing trim surfaces an existing incompatible lift variant",()=>{
- const s=base();s.trim="Rubicon";s.picks={lift:"lift-16400-0073"};assert.ok(buildIssues(s).some(i=>i.level==="error"&&i.message.includes("variant")));
+ const s=base();s.trim="Rubicon";s.picks={lift:"lift-16400-0073"};assert.ok(buildIssues(s).some(i=>i.level==="error"&&i.message.includes("Sport, Sahara")));
 });
 test("a tire above the source lift limit conflicts while other mechanical checks remain",()=>{
  const s=base();s.picks={tires:"nitto-217050",lift:"aev-spacer"};assert.ok(buildIssues(s).some(i=>i.level==="error"&&i.message.includes("limit")));
@@ -76,6 +100,28 @@ test("malformed or fabricated shared state is rejected",()=>{
  assert.equal(stateSchema.safeParse({...base(),picks:{lift:"nitto-217050"}}).success,false);
  assert.equal(stateSchema.safeParse({...base(),labor:-1}).success,false);
  assert.equal(stateSchema.safeParse({...base(),quantity:999}).success,false);
+ assert.equal(stateSchema.safeParse({...base(),year:2024,powertrain:"gas"}).success,false);
+ assert.equal(stateSchema.safeParse({...base(),year:2024,trim:"Rubicon",powertrain:"4xe"}).success,false);
+ assert.equal(stateSchema.safeParse({...base(),year:2023,trim:"Sahara",powertrain:"4xe"}).success,false);
+ assert.equal(stateSchema.safeParse({...base(),stages:{wheels:"owned"}}).success,false);
+});
+test("shared build payload exposes only public build state",()=>{
+ const state={...base(),year:2024,trim:"Sahara",powertrain:"4xe",stockRim:20,stockTire:32,budget:625000,labor:12550,extras:9999,picks:{tires:"nitto-217310-4xe",lift:"mopar-77072522ae-4xe"},stages:{tires:"now",lift:"later"},name:"Private trail name",notes:"secret notes",ownerId:"owner-1",savedTotal:1,prices:[{partId:"nitto-217310-4xe",priceCents:1}],customPrice:true};
+ const payload=encodeSharedBuildState(state),json=decodeURIComponent(payload),parsed=JSON.parse(json);
+ assert.deepEqual(Object.keys(parsed).sort(),["budget","extras","labor","picks","powertrain","quantity","stages","stockRim","stockTire","trim","vehicleCost","year"].sort());
+ assert.doesNotMatch(json,/Private trail name|secret notes|ownerId|savedTotal|prices|customPrice/);
+ assert.deepEqual(decodeSharedBuildStatePayload(payload),publicBuildState(state));
+});
+test("2024 Sahara 4xe keeps powertrain fitment explicit and supports 20-inch starting wheels",()=>{
+ const s={...base(),year:2024,trim:"Sahara",powertrain:"4xe",stockRim:20,stockTire:32,picks:{}};
+ assert.equal(stateSchema.safeParse(s).success,true);
+ assert.equal(fitsVehicle(baseCatalog.find(p=>p.id==="nitto-217330-4xe"),s),true);
+ assert.equal(fitsVehicle(baseCatalog.find(p=>p.id==="mopar-77072522ae-4xe"),s),true);
+ assert.equal(fitsVehicle(baseCatalog.find(p=>p.id==="method-MR70178550900"),s),false);
+ assert.match(partCompatibility(baseCatalog.find(p=>p.id==="method-MR70178550900"),s),/2024/);
+ const build={...s,picks:{tires:"nitto-217310-4xe",lift:"mopar-77072522ae-4xe"},stages:{tires:"now",lift:"later"}};
+ assert.equal(totalFor(build).subtotal,46300*5+183540);
+ assert.ok(!buildIssues(build).some(issue=>issue.level==="error"));
 });
 test("D1 route round-trip, price isolation, update ownership and delete ownership",async()=>{
  assert.equal((await api.GET(req(null))).status,401);
@@ -98,6 +144,13 @@ test("D1 route round-trip, price isolation, update ownership and delete ownershi
  await api.DELETE(req("alice","DELETE",undefined,undefined,"?id="+data.id));
  assert.deepEqual((await (await api.GET(req("alice"))).json()).builds,[]);
 });
+test("mutating API routes report malformed JSON as client errors",async()=>{
+ assert.equal((await api.POST(badJson("builds"))).status,400);
+ assert.equal((await catalog.PUT(badJson("catalog","PUT"))).status,400);
+ assert.equal((await drafts.PUT(badJson("draft","PUT"))).status,400);
+ assert.equal((await accountData.DELETE(badJson("data","DELETE"))).status,400);
+ assert.equal((await accountData.DELETE(jsonBody("data","DELETE",null))).status,400);
+});
 test("new 17-inch wheels conflict with retained 18-inch tires until matching tires are added",()=>{
  const state=base();state.trim="Sahara";state.stockRim=18;state.picks={wheels:"method-MR70178550900"};
  assert.ok(buildIssues(state).some(issue=>issue.level==="error"&&issue.message.includes("current tires fit 18")));
@@ -114,13 +167,14 @@ test("purchase stages exclude owned items without hiding parts from final-build 
  state.stages.wheels="now";assert.equal(planning.costPlan(state,baseCatalog).dueNow,36600*5+75000);
 });
 test("legacy saved configurations gain defaults and comparisons include quantity and purchase stage",()=>{
- const legacy=base();delete legacy.stages;delete legacy.vehicleCost;
- const restored=stateSchema.parse(legacy);assert.deepEqual(restored.stages,{});assert.equal(restored.vehicleCost,0);
+ const legacy=base();delete legacy.stages;delete legacy.vehicleCost;delete legacy.powertrain;
+ const restored=stateSchema.parse(legacy);assert.deepEqual(restored.stages,{});assert.equal(restored.vehicleCost,0);assert.equal(restored.powertrain,"gas");
  restored.picks={tires:"nitto-217020"};const other=structuredClone(restored);other.quantity=4;
  const rows=planning.compareRows(restored,other,baseCatalog);assert.equal(rows.filter(r=>r.changed).length,1);assert.equal(rows.find(r=>r.category==="tires").leftCost,43200*5);
  other.quantity=5;other.stages.tires="owned";assert.equal(planning.compareRows(restored,other,baseCatalog).find(r=>r.category==="tires").changed,true);
- assert.equal(planning.groupParts(baseCatalog).reduce((n,g)=>n+g.variants.length,0),43);
+ assert.equal(planning.groupParts(baseCatalog).reduce((n,g)=>n+g.variants.length,0),51);
  assert.equal(stateSchema.safeParse({...base(),stages:{wheels:"free"}}).success,false);
+ assert.equal(stateSchema.safeParse({...base(),picks:{tires:"nitto-217020"},stages:{tires:"owned"}}).success,true);
 });
 test("draft recovery keeps owners isolated and rejects stale concurrent writes",async()=>{
  const draft={name:"Trail draft",notes:"Still choosing",state:base(),buildId:null,lastSavedTotal:null};

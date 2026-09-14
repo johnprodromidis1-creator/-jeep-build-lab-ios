@@ -1,14 +1,37 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import 'fake-indexeddb/auto';
+import {existsSync} from 'node:fs';
+import {mkdir,readFile,rm} from 'node:fs/promises';
+import {fileURLToPath,pathToFileURL} from 'node:url';
+import path from 'node:path';
 import {build} from 'esbuild';
-import {mkdir,rm} from 'node:fs/promises';
-const output=new URL('../.sites-runtime/device-tests/',import.meta.url).pathname;
+
+const root=fileURLToPath(new URL('..',import.meta.url));
+const output=path.join(root,'.sites-runtime','device-tests');
 await mkdir(output,{recursive:true});
-await build({entryPoints:[new URL('../lib/storage/device.ts',import.meta.url).pathname],outfile:output+'device.mjs',bundle:true,platform:'node',format:'esm'});
-await build({entryPoints:[new URL('../lib/model.ts',import.meta.url).pathname],outfile:output+'model.mjs',bundle:true,platform:'node',format:'esm'});
-const {deviceStorage:storage}=await import(output+'device.mjs');
-const {initialState}=await import(output+'model.mjs');
+
+function resolveLocal(specifier,resolveDir){
+ const base=specifier.startsWith('@/')?path.join(root,specifier.slice(2)):path.resolve(resolveDir,specifier);
+ for(const candidate of [base,base+'.ts',base+'.tsx',base+'.json',path.join(base,'index.ts'),path.join(base,'index.tsx')]){
+  if(existsSync(candidate))return candidate;
+ }
+ throw new Error(`Could not resolve ${specifier} from ${resolveDir}`);
+}
+async function bundle(file,name){
+ const entry=path.join(root,file),outfile=path.join(output,name+'.mjs');
+ await build({absWorkingDir:root,stdin:{contents:await readFile(entry,'utf8'),sourcefile:path.basename(file),resolveDir:path.dirname(entry),loader:file.endsWith('.tsx')?'tsx':'ts'},outfile,bundle:true,platform:'node',format:'esm',plugins:[{name:'test-resolver',setup(b){
+  b.onResolve({filter:/^@\//},args=>({path:resolveLocal(args.path,root)}));
+  b.onResolve({filter:/^\./},args=>({path:resolveLocal(args.path,args.resolveDir)}));
+  b.onResolve({filter:/^[^./]/},args=>({path:args.path,external:true}));
+  b.onLoad({filter:/\.(ts|tsx)$/},async args=>({contents:await readFile(args.path,'utf8'),loader:args.path.endsWith('.tsx')?'tsx':'ts'}));
+  b.onLoad({filter:/\.json$/},async args=>({contents:await readFile(args.path,'utf8'),loader:'json'}));
+ }}]});
+ return import(pathToFileURL(outfile).href);
+}
+
+const {deviceStorage:storage}=await bundle('lib/storage/device.ts','device');
+const {initialState}=await bundle('lib/model.ts','model');
 const state=()=>({...structuredClone(initialState),picks:{tires:'nitto-217020'}});
 await test('device garage, backup restore, revision conflicts and erasure work without network access',async()=>{
  const originalFetch=globalThis.fetch;globalThis.fetch=()=>{throw new Error('Device garage must not use network requests.');};

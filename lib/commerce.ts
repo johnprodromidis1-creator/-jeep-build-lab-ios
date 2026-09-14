@@ -251,6 +251,16 @@ function programCategories(program: PartnerProgram) {
   return program.categories.map(category => categoryNames[category]).join(", ");
 }
 
+function selectedCategorySummary(parts: readonly Pick<Part, "category">[]) {
+  const labels = [...new Set(parts.map(part => categoryNames[part.category]))];
+  return labels.length ? labels.join(", ") : "No selected categories";
+}
+
+export function partnerProgramsForBuild(state: BuildState, parts: Part[]): PartnerProgram[] {
+  const selected = selectedParts(state, parts);
+  return selected.length ? partnerProgramsForParts(selected) : [...partnerPrograms];
+}
+
 function selectedPartCommerceLine(part: Part, state: BuildState) {
   const programs = partnerProgramsForPart(part).map(program => program.name).join(", ") || "No matching partner program listed yet.";
   return [
@@ -272,9 +282,31 @@ function partnerProgramApplicationLine(program: PartnerProgram) {
   ].join("\n");
 }
 
+export function buildPartnerApplicationLinks({ name, state, parts, generatedAt = new Date().toISOString() }: CommerceApplicationPackInput) {
+  const selected = selectedParts(state, parts);
+  const programs = partnerProgramsForBuild(state, parts);
+  return [
+    "Jeep Build Lab partner application links",
+    `Build: ${name.trim() || "Untitled build"}`,
+    `Generated: ${new Date(generatedAt).toISOString().slice(0, 10)}`,
+    `Vehicle: ${vehicleDescription(state)}`,
+    `Scope: ${selected.length ? `${selected.length} selected part${selected.length === 1 ? "" : "s"} (${selectedCategorySummary(selected)})` : "No selected parts; full partner directory."}`,
+    "",
+    noActiveCommerceDisclosure,
+    "",
+    programs.map((program, index) => [
+      `${index + 1}. ${program.name} - ${relationshipNames[program.relationship]}`,
+      `   Categories: ${programCategories(program)}`,
+      `   Status: ${commerceStatusNames[program.status]}`,
+      `   Link: ${safeCommerceUrl(program.url)}`,
+      `   Note: ${program.note}`,
+    ].join("\n")).join("\n"),
+  ].join("\n");
+}
+
 export function buildCommerceApplicationPack({ name, notes, state, parts, generatedAt = new Date().toISOString() }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
-  const programs = selected.length ? partnerProgramsForParts(selected) : [...partnerPrograms];
+  const programs = partnerProgramsForBuild(state, parts);
   return [
     "Jeep Build Lab partner application pack",
     `Build: ${name.trim() || "Untitled build"}`,

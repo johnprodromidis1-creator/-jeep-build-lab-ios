@@ -145,7 +145,12 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /Partner commerce/);
   assert.match(source, /Partner-ready offers/);
   assert.match(source, /buildCommerceApplicationPack/);
+  assert.match(source, /buildPartnerApplicationLinks/);
+  assert.match(source, /partnerProgramsForBuild/);
   assert.match(source, /Download commerce pack/);
+  assert.match(source, /Download partner links/);
+  assert.match(source, /applications for selected parts/);
+  assert.match(source, /Select parts to narrow applications/);
   assert.match(source, /Export commerce pack for/);
   assert.match(source, /ClipboardList/);
   assert.match(source, /partnerPrograms\.length/);
@@ -155,6 +160,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(privacy, /Commerce and affiliate disclosure/);
   assert.match(privacy, /no affiliate tracking, wholesale checkout or dropship fulfillment is active/);
   assert.match(commerce, /Jeep Build Lab partner application pack/);
+  assert.match(commerce, /Jeep Build Lab partner application links/);
   assert.match(commerce, /Application prep checklist/);
 });
 

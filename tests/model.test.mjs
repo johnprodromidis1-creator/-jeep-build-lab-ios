@@ -49,7 +49,7 @@ const {initialState,baseCatalog,totalFor,buildIssues,stateSchema,fitsVehicle,par
 const {dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
 const {buildShopBrief}=shopBrief;
-const {partnerPrograms,partnerProgramsForParts,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildCommerceApplicationPack,commerceApplicationChecklist}=commerce;
+const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildCommerceApplicationPack,buildPartnerApplicationLinks,commerceApplicationChecklist}=commerce;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
 const badJson=(path,method="POST")=>new Request("https://test.local/api/"+path,{method,headers:{"oai-authenticated-user-id":"alice",origin:"https://test.local","Content-Type":"application/json"},body:"{"});
@@ -88,6 +88,8 @@ test("commerce application pack exports selected partner paths and prep checklis
  const state=base();state.picks={tires:"nitto-217020",lift:"aev-spacer"};state.stages={tires:"now",lift:"later"};
  const selected=[baseCatalog.find(p=>p.id==="nitto-217020"),baseCatalog.find(p=>p.id==="aev-spacer")];
  const programs=partnerProgramsForParts(selected);
+ assert.equal(partnerProgramsForBuild(base(),baseCatalog).length,partnerPrograms.length);
+ assert.deepEqual(partnerProgramsForBuild(state,baseCatalog).map(program=>program.id),programs.map(program=>program.id));
  assert.ok(programs.some(program=>program.name==="Tire Rack"));
  assert.ok(programs.some(program=>program.name==="ARB distributor network"));
  assert.ok(!programs.some(program=>program.name==="MORryde Jeep"));
@@ -102,6 +104,13 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(pack,/1\. Confirm the legal business name/);
  assert.match(pack,/Owner notes\nApply before linking\./);
  assert.doesNotMatch(pack,/MORryde Jeep/);
+ const links=buildPartnerApplicationLinks({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z"});
+ assert.match(links,/Jeep Build Lab partner application links/);
+ assert.match(links,/Scope: 2 selected parts \(Tires, Suspension\)/);
+ assert.match(links,/1\. Tire Rack - Affiliate/);
+ assert.match(links,/Link: https:\/\/www\.tirerack\.com\/affiliate/);
+ assert.match(links,/Turn 14 Distribution - Distributor/);
+ assert.doesNotMatch(links,/MORryde Jeep/);
 });
 test("totals multiply individual wheels/tires, count kits once, and include allowances",()=>{
  const s=base();s.picks={wheels:"method-MR70178550900",tires:"nitto-217020",lift:"lift-16400-0073"};s.labor=50000;s.extras=30000;

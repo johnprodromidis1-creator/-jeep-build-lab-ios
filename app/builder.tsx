@@ -14,7 +14,7 @@ import {baseCatalog,categories,categoryNames,initialState,stateSchema,selectedPa
 import {allCatalogFilter,dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters,priceBandOptions} from "@/lib/catalog-filters";
 import {allGarageFilter,filterGarageBuilds,garageConflictCount,garageConflictOptions,garageSortOptions,hasGarageFilter,type GarageSort} from "@/lib/garage-filters";
 import {buildShopBrief} from "@/lib/shop-brief";
-import {commerceDisclosure,noActiveCommerceDisclosure,partnerPrograms,commerceOffersForPart,commerceSummaryForPart,relationshipNames,commerceStatusNames,safeCommerceUrl,buildCommerceApplicationPack} from "@/lib/commerce";
+import {commerceDisclosure,noActiveCommerceDisclosure,partnerPrograms,commerceOffersForPart,commerceSummaryForPart,relationshipNames,commerceStatusNames,safeCommerceUrl,buildCommerceApplicationPack,buildPartnerApplicationLinks,partnerProgramsForBuild} from "@/lib/commerce";
 
 import {costPlan,groupParts,stageFor,stageNames,type Stage} from '@/lib/planning';
 import {useBuildDraft,type Draft} from './components/use-build-draft';
@@ -111,6 +111,7 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
  },dirty||!!id||touchedDraft);
  const selected=useMemo(()=>selectedParts(state,parts),[state,parts]);
  const issues=useMemo(()=>buildIssues(state,parts),[state,parts]);
+ const relevantPartnerPrograms=useMemo(()=>partnerProgramsForBuild(state,parts),[state,parts]);
  const selectedCommercePathCount=useMemo(()=>selected.reduce((count,part)=>count+commerceOffersForPart(part).length,0),[selected]);
  const {subtotal,total}=totalFor(state,parts);
  const plan=costPlan(state,parts);
@@ -184,6 +185,9 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
  async function exportCommercePack(){
   try{await exportFile('jeep-build-commerce-pack.txt',buildCommerceApplicationPack({name,notes,state,parts}),'text/plain;charset=utf-8');}catch(e){toast.error(e instanceof Error?e.message:'The commerce pack could not be exported.');}
  }
+ async function exportPartnerLinks(){
+  try{await exportFile('jeep-build-partner-links.txt',buildPartnerApplicationLinks({name,notes,state,parts}),'text/plain;charset=utf-8');}catch(e){toast.error(e instanceof Error?e.message:'The partner links could not be exported.');}
+ }
  async function exportSavedShopBrief(build:SavedBuild){
   try{await exportFile('jeep-build-shop-brief.txt',buildShopBrief({name:build.name,notes:build.notes,state:build.state,parts}),'text/plain;charset=utf-8');}catch(e){toast.error(e instanceof Error?e.message:'The shop brief could not be exported.');}
  }
@@ -249,7 +253,7 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
  <div className="totals"><div><span>Buy now · parts</span><span>{money(plan.now)}</span></div><div><span>Buy later · parts</span><span>{money(plan.later)}</span></div><div><span>Labor & other allowances</span><span>{money(plan.allowances)}</span></div>{plan.covered>0&&<div><span>Owned / installed · excluded</span><span>{money(plan.covered)}</span></div>}<div className="grand-total"><span>Upgrades left to fund</span><strong aria-live="polite">{money(plan.remaining)}</strong></div></div>
  {state.budget>0&&<div className={`budget-meter ${plan.remaining>state.budget?'over':''}`}><div><span style={{width:Math.min(plan.remaining/state.budget*100,100)+'%'}}/></div><p>{plan.remaining>state.budget?`${money(plan.remaining-state.budget)} over upgrade budget`:`${money(state.budget-plan.remaining)} left in your upgrade budget`}</p></div>}
  <p className="price-note">Allowances start at $0. Enter quotes for labor, tax, shipping and supporting parts to include them. Owned and installed parts use catalog value, not your original purchase price.</p>
- <details className="commerce-summary"><summary><Handshake size={15}/>Partner commerce</summary><p>{commerceDisclosure} {noActiveCommerceDisclosure}</p><div className="commerce-stats"><span>{partnerPrograms.length} programs</span><span>{selected.length?`${selectedCommercePathCount} paths for selected parts`:"Select parts to see paths"}</span></div><div className="commerce-directory">{partnerPrograms.map(program=><a key={program.id} className="commerce-link" href={program.url} target="_blank" rel="noopener noreferrer" onClick={e=>{if(isNative()){e.preventDefault();void openCommerceLink(program.url);}}}><strong>{program.name}</strong><small>{relationshipNames[program.relationship]} · {program.note}</small><em>{commerceStatusNames[program.status]}</em><ArrowUpRight size={13}/></a>)}</div></details>
+ <details className="commerce-summary"><summary><Handshake size={15}/>Partner commerce</summary><p>{commerceDisclosure} {noActiveCommerceDisclosure}</p><div className="commerce-stats"><span>{partnerPrograms.length} programs listed</span><span>{selected.length?`${relevantPartnerPrograms.length} applications for selected parts`:"Select parts to narrow applications"}</span><span>{selected.length?`${selectedCommercePathCount} source and partner paths`:"Full directory shown"}</span></div><p className="commerce-directory-note">{selected.length?`Showing programs that match this build's selected categories. Add or remove parts to change the application list.`:"Pick at least one part to focus this directory on the programs that match your build."}</p><div className="commerce-actions"><Button variant="outline" size="sm" onClick={exportPartnerLinks}><ClipboardList size={14}/>{isNative()?'Share partner links':'Download partner links'}</Button></div><div className="commerce-directory">{relevantPartnerPrograms.map(program=><a key={program.id} className="commerce-link" href={program.url} target="_blank" rel="noopener noreferrer" onClick={e=>{if(isNative()){e.preventDefault();void openCommerceLink(program.url);}}}><strong>{program.name}</strong><small>{relationshipNames[program.relationship]} · {program.note}</small><em>{commerceStatusNames[program.status]}</em><ArrowUpRight size={13}/></a>)}</div></details>
  <details className="purchase-plan"><summary>Vehicle cost & purchase plan</summary><CashField label="Vehicle price or quote (optional)" value={state.vehicleCost??0} onChange={n=>update({vehicleCost:n})}/><p>Leave $0 if you already own your Jeep. Enter your own quote; this is not factory MSRP.</p><dl><div><dt>Buy now + all allowances</dt><dd>{money(plan.dueNow)}</dd></div><div><dt>Buy later</dt><dd>{money(plan.later)}</dd></div><div><dt>Vehicle + unfunded upgrades</dt><dd>{money(plan.project)}</dd></div></dl><p>Allowances are reserved in the first phase. “Buy now” is a budget plan, not a verified installation sequence.</p></details>
  {lastSavedTotal!==null&&!dirty&&total!==lastSavedTotal&&<p className="inline-warning">Your full selection estimate changed by {money(total-lastSavedTotal)} since this version was saved. Current prices are used above.</p>}
  <Button className="compare-full" variant="outline" onClick={()=>{setCompareOpen(true);void loadGarage();}}><GitCompareArrows size={16}/>Compare with a saved build</Button>

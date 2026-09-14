@@ -12,7 +12,7 @@ else
   project=ios/App/App.xcodeproj
   scheme=App
   app_name=App
-  launch_args=()
+  launch_args=(--admob-verification)
 fi
 xcrun simctl list devices available -j > build/admob/devices.json
 device=$(python3 - <<'PY'

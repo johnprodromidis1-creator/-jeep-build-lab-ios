@@ -288,6 +288,181 @@
     "notes": "Nominal size only. Confirm approved rim width, load rating, clearance and spare-carrier capacity with your installer."
   },
   {
+    "id": "nitto-217670-4xe",
+    "category": "tires",
+    "brand": "Nitto",
+    "name": "Ridge Grappler",
+    "variant": "275/55R20",
+    "reference": "MPN 217670 · Catalog 92622-4049",
+    "priceCents": 34000,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/nitto/ridge-grappler-tire/275/55r20-217670",
+    "checkedAt": "2026-09-13",
+    "yearFrom": 2024,
+    "yearTo": 2024,
+    "trims": [
+      "Sahara"
+    ],
+    "powertrains": [
+      "4xe"
+    ],
+    "specs": {
+      "diameter": 32,
+      "rim": 20
+    },
+    "notes": "20-inch Ridge Grappler option sourced for the first 2024 Sahara 4xe batch. Confirm approved rim width, tire load rating, clearance, TPMS and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "nitto-217330-4xe",
+    "category": "tires",
+    "brand": "Nitto",
+    "name": "Ridge Grappler",
+    "variant": "LT275/55R20",
+    "reference": "MPN 217330 · Catalog 92622-4050",
+    "priceCents": 34900,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/nitto/ridge-grappler-tire/lt275/55r20-217330",
+    "checkedAt": "2026-09-13",
+    "yearFrom": 2024,
+    "yearTo": 2024,
+    "trims": [
+      "Sahara"
+    ],
+    "powertrains": [
+      "4xe"
+    ],
+    "specs": {
+      "diameter": 32,
+      "rim": 20
+    },
+    "notes": "20-inch Ridge Grappler option sourced for the first 2024 Sahara 4xe batch. Confirm approved rim width, tire load rating, clearance, TPMS and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "nitto-217630-4xe",
+    "category": "tires",
+    "brand": "Nitto",
+    "name": "Ridge Grappler",
+    "variant": "275/60R20",
+    "reference": "MPN 217630 · Catalog 92622-4051",
+    "priceCents": 34300,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/nitto/ridge-grappler-tire/275/60r20-217630",
+    "checkedAt": "2026-09-13",
+    "yearFrom": 2024,
+    "yearTo": 2024,
+    "trims": [
+      "Sahara"
+    ],
+    "powertrains": [
+      "4xe"
+    ],
+    "specs": {
+      "diameter": 33,
+      "rim": 20
+    },
+    "notes": "20-inch Ridge Grappler option sourced for the first 2024 Sahara 4xe batch. Confirm approved rim width, tire load rating, clearance, TPMS and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "nitto-217320-4xe",
+    "category": "tires",
+    "brand": "Nitto",
+    "name": "Ridge Grappler",
+    "variant": "LT275/60R20",
+    "reference": "MPN 217320 · Catalog 92622-4052",
+    "priceCents": 37100,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/nitto/ridge-grappler-tire/lt275/60r20-217320",
+    "checkedAt": "2026-09-13",
+    "yearFrom": 2024,
+    "yearTo": 2024,
+    "trims": [
+      "Sahara"
+    ],
+    "powertrains": [
+      "4xe"
+    ],
+    "specs": {
+      "diameter": 33,
+      "rim": 20
+    },
+    "notes": "20-inch Ridge Grappler option sourced for the first 2024 Sahara 4xe batch. Confirm approved rim width, tire load rating, clearance, TPMS and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "nitto-217150-4xe",
+    "category": "tires",
+    "brand": "Nitto",
+    "name": "Ridge Grappler",
+    "variant": "LT275/65R20",
+    "reference": "MPN 217150 · Catalog 92622-4053",
+    "priceCents": 44500,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/nitto/ridge-grappler-tire/lt275/65r20-217150",
+    "checkedAt": "2026-09-13",
+    "yearFrom": 2024,
+    "yearTo": 2024,
+    "trims": [
+      "Sahara"
+    ],
+    "powertrains": [
+      "4xe"
+    ],
+    "specs": {
+      "diameter": 34,
+      "rim": 20
+    },
+    "notes": "20-inch Ridge Grappler option sourced for the first 2024 Sahara 4xe batch. Confirm approved rim width, tire load rating, clearance, TPMS and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "nitto-217310-4xe",
+    "category": "tires",
+    "brand": "Nitto",
+    "name": "Ridge Grappler",
+    "variant": "33×11.50R20LT",
+    "reference": "MPN 217310 · Catalog 92622-4039",
+    "priceCents": 46300,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/nitto/ridge-grappler-tire/33x11.50r20lt-217310",
+    "checkedAt": "2026-09-13",
+    "yearFrom": 2024,
+    "yearTo": 2024,
+    "trims": [
+      "Sahara"
+    ],
+    "powertrains": [
+      "4xe"
+    ],
+    "specs": {
+      "diameter": 33,
+      "rim": 20
+    },
+    "notes": "20-inch Ridge Grappler option sourced for the first 2024 Sahara 4xe batch. Confirm approved rim width, tire load rating, clearance, TPMS and spare-carrier capacity with your installer."
+  },
+  {
+    "id": "nitto-217290-4xe",
+    "category": "tires",
+    "brand": "Nitto",
+    "name": "Ridge Grappler",
+    "variant": "35×11.50R20LT",
+    "reference": "MPN 217290 · Catalog 92622-4041",
+    "priceCents": 48700,
+    "retailer": "Quadratec",
+    "url": "https://www.quadratec.com/p/nitto/ridge-grappler-tire/35x11.50r20lt-217290",
+    "checkedAt": "2026-09-13",
+    "yearFrom": 2024,
+    "yearTo": 2024,
+    "trims": [
+      "Sahara"
+    ],
+    "powertrains": [
+      "4xe"
+    ],
+    "specs": {
+      "diameter": 35,
+      "rim": 20
+    },
+    "notes": "20-inch Ridge Grappler option sourced for the first 2024 Sahara 4xe batch. Confirm approved rim width, tire load rating, clearance, TPMS and spare-carrier capacity with your installer."
+  },
+  {
     "id": "bfg-68284",
     "category": "tires",
     "brand": "BFGoodrich",
@@ -699,9 +874,9 @@
     "priceCents": 24999,
     "retailer": "Quadratec",
     "url": "https://www.quadratec.com/p/quadratec/morphic-ii-wheel-wrangler-jl-jk-gladiator-jt",
-    "checkedAt": "2026-09-08",
+    "checkedAt": "2026-09-13",
     "yearFrom": 2018,
-    "yearTo": 2023,
+    "yearTo": 2026,
     "trims": [
       "Sport",
       "Sahara",
@@ -713,7 +888,11 @@
       "backspacing": 5.2,
       "finish": "charcoal"
     },
-    "notes": "Retailer lists Wrangler JL. Confirm backspacing meets your lift and tire requirements. Preview uses a generic wheel illustration."
+    "notes": "Quadratec lists this 17x8.5 wheel for 2018-2026 JL Unlimited four-door. Confirm offset, brake clearance, load rating, lug hardware, tire pairing and spare fit before purchase.",
+    "powertrains": [
+      "gas",
+      "4xe"
+    ]
   },
   {
     "id": "morphic-92615-3570",
@@ -725,9 +904,9 @@
     "priceCents": 24999,
     "retailer": "Quadratec",
     "url": "https://www.quadratec.com/p/quadratec/morphic-ii-wheel-wrangler-jl-jk-gladiator-jt",
-    "checkedAt": "2026-09-08",
+    "checkedAt": "2026-09-13",
     "yearFrom": 2018,
-    "yearTo": 2023,
+    "yearTo": 2026,
     "trims": [
       "Sport",
       "Sahara",
@@ -739,7 +918,11 @@
       "backspacing": 5.2,
       "finish": "charcoal"
     },
-    "notes": "Retailer lists Wrangler JL. Confirm backspacing meets your lift and tire requirements. Preview uses a generic wheel illustration."
+    "notes": "Quadratec lists this 17x8.5 wheel for 2018-2026 JL Unlimited four-door. Confirm offset, brake clearance, load rating, lug hardware, tire pairing and spare fit before purchase.",
+    "powertrains": [
+      "gas",
+      "4xe"
+    ]
   },
   {
     "id": "morphic-92615-3830",
@@ -751,9 +934,9 @@
     "priceCents": 24999,
     "retailer": "Quadratec",
     "url": "https://www.quadratec.com/p/quadratec/morphic-ii-wheel-wrangler-jl-jk-gladiator-jt",
-    "checkedAt": "2026-09-08",
+    "checkedAt": "2026-09-13",
     "yearFrom": 2018,
-    "yearTo": 2023,
+    "yearTo": 2026,
     "trims": [
       "Sport",
       "Sahara",
@@ -765,7 +948,11 @@
       "backspacing": 5.2,
       "finish": "charcoal"
     },
-    "notes": "Retailer lists Wrangler JL. Confirm backspacing meets your lift and tire requirements. Preview uses a generic wheel illustration."
+    "notes": "Quadratec lists this 17x8.5 wheel for 2018-2026 JL Unlimited four-door. Confirm offset, brake clearance, load rating, lug hardware, tire pairing and spare fit before purchase.",
+    "powertrains": [
+      "gas",
+      "4xe"
+    ]
   },
   {
     "id": "lift-16400-0071",
@@ -926,6 +1113,30 @@
       "maxTireRubicon": 37
     },
     "notes": "Retailer lists 35-inch Sport/Sahara or 37-inch Rubicon with aftermarket wheels. This planner excludes Xtreme Recon, 4xe, diesel and 392."
+  },
+  {
+    "id": "mopar-77072522ae-4xe",
+    "category": "lift",
+    "brand": "Mopar",
+    "name": "Jeep Performance Parts Lift Suspension Kit",
+    "variant": "2-inch · 2024 Sahara 4xe · Bilstein reservoir shocks",
+    "reference": "MPN 77072522AE",
+    "priceCents": 183540,
+    "retailer": "Mopar eStore",
+    "url": "https://store.mopar.com/v-2024-jeep-wrangler--sahara-4xe--2-0l-l4-electric-gas/performance--suspension-upgrades-and-components",
+    "checkedAt": "2026-09-13",
+    "yearFrom": 2024,
+    "yearTo": 2024,
+    "trims": [
+      "Sahara"
+    ],
+    "powertrains": [
+      "4xe"
+    ],
+    "specs": {
+      "lift": 2
+    },
+    "notes": "Mopar eStore lists this kit under 2024 Wrangler Sahara 4xe 2.0L PHEV and describes a 2-inch lift with Bilstein reservoir shocks. Confirm alignment, wheel/tire clearance, warranty effects and any supporting hardware with a Jeep-capable installer."
   },
   {
     "id": "qrc-12057-0140",

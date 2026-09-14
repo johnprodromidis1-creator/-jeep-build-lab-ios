@@ -1,6 +1,6 @@
 "use client";
 import {useEffect,useId,useMemo,useRef,useState} from "react";
-import {Wrench,ArrowUpRight,Plus,Trash2,Save,Share2,Printer,RotateCcw,Search,SlidersHorizontal,ChevronRight,TriangleAlert,Info,FolderOpen,ArrowLeft,LoaderCircle,Settings2,CircleDot,MoveVertical,Shield,Anchor,PanelTop,CheckCheck,Undo2,GitCompareArrows,Tag,DollarSign,Ruler,X} from "lucide-react";
+import {Wrench,ArrowUpRight,Plus,Trash2,Save,Share2,Printer,RotateCcw,Search,SlidersHorizontal,ChevronRight,TriangleAlert,Info,FolderOpen,ArrowLeft,LoaderCircle,Settings2,CircleDot,MoveVertical,Shield,Anchor,PanelTop,CheckCheck,Undo2,GitCompareArrows,Tag,DollarSign,Ruler,X,FileText} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
@@ -13,6 +13,7 @@ import {toast,Toaster} from "sonner";
 import {baseCatalog,categories,categoryNames,initialState,stateSchema,selectedParts,totalFor,quantityFor,fitsVehicle,buildIssues,partCompatibility,partCoverage,defaultEquipment,vehicleDescription,powertrainNames,money,encodeSharedBuildState,decodeSharedBuildStatePayload,optionAddsBuildError,type BuildState,type Part,type Category,type SavedBuild,type Trim,type Powertrain} from "@/lib/model";
 import {allCatalogFilter,dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters,priceBandOptions} from "@/lib/catalog-filters";
 import {allGarageFilter,filterGarageBuilds,garageConflictCount,garageConflictOptions,garageSortOptions,hasGarageFilter,type GarageSort} from "@/lib/garage-filters";
+import {buildShopBrief} from "@/lib/shop-brief";
 
 import {costPlan,groupParts,stageFor,stageNames,type Stage} from '@/lib/planning';
 import {useBuildDraft,type Draft} from './components/use-build-draft';
@@ -165,6 +166,9 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
   const rows=[["Jeep Build Lab",name],["Vehicle",vehicleText],["Category","Brand","Product","Variant","Reference","Quantity","Unit USD","Line USD","Source","Price date","Price type","Purchase stage"],...selected.map(p=>[categoryNames[p.category],p.brand,p.name,p.variant,p.reference,quantityFor(p,state),p.priceCents/100,p.priceCents*quantityFor(p,state)/100,p.url,p.checkedAt,p.customPrice?"Personal price":"Source snapshot",stageNames[stageFor(state,p.category)]]),["Parts subtotal",subtotal/100],["Labor allowance",state.labor/100],["Tax, shipping and extras allowance",state.extras/100],["Full selection value incl. allowances",total/100],["Already owned / installed selection value",plan.covered/100],["Buy now parts",plan.now/100],["Buy later parts",plan.later/100],["Upgrades left to fund incl. allowances",plan.remaining/100],["Entered vehicle price",state.vehicleCost/100],["Vehicle plus unfunded upgrades",plan.project/100],["Notes",notes],...issues.map(i=>["Fitment "+i.level,i.message])];
   const csv=rows.map(row=>row.map(v=>'"'+String(v).replace(/^[=+@-]/,"'$&").replaceAll('"','""')+'"').join(",")).join("\r\n");try{await exportFile('jeep-build-parts.csv','\uFEFF'+csv,'text/csv;charset=utf-8');}catch(e){toast.error(e instanceof Error?e.message:'The parts list could not be exported.');}
  }
+ async function exportShopBrief(){
+  try{await exportFile('jeep-build-shop-brief.txt',buildShopBrief({name,notes,state,parts}),'text/plain;charset=utf-8');}catch(e){toast.error(e instanceof Error?e.message:'The shop brief could not be exported.');}
+ }
  const confirmTitle=confirm?.kind==="delete"?"Delete this saved build?":confirm?.kind==="starter"?"Load the 4xe starter build?":"Leave the current build?";
  const confirmDescription=confirm?.kind==="delete"?`“${confirm.build?.name}” will be removed from your garage.`:confirm?.kind==="starter"?"This replaces your current draft with a sample 2024 Sahara 4xe plan. Save a named version first if you want to keep your current draft. Other saved builds stay in your garage.":"Continuing replaces your current draft. Save a named version first if you want to keep it. Other saved builds stay in your garage.";
  const confirmAction=busyDelete?"Deleting…":confirm?.kind==="delete"?"Delete build":confirm?.kind==="starter"?"Load starter build":"Continue";
@@ -220,6 +224,7 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
  <Button className="compare-full" variant="outline" onClick={()=>{setCompareOpen(true);void loadGarage();}}><GitCompareArrows size={16}/>Compare with a saved build</Button>
  <Button className="save-full" onClick={()=>{setSaveCopy(false);setSaveOpen(true);}}><Save size={16}/>{id?"Save changes":"Save to my garage"}</Button>
  <div className="export-buttons"><Button variant="ghost" onClick={share}><Share2 size={15}/>Share build</Button>{!isNative()&&<Button variant="ghost" onClick={()=>window.print()}><Printer size={15}/>Print list</Button>}</div>
+ <button type="button" className="csv-link" onClick={exportShopBrief}>{isNative()?'Share shop brief':'Download shop brief'}<FileText size={13}/></button>
  <button type="button" className="csv-link" onClick={exportCSV}>{isNative()?'Export parts list':'Download parts CSV'}<ArrowUpRight size={13}/></button>
  </div>
  </aside></div>

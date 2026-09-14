@@ -102,3 +102,11 @@ test("garage management includes search and fitment filters", async () => {
   assert.match(source, /Filter garage by fitment status/);
   assert.match(source, /Clear garage filters/);
 });
+
+test("builder surfaces the shop brief export", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+
+  assert.match(source, /buildShopBrief/);
+  assert.match(source, /Download shop brief/);
+  assert.match(source, /Share shop brief/);
+});

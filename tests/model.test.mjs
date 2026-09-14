@@ -43,9 +43,11 @@ const catalog=await module("app/api/catalog/route.ts","catalog");
 const decimalInput=await module("lib/decimal-input.ts","decimal-input");
 const catalogFilters=await module("lib/catalog-filters.ts","catalog-filters");
 const garageFilters=await module("lib/garage-filters.ts","garage-filters");
+const shopBrief=await module("lib/shop-brief.ts","shop-brief");
 const {initialState,baseCatalog,totalFor,buildIssues,stateSchema,fitsVehicle,partCompatibility,publicBuildState,encodeSharedBuildState,decodeSharedBuildStatePayload,buildErrorsForOption,optionAddsBuildError}=model;
 const {dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
+const {buildShopBrief}=shopBrief;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
 const badJson=(path,method="POST")=>new Request("https://test.local/api/"+path,{method,headers:{"oai-authenticated-user-id":"alice",origin:"https://test.local","Content-Type":"application/json"},body:"{"});
@@ -163,6 +165,23 @@ test("garage filters search saved builds by vehicle, notes, parts, status and va
  assert.deepEqual(filterGarageBuilds(builds,baseCatalog,{query:"",powertrain:allGarageFilter,conflicts:"needs-review",sort:"value-desc"}).map(b=>b.id),["gas-conflict"]);
  assert.deepEqual(filterGarageBuilds(builds,baseCatalog,{query:"",powertrain:allGarageFilter,conflicts:allGarageFilter,sort:"value-desc"}).map(b=>b.id),["hybrid","gas-conflict","stock"]);
  assert.deepEqual(filterGarageBuilds(builds,baseCatalog,{query:"",powertrain:allGarageFilter,conflicts:allGarageFilter,sort:"updated-asc"}).map(b=>b.id),["gas-conflict","stock","hybrid"]);
+});
+test("shop brief export groups staged parts, totals, source links and fitment notes",()=>{
+ const state=base();state.picks={tires:"nitto-217020",lift:"aev-spacer"};state.stages={tires:"now",lift:"owned"};state.labor=12500;state.extras=5000;
+ const brief=buildShopBrief({name:"Trail quote",notes:"Ask about alignment timing.",state,parts:baseCatalog,generatedAt:"2026-09-14T12:00:00.000Z"});
+ assert.match(brief,/Jeep Build Lab shop brief/);
+ assert.match(brief,/Build: Trail quote/);
+ assert.match(brief,/Generated: 2026-09-14/);
+ assert.match(brief,/2021 Wrangler JL Unlimited 4-door Sport/);
+ assert.match(brief,/Buy now\n- Tires: Nitto Ridge Grappler/);
+ assert.match(brief,/Already owned\n- Suspension: AEV 2/);
+ assert.match(brief,/Price: \$432.00 x 5 = \$2,160.00/);
+ assert.match(brief,/Upgrades left to fund: \$2,335.00/);
+ assert.match(brief,/Source: Quadratec - https:\/\/www\.quadratec\.com\/p\/nitto\/ridge-grappler-tire/);
+ assert.match(brief,/Fitment conflicts \(0\)/);
+ assert.match(brief,/No blocking fitment conflicts detected/);
+ assert.match(brief,/Shop confirmation checks \([1-9]/);
+ assert.match(brief,/Owner notes\nAsk about alignment timing\./);
 });
 test("D1 route round-trip, price isolation, update ownership and delete ownership",async()=>{
  assert.equal((await api.GET(req(null))).status,401);

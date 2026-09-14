@@ -28,7 +28,7 @@ Codemagic is the selected Mac build service. The first native simulator compile 
 | 3 | Compare Test B with Test A, switch differing-parts filter | Correct option and cost differences | Pending |
 | 4 | Mark one part owned and another buy later | Owned excluded from amount left to fund; later still included in final fitment checks | Pending |
 | 5 | Share build link | Share sheet opens; copied/shared link contains chosen configuration and no build name or private notes | Pending |
-| 6 | Export parts CSV and backup JSON to Files | Both files open and contain the intended quantities and records | Pending |
+| 6 | Export shop brief, parts CSV and backup JSON to Files | All files open and contain the intended quantities, notes and records | Pending |
 | 7 | Modify garage, restore the backup after confirming | Original backed-up records restored; newer device records replaced only after confirmation | Pending |
 | 8 | Delete app data after exporting a backup | Garage and price overrides cleared; relaunch does not resurrect them | Pending |
 | 9 | Open retailer page online and return | Correct retailer variant page; build preserved | Pending |

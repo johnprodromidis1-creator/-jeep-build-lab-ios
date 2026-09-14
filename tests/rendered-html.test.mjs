@@ -124,6 +124,17 @@ test("builder surfaces the shop brief export", async () => {
   assert.match(source, /Export shop brief for/);
 });
 
+test("garage cards can export saved-build parts CSV files", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+
+  assert.match(source, /function buildPartsCsv\(\{name,notes,state,parts\}/);
+  assert.match(source, /function exportSavedCSV\(build:SavedBuild\)/);
+  assert.match(source, /buildPartsCsv\(\{name:build\.name,notes:build\.notes,state:build\.state,parts\}\)/);
+  assert.match(source, /Export parts CSV for/);
+  assert.match(source, /FileSpreadsheet/);
+  assert.match(source, /text\/csv;charset=utf-8/);
+});
+
 test("comparison dialog can open the selected saved build", async () => {
   const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
   const dialog = await readFile(new URL("../app/components/build-comparison.tsx", import.meta.url), "utf8");

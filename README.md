@@ -18,7 +18,7 @@ The iOS build destination is [johnprodromidis1-creator/-jeep-build-lab-ios](http
 - Buy now/later/owned/installed stages, remaining upgrade budget and optional user-entered vehicle price. All allowances are reserved in the first phase; installation sequence is not verified.
 - Owner-scoped D1 draft recovery with debounced writes and revision checks to prevent stale tab/device overwrites; explicit failure/retry states. Named garage snapshots remain separate.
 - Twenty configuration undo steps per session. Fitment conflicts appear above the preview with review links, including retained-tire/new-wheel mismatches.
-- Partner-commerce directory for source, affiliate, reseller, dealer and distributor paths, narrowed to selected build parts with exportable application links. No active affiliate tracking, paid APIs, scraping pipeline, wholesale checkout or dropship fulfillment.
+- Partner-commerce directory for source, affiliate, reseller, dealer and distributor paths, narrowed to selected build parts with selected source links and exportable application links. No active affiliate tracking, paid APIs, scraping pipeline, wholesale checkout or dropship fulfillment.
 
 ## Catalog
 lib/catalog.json contains variant records and dated source URLs. Facts were manually checked September 8 and September 13, 2026. Prices are snapshots; no stock status promised. Descriptions are original. Generated illustrations are not branded product photographs. The September 13 update adds explicit powertrain fitment, seven 20-inch Ridge Grappler options for the 2024 Sahara 4xe path, a Mopar 4xe lift kit and documented Morphic wheel coverage through current JL Unlimited listings.

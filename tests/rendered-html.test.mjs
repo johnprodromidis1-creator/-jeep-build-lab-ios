@@ -151,6 +151,9 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /Download partner links/);
   assert.match(source, /applications for selected parts/);
   assert.match(source, /Select parts to narrow applications/);
+  assert.match(source, /Selected source links/);
+  assert.match(source, /aria-label="Selected source links"/);
+  assert.match(source, /Source link/);
   assert.match(source, /Export commerce pack for/);
   assert.match(source, /ClipboardList/);
   assert.match(source, /partnerPrograms\.length/);

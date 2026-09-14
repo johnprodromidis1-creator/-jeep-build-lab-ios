@@ -103,6 +103,17 @@ test("garage management includes search and fitment filters", async () => {
   assert.match(source, /Clear garage filters/);
 });
 
+test("garage cards can duplicate a saved build without opening the current draft", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+
+  assert.match(source, /function duplicateSavedBuild\(build:SavedBuild\)/);
+  assert.match(source, /copiedBuildName\(build\.name\)/);
+  assert.match(source, /state:structuredClone\(build\.state\)/);
+  assert.match(source, /setGarage\(v=>\[\{\.\.\.build,id:saved\.id,name:copyName,updatedAt:new Date\(\)\.toISOString\(\),savedTotal:saved\.savedTotal\},\.\.\.v\]\)/);
+  assert.match(source, /Duplicate saved build/);
+  assert.match(source, /CopyPlus/);
+});
+
 test("builder surfaces the shop brief export", async () => {
   const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
 

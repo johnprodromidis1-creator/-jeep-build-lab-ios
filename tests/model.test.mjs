@@ -42,8 +42,10 @@ const accountData=await module("app/api/data/route.ts","data");
 const catalog=await module("app/api/catalog/route.ts","catalog");
 const decimalInput=await module("lib/decimal-input.ts","decimal-input");
 const catalogFilters=await module("lib/catalog-filters.ts","catalog-filters");
+const garageFilters=await module("lib/garage-filters.ts","garage-filters");
 const {initialState,baseCatalog,totalFor,buildIssues,stateSchema,fitsVehicle,partCompatibility,publicBuildState,encodeSharedBuildState,decodeSharedBuildStatePayload,buildErrorsForOption,optionAddsBuildError}=model;
 const {dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
+const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
 const badJson=(path,method="POST")=>new Request("https://test.local/api/"+path,{method,headers:{"oai-authenticated-user-id":"alice",origin:"https://test.local","Content-Type":"application/json"},body:"{"});
@@ -144,6 +146,23 @@ test("catalog filters combine brand, line price, search terms and dimensions",()
  assert.equal(matchesCatalogFilters(tire,state,{category:"tires",query:"ridge",brand:"Nitto",price:"1000-2500",dimension:"rim:17"}),false);
  const options=dimensionFilterOptions(baseCatalog.filter(p=>p.category==="tires"),"tires");
  assert.ok(options.some(option=>option.value==="rim:20"&&/20-inch/.test(option.label)));
+});
+test("garage filters search saved builds by vehicle, notes, parts, status and value",()=>{
+ const mismatch={...base(),trim:"Sahara",stockRim:18,picks:{wheels:"method-MR70178550900"}};
+ const hybrid={...base(),year:2024,trim:"Sahara",powertrain:"4xe",stockRim:20,stockTire:32,picks:{tires:"nitto-217310-4xe",lift:"mopar-77072522ae-4xe"},stages:{tires:"now",lift:"later"}};
+ const stock=base();
+ const builds=[
+  {id:"gas-conflict",name:"17s on Sahara",notes:"Needs matching tires",state:mismatch,updatedAt:"2026-09-10T10:00:00.000Z",savedTotal:123000},
+  {id:"hybrid",name:"Sahara 4xe beach plan",notes:"Ridge Grappler and Mopar lift",state:hybrid,updatedAt:"2026-09-13T10:00:00.000Z",savedTotal:415040},
+  {id:"stock",name:"Baseline daily",notes:"No upgrades yet",state:stock,updatedAt:"2026-09-12T10:00:00.000Z",savedTotal:0},
+ ];
+ assert.equal(hasGarageFilter({query:"",powertrain:allGarageFilter,conflicts:allGarageFilter}),false);
+ assert.ok(garageSearchText(builds[1],baseCatalog).includes("ridge grappler"));
+ assert.equal(garageConflictCount(builds[0],baseCatalog),1);
+ assert.deepEqual(filterGarageBuilds(builds,baseCatalog,{query:"ridge mopar",powertrain:"4xe",conflicts:"clean",sort:"updated-desc"}).map(b=>b.id),["hybrid"]);
+ assert.deepEqual(filterGarageBuilds(builds,baseCatalog,{query:"",powertrain:allGarageFilter,conflicts:"needs-review",sort:"value-desc"}).map(b=>b.id),["gas-conflict"]);
+ assert.deepEqual(filterGarageBuilds(builds,baseCatalog,{query:"",powertrain:allGarageFilter,conflicts:allGarageFilter,sort:"value-desc"}).map(b=>b.id),["hybrid","gas-conflict","stock"]);
+ assert.deepEqual(filterGarageBuilds(builds,baseCatalog,{query:"",powertrain:allGarageFilter,conflicts:allGarageFilter,sort:"updated-asc"}).map(b=>b.id),["gas-conflict","stock","hybrid"]);
 });
 test("D1 route round-trip, price isolation, update ownership and delete ownership",async()=>{
  assert.equal((await api.GET(req(null))).status,401);

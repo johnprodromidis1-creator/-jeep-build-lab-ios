@@ -186,8 +186,13 @@
 .empty-state p{font-size:14px;margin:7px 0 20px}
 .garage-empty{padding:85px 20px;margin-bottom:120px}
 .back-builder{margin:0 0 14px -12px}
+.garage-tools{display:grid;grid-template-columns:minmax(220px,1fr) repeat(3,minmax(140px,178px)) auto;gap:10px;align-items:start;margin:0 0 10px}
+.garage-tools [data-slot=select-trigger]{width:100%;min-height:42px;background:#1b2225;font-size:12px;border-color:#354248;gap:7px}
+.garage-clear{justify-content:center;color:#bbcbd3}
+.garage-count{font-size:12px;color:#a1afb5;margin:0 0 16px}
 .garage-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:23px}
 .garage-card{border:1px solid #3b505b;border-radius:10px;overflow:hidden;background:#1d282e}
+.garage-card.needs-review{border-color:#70513f}
 .garage-preview{aspect-ratio:2.5;overflow:hidden;background:radial-gradient(ellipse,#43515a,#1d292f)}
 .garage-preview .jeep-canvas{margin-top:-15%}
 .garage-info{padding:22px}
@@ -336,3 +341,5 @@
 .site-footer>nav>*{min-height:44px;display:flex;align-items:center;color:#bccbd2}
 @media(max-width:600px){.topbar{flex-wrap:wrap;height:auto;min-height:110px;padding-top:max(12px,env(safe-area-inset-top));padding-bottom:12px}.brand{font-size:17px}.topbar>.brand{flex:1}.topbar>[data-slot=tabs]{order:3;width:100%}.topbar .nav-tabs{width:100%}.topbar .nav-tabs [data-slot=tabs-trigger]{flex:1}.settings-button>span{display:none}.settings-dialog[data-slot=dialog-content]{padding:19px}.settings-data p,.policy-content p{font-size:16px}.two-fields{grid-template-columns:1fr}.site-footer{align-items:flex-start}.storage-label{font-size:12px}}
 @media(max-width:760px){.catalog-toolbar{flex-wrap:wrap}.catalog-toolbar .search-box{flex-basis:100%}.catalog-toolbar [data-slot=select-trigger],.catalog-toggle{flex:1;min-width:0}.catalog-toggle{justify-content:center}}
+@media(max-width:1000px){.garage-tools{grid-template-columns:repeat(2,minmax(0,1fr))}.garage-search{grid-column:1/-1}.garage-clear{grid-column:1/-1}}
+@media(max-width:520px){.garage-tools{grid-template-columns:1fr}}

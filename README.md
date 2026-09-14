@@ -8,7 +8,7 @@ The iOS build destination is [johnprodromidis1-creator/-jeep-build-lab-ios](http
 ## Implemented
 - 51 sourced product variants across wheels, tires, suspension, front bumpers, winches and side armor.
 - Original illustrative PNG vehicle and wheel layers; tire diameter, wheel finish and lift change the preview. Accessories are list-only.
-- D1 garage with authenticated owner isolation, saved estimate snapshot, notes, save-as-copy, delete.
+- D1 garage with authenticated owner isolation, saved estimate snapshot, notes, save-as-copy, delete, search, sort and fitment-status filters.
 - D1 personal price overrides; curated specifications remain immutable.
 - Quantity-aware totals, budget, labor and other allowances, CSV export, print sheet, URL configuration.
 - Explicit year, trim, powertrain, diameter and listed tire-limit conflicts, plus unresolved installation dependencies.

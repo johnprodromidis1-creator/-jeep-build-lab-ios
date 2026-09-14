@@ -167,6 +167,17 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(commerce, /Application prep checklist/);
 });
 
+test("vehicle edits warn before selected parts become invalid", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+
+  assert.match(source, /function vehicleChangeWarning\(next:BuildState\)/);
+  assert.match(source, /function requestVehicleUpdate\(patch:Partial<BuildState>\)/);
+  assert.match(source, /setConfirm\(\{kind:"vehicle",patch,warning\}\)/);
+  assert.match(source, /Confirm vehicle change/);
+  assert.match(source, /Change vehicle/);
+  assert.match(source, /Vehicle changes that affect selected parts ask for confirmation first/);
+});
+
 test("comparison dialog can open the selected saved build", async () => {
   const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
   const dialog = await readFile(new URL("../app/components/build-comparison.tsx", import.meta.url), "utf8");

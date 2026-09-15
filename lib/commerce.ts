@@ -83,7 +83,7 @@ export const partnerPrograms = [
     status: "application-needed",
     url: "https://www.tirerack.com/affiliate",
     categories: ["wheels", "tires"],
-    note: "Commission path for tire and wheel referrals after approval and tracking setup.",
+    note: "Commission path for tire and rim referrals after approval and tracking setup.",
   },
   {
     id: "realtruck-affiliate",

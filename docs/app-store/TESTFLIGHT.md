@@ -35,8 +35,8 @@ Codemagic is the selected Mac build service. The first native simulator compile 
 | 10 | Check privacy/help, large text, VoiceOver, keyboard and rotation | Content and buttons remain usable; contact link opens mail composer | Pending |
 | 11 | Change the current build, choose New build and confirm, wait for draft saved, then close and reopen | Empty new build returns; the old draft does not reappear; named garage builds remain | Pending |
 | 12 | Clear Labor allowance, type 125.50, then tap another field; enter 32.5 as current tire diameter and finish editing | Labor becomes $125.50 and tire size 32.5; partial typing is preserved; an invalid or out-of-range entry keeps the previous value with a visible explanation | Pending |
-| 13 | Open vehicle settings, switch to 4xe, then review wheels, tires and suspension | Vehicle becomes 2024 Sahara 4xe with 20-inch starting wheels; 20-inch Ridge Grappler tires and the Mopar 4xe lift appear; gas-only parts remain excluded with reasons when Show excluded is on | Pending |
-| 14 | From a clean or saved draft, tap Load starter and confirm if prompted | 2024 Sahara 4xe starter loads with the sourced Nitto tire, Mopar 4xe lift, 20-inch starting wheels, matching spare and no fitment conflicts | Pending |
+| 13 | Open vehicle settings, switch to 4xe, then review rims, tires and suspension | Vehicle becomes 2024 Sahara 4xe with 20-inch starting rims; 20-inch Ridge Grappler tires and the Mopar 4xe lift appear; gas-only parts remain excluded with reasons when Show excluded is on | Pending |
+| 14 | From a clean or saved draft, tap Load starter and confirm if prompted | 2024 Sahara 4xe starter loads with the sourced Nitto tire, Mopar 4xe lift, 20-inch starting rims, matching spare and no fitment conflicts | Pending |
 
 On the web version, also open a shared build link before restoring a backup or deleting app data. After the confirmed action and reload, the old link must be cleared; the restored draft or an empty garage must appear as appropriate.
 

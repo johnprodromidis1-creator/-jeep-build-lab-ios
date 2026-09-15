@@ -5,7 +5,7 @@ import catalogExpansion from "./catalog-expansion";
 export const categories = ["wheels", "tires", "lift", "bumpers", "winches", "armor"] as const;
 export type Category = typeof categories[number];
 export const categoryNames: Record<Category, string> = {
-  wheels: "Wheels",
+  wheels: "Rims",
   tires: "Tires",
   lift: "Suspension",
   bumpers: "Bumpers",
@@ -229,16 +229,16 @@ export function buildIssues(s: BuildState, parts: Part[] = baseCatalog): Issue[]
   }
   const rim = wheel?.specs.rim ?? s.stockRim;
   if (tire && tire.specs.rim !== rim) {
-    issues.push({ level: "error", category: "tires", message: `Wheel diameter mismatch: ${tire.specs.rim}″ tire requires a ${tire.specs.rim}″ wheel. Your selected wheels are ${rim}″.` });
+    issues.push({ level: "error", category: "tires", message: `Rim diameter mismatch: ${tire.specs.rim}″ tire requires a ${tire.specs.rim}″ rim. Your selected rims are ${rim}″.` });
   }
   if (wheel && !tire && rim !== s.stockRim) {
-    issues.push({ level: "error", category: "tires", message: `Wheel diameter mismatch: your current tires fit ${s.stockRim}″ wheels and cannot mount on these ${rim}″ wheels. Add ${rim}″ tires or keep your current wheels.` });
+    issues.push({ level: "error", category: "tires", message: `Rim diameter mismatch: your current tires fit ${s.stockRim}″ rims and cannot mount on these ${rim}″ rims. Add ${rim}″ tires or keep your current rims.` });
   }
   const diameter = tire?.specs.diameter ?? s.stockTire;
   const max = lift ? (s.trim === "Rubicon" ? (lift.specs.maxTireRubicon ?? lift.specs.maxTire) : lift.specs.maxTire) : undefined;
   if (max && diameter > max) issues.push({ level: "error", category: "tires", message: `${diameter}″ tires exceed this lift's listed ${max}″ tire limit for your trim.` });
   if (tire && !lift && diameter > s.stockTire + .2) issues.push({ level: "note", message: "Larger-than-stock tires: clearance is unverified. Check lift, fenders, steering and suspension travel before purchase." });
-  if (lift && !wheel) issues.push({ level: "note", message: "Factory wheels with this lift need additional clearance checks; wheel changes or spacers may be required." });
+  if (lift && !wheel) issues.push({ level: "note", message: "Factory rims with this lift need additional clearance checks; rim changes or spacers may be required." });
   if (wheel || tire) issues.push({ level: "note", message: "Confirm rim width, offset/backspacing, brake clearance, tire load rating and spare-carrier capacity. Matching diameters alone does not establish fitment." });
   if (lift) issues.push({ level: "note", message: "Budget for alignment and any required geometry correction, tire calibration or gearing changes. The preview does not simulate suspension travel." });
   if (selected.some(p => p.category === "winches")) {

@@ -5,7 +5,7 @@ This update keeps the original offline planner shape and adds a narrow, source-b
 ## Implemented
 
 - Added `powertrain` to build state and catalog compatibility. Legacy saves and shared links without `powertrain` parse as `gas`.
-- Added 20-inch starting wheel support for the first 2024 Sahara 4xe workflow.
+- Added 20-inch starting rim support for the first 2024 Sahara 4xe workflow.
 - Added seven 20-inch Nitto Ridge Grappler variants for 2024 Sahara 4xe tire planning: `217670`, `217330`, `217630`, `217320`, `217150`, `217310` and `217290`.
 - Added Mopar `77072522AE`, a 2-inch Jeep Performance Parts lift kit, for the 2024 Sahara 4xe planning path.
 - Updated the Quadratec Morphic II wheel family to explicit `gas` and `4xe` powertrain coverage where the source lists 2018-2026 JL Unlimited four-door applications.
@@ -28,5 +28,5 @@ All tire records remain dimensional planning records. The app still tells the cu
 ## Still Needed
 
 - Installer review of the 2024 Sahara 4xe combinations.
-- More 4xe-specific categories beyond tires, the first lift kit and Morphic wheels.
+- More 4xe-specific categories beyond tires, the first lift kit and Morphic rims.
 - Actual iPhone TestFlight validation of the vehicle switcher, excluded-card behavior, offline garage, share sheet and retailer-return flow.

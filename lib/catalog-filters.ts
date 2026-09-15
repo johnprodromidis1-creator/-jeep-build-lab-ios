@@ -30,9 +30,9 @@ function inchTerms(label: string, value?: number) {
 export function catalogSearchText(part: Part) {
   const powertrains = part.powertrains?.map(powertrain => powertrainNames[powertrain]).join(" ") ?? powertrainNames.gas;
   const specs = [
-    inchTerms("wheel rim diameter", part.specs.rim),
+    inchTerms("rim diameter", part.specs.rim),
     inchTerms("tire diameter", part.specs.diameter),
-    inchTerms("wheel width", part.specs.width),
+    inchTerms("rim width", part.specs.width),
     part.specs.offset === undefined ? "" : `offset ${part.specs.offset} mm`,
     inchTerms("backspacing", part.specs.backspacing),
     inchTerms("lift height", part.specs.lift),
@@ -67,7 +67,7 @@ export function dimensionFilterKey(category: Category, part: Part) {
 
 export function dimensionFilterLabel(category: Category, key: string) {
   const [, raw] = key.split(":");
-  if (key.startsWith("rim:")) return category === "tires" ? `Fits ${raw}-inch wheel` : `${raw}-inch wheel`;
+  if (key.startsWith("rim:")) return category === "tires" ? `Fits ${raw}-inch rim` : `${raw}-inch rim`;
   if (key.startsWith("lift:")) return `${raw}-inch lift`;
   if (key === "winch:yes") return "Winch mount";
   if (key === "winch:no") return "No winch mount";

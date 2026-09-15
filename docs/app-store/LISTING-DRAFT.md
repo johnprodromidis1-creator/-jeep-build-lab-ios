@@ -13,13 +13,13 @@ Copyright proposal: 2026 John Prodromidis
 
 Plan your Wrangler JL upgrades with a curated parts catalog, an illustrative build preview and a running budget.
 
-Choose wheels, tires, suspension, bumpers, winches and side armor. Compare two build plans, include a matching spare, enter price quotes, and split purchases into buy now, buy later, already owned or installed.
+Choose rims, tires, suspension, bumpers, winches and side armor. Compare two build plans, include a matching spare, enter price quotes, and split purchases into buy now, buy later, already owned or installed.
 
 Save builds on your iPhone without an account. The bundled catalog, preview, calculations and device garage work offline. Export a parts list, shop brief or commerce application pack, review clearly labeled source/partner links, back up your garage, or share a configuration link when you are ready.
 
 Coverage: 2018–2023 Wrangler JL Unlimited four-door, 3.6L gasoline, Sport/Sahara/Rubicon with standard factory suspension as the starting point, plus first-batch 2024 Sahara 4xe catalog support. TJ, JK, JT, two-door, diesel, 392, Xtreme Recon and other 4xe trims are not supported in this release.
 
-Prices are dated snapshots or your own quotes, not live retailer inventory. The preview uses generic wheel illustrations; some accessories appear in the parts list only. Automated checks do not certify fitment. Have a qualified installer confirm the complete combination and installation sequence.
+Prices are dated snapshots or your own quotes, not live retailer inventory. The preview uses generic rim illustrations; some accessories appear in the parts list only. Automated checks do not certify fitment. Have a qualified installer confirm the complete combination and installation sequence.
 
 Independent aftermarket planning software. Not affiliated with Jeep, Stellantis or the parts brands shown.
 

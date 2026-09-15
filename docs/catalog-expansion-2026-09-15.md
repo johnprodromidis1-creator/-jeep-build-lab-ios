@@ -4,7 +4,7 @@ This pass expands the visible choice depth without changing the app into a store
 
 ## What Changed
 
-- Added enough sourced records to bring wheels, tires, suspension, bumpers, winches and side armor to at least 15 catalog variants each.
+- Added enough sourced records to bring rims, tires, suspension, bumpers, winches and side armor to at least 15 catalog variants each.
 - Changed planner grouping so every product variant renders as its own visible choice instead of being hidden inside a brand/name family selector.
 - Kept source confidence fields on each added record: checked date, retailer/source URL, price basis and planner coverage.
 

@@ -6,8 +6,8 @@ Mobile-first Wrangler JL build planner. Initial scope: 2018–2023 JL Unlimited 
 The iOS build destination is [johnprodromidis1-creator/-jeep-build-lab-ios](https://github.com/johnprodromidis1-creator/-jeep-build-lab-ios). The leading hyphen is part of the repository name. Add this repository to the owner's Codemagic team and select the `jeep-ios-testflight` workflow on `main`. Before spending build minutes, run `npm run release:preflight`, then confirm GitHub `main` contains the current source from this checkout/Sites repository; publishing the website does not update the GitHub mobile build branch. Follow [the Codemagic setup guide](docs/app-store/CODEMAGIC.md) to connect this app's Apple record and provisioning profile before starting a build. No signed build has been verified yet.
 
 ## Implemented
-- 104 sourced product variants across wheels, tires, suspension, front bumpers, winches and side armor, with at least 15 visible choices in every major part category.
-- Original illustrative PNG vehicle and wheel layers; tire diameter, wheel finish and lift change the preview. Accessories are list-only.
+- 104 sourced product variants across rims, tires, suspension, front bumpers, winches and side armor, with at least 15 visible choices in every major part category.
+- Original illustrative PNG vehicle and rim layers; tire diameter, rim finish and lift change the preview. Accessories are list-only.
 - D1 garage with authenticated owner isolation, saved estimate snapshot, notes, save-as-copy, saved-build duplication, saved-build shop brief/commerce pack/CSV export, compare-to-open action, delete, search, sort and fitment-status filters.
 - D1 personal price overrides; curated specifications remain immutable.
 - Quantity-aware totals, budget, labor and other allowances, current-build shop brief, commerce pack and CSV export, print sheet, URL configuration.
@@ -15,7 +15,7 @@ The iOS build destination is [johnprodromidis1-creator/-jeep-build-lab-ios](http
 - Source-confidence layer across catalog cards, quote summary, detail dialog, print view, shop brief, commerce pack and CSV exports, carrying checked dates, price basis, retailer links and planner coverage.
 - Explicit year, trim, powertrain, diameter and listed tire-limit conflicts, plus unresolved installation dependencies. Vehicle edits that would leave selected parts needing review ask for confirmation first.
 - Three-step navigation, thumbnail-backed individual product-variant cards, device-local favorite parts filtering, quantity-inclusive card prices and replacement price deltas.
-- First-time 2024 Sahara 4xe starter build that loads a sourced tire/lift plan on stock 20-inch wheels while preserving saved garage entries.
+- First-time 2024 Sahara 4xe starter build that loads a sourced tire/lift plan on stock 20-inch rims while preserving saved garage entries.
 - Side-by-side current/saved build comparison with differing-parts filter; both columns use the same catalog and personal quotes.
 - Buy now/later/owned/installed stages with a summary breakdown, remaining upgrade budget and optional user-entered vehicle price. All allowances are reserved in the first phase; installation sequence is not verified.
 - Owner-scoped D1 draft recovery with debounced writes and revision checks to prevent stale tab/device overwrites; explicit failure/retry states. Named garage snapshots remain separate.
@@ -23,8 +23,8 @@ The iOS build destination is [johnprodromidis1-creator/-jeep-build-lab-ios](http
 - Partner-commerce directory for source, affiliate, reseller, dealer and distributor paths, narrowed to selected build parts with selected source links and exportable application links. No active affiliate tracking, paid APIs, scraping pipeline, wholesale checkout or dropship fulfillment.
 
 ## Catalog
-`lib/catalog.json` plus `lib/catalog-expansion.ts` contain variant records and dated source URLs. Facts were manually checked September 8, September 13 and September 15, 2026. Prices are snapshots; no stock status promised. Descriptions are original. Generated illustrations are not branded product photographs. The September 13 update adds explicit powertrain fitment, seven 20-inch Ridge Grappler options for the 2024 Sahara 4xe path, a Mopar 4xe lift kit and documented Morphic wheel coverage through current JL Unlimited listings. The September 15 update expands visible catalog depth to at least 15 choices per major category while keeping commerce neutral.
-Vehicle fitment is deliberately limited. Tires are size-based; wheel width/load/offset/brake/spare fit is not automatically established. 4xe support is limited to the records explicitly marked for that powertrain.
+`lib/catalog.json` plus `lib/catalog-expansion.ts` contain variant records and dated source URLs. Facts were manually checked September 8, September 13 and September 15, 2026. Prices are snapshots; no stock status promised. Descriptions are original. Generated illustrations are not branded product photographs. The September 13 update adds explicit powertrain fitment, seven 20-inch Ridge Grappler options for the 2024 Sahara 4xe path, a Mopar 4xe lift kit and documented Morphic rim coverage through current JL Unlimited listings. The September 15 update expands visible catalog depth to at least 15 choices per major category while keeping commerce neutral.
+Vehicle fitment is deliberately limited. Tires are size-based; rim width/load/offset/brake/spare fit is not automatically established. 4xe support is limited to the records explicitly marked for that powertrain.
 No legal or mechanical fitment certification is represented.
 
 Source notes and competitor observations: `docs/catalog-expansion-2026-09-13.md`, `docs/catalog-expansion-2026-09-15.md`.

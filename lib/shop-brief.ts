@@ -45,7 +45,7 @@ export function buildShopBrief({ name, notes, state, parts, generatedAt }: ShopB
     "",
     "Vehicle",
     `- ${vehicleDescription(state)}`,
-    `- Current equipment: ${state.stockRim}-inch wheels, ${state.stockTire}-inch tires`,
+    `- Current equipment: ${state.stockRim}-inch rims, ${state.stockTire}-inch tires`,
     "",
     "Budget snapshot",
     `- Buy now parts: ${money(plan.now)}`,

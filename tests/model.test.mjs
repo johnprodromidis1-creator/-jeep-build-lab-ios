@@ -152,7 +152,7 @@ test("entered decimal allowances flow through the build total as integer cents",
  assert.ok(stateSchema.safeParse(state).success);
  assert.equal(totalFor(state).total,43200*5+125029+9999);
 });
-test("18-inch tires on 17-inch wheels produce an explicit conflict",()=>{
+test("18-inch tires on 17-inch rims produce an explicit conflict",()=>{
  const s=base();s.picks={tires:"nitto-217130"};assert.ok(buildIssues(s).some(i=>i.level==="error"&&i.message.includes("diameter mismatch")));
  s.stockRim=18;assert.ok(!buildIssues(s).some(i=>i.message.includes("diameter mismatch")));
 });
@@ -180,7 +180,7 @@ test("shared build payload exposes only public build state",()=>{
  assert.doesNotMatch(json,/Private trail name|secret notes|ownerId|savedTotal|prices|customPrice/);
  assert.deepEqual(decodeSharedBuildStatePayload(payload),publicBuildState(state));
 });
-test("2024 Sahara 4xe keeps powertrain fitment explicit and supports 20-inch starting wheels",()=>{
+test("2024 Sahara 4xe keeps powertrain fitment explicit and supports 20-inch starting rims",()=>{
  const s={...base(),year:2024,trim:"Sahara",powertrain:"4xe",stockRim:20,stockTire:32,picks:{}};
  assert.equal(stateSchema.safeParse(s).success,true);
  assert.equal(fitsVehicle(baseCatalog.find(p=>p.id==="nitto-217330-4xe"),s),true);
@@ -197,7 +197,7 @@ test("catalog recommendations distinguish vehicle fit from current-build conflic
  const tire20=baseCatalog.find(p=>p.id==="nitto-217330-4xe");
  assert.equal(fitsVehicle(wheel17,state),true);
  assert.equal(optionAddsBuildError(wheel17,state,baseCatalog),true);
- assert.match(buildErrorsForOption(wheel17,state,baseCatalog)[0].message,/Wheel diameter mismatch/);
+ assert.match(buildErrorsForOption(wheel17,state,baseCatalog)[0].message,/Rim diameter mismatch/);
  assert.equal(optionAddsBuildError(tire20,state,baseCatalog),false);
 });
 test("catalog filters combine brand, line price, search terms and dimensions",()=>{
@@ -275,7 +275,7 @@ test("mutating API routes report malformed JSON as client errors",async()=>{
  assert.equal((await accountData.DELETE(badJson("data","DELETE"))).status,400);
  assert.equal((await accountData.DELETE(jsonBody("data","DELETE",null))).status,400);
 });
-test("new 17-inch wheels conflict with retained 18-inch tires until matching tires are added",()=>{
+test("new 17-inch rims conflict with retained 18-inch tires until matching tires are added",()=>{
  const state=base();state.trim="Sahara";state.stockRim=18;state.picks={wheels:"method-MR70178550900"};
  assert.ok(buildIssues(state).some(issue=>issue.level==="error"&&issue.message.includes("current tires fit 18")));
  state.picks.tires="nitto-217020";

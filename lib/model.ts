@@ -186,6 +186,45 @@ export function partCoverage(p: Part) {
   return `${p.yearFrom}-${p.yearTo} JL four-door · ${p.trims.join(", ")} · ${powertrainList(p)}`;
 }
 
+function inchLabel(value: number) {
+  return `${Number.isInteger(value) ? value : value.toFixed(1)} in`;
+}
+
+export function partSpecBadges(p: Part) {
+  const badges: string[] = [];
+  const specs = p.specs;
+  if (p.category === "wheels") {
+    if (specs.rim) badges.push(`${inchLabel(specs.rim)} rim`);
+    if (specs.width) badges.push(`${inchLabel(specs.width)} wide`);
+    if (specs.offset !== undefined) badges.push(`${specs.offset > 0 ? "+" : ""}${specs.offset} mm offset`);
+    if (specs.finish) badges.push(specs.finish);
+  } else if (p.category === "tires") {
+    if (specs.diameter) badges.push(`${inchLabel(specs.diameter)} tire`);
+    if (specs.rim) badges.push(`Fits ${inchLabel(specs.rim)} rim`);
+    const loadRange = p.variant.match(/\b([CDEF])\b/);
+    if (loadRange) badges.push(`Load ${loadRange[1]}`);
+  } else if (p.category === "lift") {
+    if (specs.lift) badges.push(`${inchLabel(specs.lift)} lift`);
+    if (specs.maxTire) badges.push(`Up to ${inchLabel(specs.maxTire)} tires`);
+    if (specs.maxTireRubicon && specs.maxTireRubicon !== specs.maxTire) badges.push(`Rubicon ${inchLabel(specs.maxTireRubicon)} guide`);
+  } else if (p.category === "bumpers") {
+    badges.push(specs.winchMount ? "Winch-ready" : "No winch mount");
+    if (/stubby/i.test(p.variant)) badges.push("Stubby");
+    else if (/mid-width/i.test(p.variant)) badges.push("Mid-width");
+    else if (/full width/i.test(p.variant)) badges.push("Full width");
+  } else if (p.category === "winches") {
+    const capacity = p.variant.match(/(\d{1,2},?\d{3})\s*lb/i)?.[1];
+    if (capacity) badges.push(`${capacity} lb pull`);
+    if (/synthetic/i.test(p.variant)) badges.push("Synthetic rope");
+    else if (/steel/i.test(p.variant)) badges.push("Steel cable");
+  } else if (p.category === "armor") {
+    badges.push("JL 4-door");
+    if (/pair/i.test(p.variant)) badges.push("Pair");
+    if (/step/i.test(p.variant)) badges.push("Step");
+  }
+  return badges.slice(0, 4);
+}
+
 export function selectedParts(s: BuildState, parts: Part[] = baseCatalog) {
   return categories.map(c => parts.find(p => p.id === s.picks[c])).filter((p): p is Part => !!p);
 }

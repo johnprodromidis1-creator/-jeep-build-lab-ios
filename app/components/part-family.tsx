@@ -3,7 +3,7 @@ import {useState} from 'react';
 import {Check,Plus,ArrowUpRight,Handshake,Star} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {Select,SelectContent,SelectItem,SelectTrigger,SelectValue} from '@/components/ui/select';
-import {buildErrorsForOption,money,partCoverage,priceBasis,quantityFor,sourceCheckedLabel,type Part,type BuildState} from '@/lib/model';
+import {buildErrorsForOption,money,partCoverage,partSpecBadges,priceBasis,quantityFor,sourceCheckedLabel,type Part,type BuildState} from '@/lib/model';
 import {partnerProgramsForPart} from '@/lib/commerce';
 import {partThumbnail} from '@/lib/part-images';
 export function PartFamily({variants,state,parts,favoriteIds,onFavorite,onSelect,onDetail,compatibilityReason}:{variants:Part[];state:BuildState;parts:Part[];favoriteIds:ReadonlySet<string>;onFavorite:(p:Part)=>void;onSelect:(p:Part)=>void;onDetail:(p:Part)=>void;compatibilityReason?:(p:Part)=>string|null}){
@@ -17,9 +17,11 @@ export function PartFamily({variants,state,parts,favoriteIds,onFavorite,onSelect
  const partnerCount=partnerProgramsForPart(p).length;
  const actionLabel=active?'Added':excludedReason?'Excluded':conflicts.length?current?'Replace anyway':'Add anyway':current?'Replace':'Add';
  const favorite=favoriteIds.has(p.id);
+ const specBadges=partSpecBadges(p);
  return <article className={`part-card ${active?'selected':''} ${excludedReason&&!active?'excluded':''} ${favorite?'favorite':''}`}>
   <div className="part-card-top"><span className="part-brand">{p.brand}</span><div className="part-card-actions"><button type="button" className={`favorite-button ${favorite?'active':''}`} aria-label={`${favorite?'Remove favorite':'Save favorite'} ${p.brand} ${p.name}`} aria-pressed={favorite} title={favorite?'Remove favorite':'Save favorite'} onClick={()=>onFavorite(p)}><Star size={15} fill={favorite?'currentColor':'none'}/></button><span className="part-type">{excludedReason&&!active?'Excluded':conflicts.length&&!active?'Build conflict':variants.length===1?'1 option':`${variants.length} options`}</span></div></div>
   <div className="part-content"><div className={`part-art ${thumbnail.className}`} aria-hidden="true"><img src={thumbnail.src} alt="" draggable={false}/></div><div><h3>{p.name}</h3><span className="part-reference">{p.reference}</span></div></div>
+  {specBadges.length>0&&<p className="spec-badges" aria-label="Key part specs">{specBadges.map(badge=><span key={badge}>{badge}</span>)}</p>}
   <p className="source-badges" aria-label="Part source confidence" title={`${priceBasis(p)} · Planner coverage: ${partCoverage(p)}`}><span>Checked {sourceCheckedLabel(p.checkedAt)}</span><span>{p.customPrice?'Price note':'Source price'}</span></p>
   {variants.length>1?<Select value={p.id} onValueChange={setChoice}><SelectTrigger className="variant-select" aria-label={`${p.brand} ${p.name} variant`}><SelectValue/></SelectTrigger><SelectContent>{variants.map(v=><SelectItem key={v.id} value={v.id}>{v.variant} · {money(v.priceCents)} / {v.category==='tires'||v.category==='wheels'?'each':v.category==='armor'?'pair':'kit'}{compatibilityReason?.(v)?' · Excluded':''}</SelectItem>)}</SelectContent></Select>:<p className="single-variant">{p.variant}</p>}
   <button type="button" className="details-link" onClick={()=>onDetail(p)}>Specs & fitment notes<ArrowUpRight size={13}/></button>

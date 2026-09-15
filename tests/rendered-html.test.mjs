@@ -226,6 +226,22 @@ test("part catalog uses thumbnail images beside parts", async () => {
   assert.match(css, /\.part-dialog-hero/);
 });
 
+test("part cards surface key specs for faster comparison", async () => {
+  const partFamily = await readFile(new URL("../app/components/part-family.tsx", import.meta.url), "utf8");
+  const model = await readFile(new URL("../lib/model.ts", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(model, /function inchLabel/);
+  assert.match(model, /export function partSpecBadges/);
+  assert.match(model, /mm offset/);
+  assert.match(model, /lb pull/);
+  assert.match(partFamily, /partSpecBadges\(p\)/);
+  assert.match(partFamily, /className="spec-badges"/);
+  assert.match(partFamily, /aria-label="Key part specs"/);
+  assert.match(css, /\.spec-badges/);
+  assert.match(css, /\.spec-badges span/);
+});
+
 test("build summary surfaces quote readiness actions", async () => {
   const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");

@@ -45,7 +45,7 @@ const catalogFilters=await module("lib/catalog-filters.ts","catalog-filters");
 const garageFilters=await module("lib/garage-filters.ts","garage-filters");
 const shopBrief=await module("lib/shop-brief.ts","shop-brief");
 const commerce=await module("lib/commerce.ts","commerce");
-const {initialState,baseCatalog,categories,totalFor,buildIssues,stateSchema,fitsVehicle,partCompatibility,publicBuildState,encodeSharedBuildState,decodeSharedBuildStatePayload,buildErrorsForOption,optionAddsBuildError}=model;
+const {initialState,baseCatalog,categories,totalFor,buildIssues,stateSchema,fitsVehicle,partCompatibility,partSpecBadges,publicBuildState,encodeSharedBuildState,decodeSharedBuildStatePayload,buildErrorsForOption,optionAddsBuildError}=model;
 const {dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
 const {buildShopBrief}=shopBrief;
@@ -65,6 +65,20 @@ test("catalog exposes at least fifteen visible choices per major part category",
   assert.ok(categoryParts.length>=15,`${category} only has ${categoryParts.length} variants`);
   assert.ok(planning.groupParts(categoryParts).length>=15,`${category} only shows ${planning.groupParts(categoryParts).length} choices`);
  }
+});
+test("part spec badges expose key comparison details by category",()=>{
+ const wheel=baseCatalog.find(p=>p.id==="method-MR70178550500");
+ const tire=baseCatalog.find(p=>p.id==="nitto-217010");
+ const lift=baseCatalog.find(p=>p.id==="aev-spacer");
+ const bumper=baseCatalog.find(p=>p.id==="qrc-12057-0140");
+ const winch=baseCatalog.find(p=>p.id==="warn-evo");
+ const armor=baseCatalog.find(p=>p.id==="qrc-armor");
+ assert.deepEqual(partSpecBadges(wheel).slice(0,3),["17 in rim","8.5 in wide","0 mm offset"]);
+ assert.ok(partSpecBadges(tire).includes("Fits 17 in rim"));
+ assert.ok(partSpecBadges(lift).includes("2 in lift"));
+ assert.ok(partSpecBadges(bumper).includes("Stubby"));
+ assert.ok(partSpecBadges(winch).some(label=>label.includes("lb pull")));
+ assert.ok(partSpecBadges(armor).includes("JL 4-door"));
 });
 test("commerce partner directory covers all affiliate reseller dealer and distributor paths",()=>{
  assert.equal(partnerPrograms.length,13);

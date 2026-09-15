@@ -124,6 +124,8 @@
 .part-content h3{font-size:17px;line-height:1.23;letter-spacing:-.35px;font-weight:600;margin:0 0 6px}
 .part-content p{font-size:12px;color:#b0bfc6;line-height:1.5;margin:0 0 3px}
 .part-reference{font:12px ui-monospace,monospace;letter-spacing:-.1px;color:#8e9fa7;overflow-wrap:anywhere}
+.spec-badges{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 10px}
+.spec-badges span{border:1px solid #475954;background:#202a27;border-radius:999px;color:#d0ddd7;font-size:12px;line-height:1.35;padding:3px 8px}
 .source-badges{display:flex;flex-wrap:wrap;gap:6px;margin:-3px 0 9px}
 .source-badges span{border:1px solid #415057;background:#162126;border-radius:999px;color:#bdccd2;font-size:12px;line-height:1.35;padding:3px 8px}
 .details-link{display:flex;align-items:center;gap:5px;font-size:12px;color:#b6c1c6;padding:3px 0 12px;text-align:left}

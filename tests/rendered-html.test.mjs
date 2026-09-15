@@ -228,6 +228,35 @@ test("build summary breaks costs into purchase stages", async () => {
   assert.match(css, /\.stage-breakdown-row\.allowances/);
 });
 
+test("builder surfaces source confidence and export proof fields", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const partFamily = await readFile(new URL("../app/components/part-family.tsx", import.meta.url), "utf8");
+  const model = await readFile(new URL("../lib/model.ts", import.meta.url), "utf8");
+  const shopBrief = await readFile(new URL("../lib/shop-brief.ts", import.meta.url), "utf8");
+  const commerce = await readFile(new URL("../lib/commerce.ts", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(model, /function sourceCheckedLabel/);
+  assert.match(model, /function sourceFreshnessSummary/);
+  assert.match(model, /function priceBasis/);
+  assert.match(source, /aria-label="Catalog source status"/);
+  assert.match(source, /catalogSourceText/);
+  assert.match(source, /aria-label="Build source evidence"/);
+  assert.match(source, /Source evidence checked through/);
+  assert.match(source, /aria-label="Source confidence"/);
+  assert.match(source, /Planner fitment is coverage, not certification/);
+  assert.match(source, /Planner coverage/);
+  assert.match(partFamily, /aria-label="Part source confidence"/);
+  assert.match(partFamily, /Checked \{sourceCheckedLabel\(p\.checkedAt\)\}/);
+  assert.match(shopBrief, /Price basis: \$\{priceBasis\(part\)\}/);
+  assert.match(shopBrief, /Planner coverage: \$\{partCoverage\(part\)\}/);
+  assert.match(commerce, /Price basis: \$\{priceBasis\(part\)\}/);
+  assert.match(commerce, /Planner coverage: \$\{partCoverage\(part\)\}/);
+  assert.match(css, /\.source-status/);
+  assert.match(css, /\.source-badges/);
+  assert.match(css, /\.source-confidence/);
+});
+
 test("comparison dialog can open the selected saved build", async () => {
   const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
   const dialog = await readFile(new URL("../app/components/build-comparison.tsx", import.meta.url), "utf8");

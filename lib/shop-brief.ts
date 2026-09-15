@@ -1,4 +1,4 @@
-import { buildIssues, categoryNames, money, quantityFor, selectedParts, vehicleDescription, type BuildState, type Part } from "./model";
+import { buildIssues, categoryNames, money, partCoverage, priceBasis, quantityFor, selectedParts, vehicleDescription, type BuildState, type Part } from "./model";
 import { commerceDisclosure, commerceSummaryForPart, noActiveCommerceDisclosure } from "./commerce";
 import { costPlan, stageFor, stageNames, type Stage } from "./planning";
 
@@ -20,12 +20,13 @@ function generatedDate(value: Date | string | undefined) {
 function partLine(part: Part, state: BuildState) {
   const quantity = quantityFor(part, state);
   const lineTotal = part.priceCents * quantity;
-  const priceType = part.customPrice ? "personal quote" : `source snapshot ${part.checkedAt}`;
   return [
     `- ${categoryNames[part.category]}: ${part.brand} ${part.name}`,
     `  Variant: ${part.variant}`,
     `  Reference: ${part.reference}`,
-    `  Price: ${money(part.priceCents)} x ${quantity} = ${money(lineTotal)} (${priceType})`,
+    `  Price: ${money(part.priceCents)} x ${quantity} = ${money(lineTotal)}`,
+    `  Price basis: ${priceBasis(part)}`,
+    `  Planner coverage: ${partCoverage(part)}`,
     `  Source: ${part.retailer} - ${part.url}`,
     `  Commerce options: ${commerceSummaryForPart(part)}`,
   ].join("\n");

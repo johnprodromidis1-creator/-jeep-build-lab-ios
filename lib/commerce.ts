@@ -2,6 +2,8 @@ import {
   categories,
   categoryNames,
   money,
+  partCoverage,
+  priceBasis,
   quantityFor,
   selectedParts,
   vehicleDescription,
@@ -267,6 +269,8 @@ function selectedPartCommerceLine(part: Part, state: BuildState) {
     `- ${categoryNames[part.category]}: ${part.brand} ${part.name} - ${part.variant}`,
     `  Reference: ${part.reference}`,
     `  Quantity: ${quantityFor(part, state)} at ${money(part.priceCents)} each`,
+    `  Price basis: ${priceBasis(part)}`,
+    `  Planner coverage: ${partCoverage(part)}`,
     `  Source: ${part.retailer} - ${safeCommerceUrl(part.url)}`,
     `  Matching programs: ${programs}`,
   ].join("\n");

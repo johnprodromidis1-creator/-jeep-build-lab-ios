@@ -262,3 +262,21 @@ export function optionAddsBuildError(p: Part, s: BuildState, parts: Part[] = bas
 }
 
 export const money = (cents: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 }).format(cents / 100);
+
+export function sourceCheckedLabel(value: string) {
+  if (!value) return "not checked";
+  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(new Date(`${value}T00:00:00Z`));
+}
+
+export function latestSourceCheckedAt(parts: readonly Pick<Part, "checkedAt">[]) {
+  return parts.reduce((latest, part) => part.checkedAt > latest ? part.checkedAt : latest, "");
+}
+
+export function sourceFreshnessSummary(parts: readonly Pick<Part, "checkedAt">[]) {
+  const latest = latestSourceCheckedAt(parts);
+  return latest ? `${parts.length} sourced variants - latest check ${sourceCheckedLabel(latest)}` : "No sourced variants loaded";
+}
+
+export function priceBasis(part: Pick<Part, "customPrice" | "checkedAt">) {
+  return part.customPrice ? `Personal price note; source checked ${sourceCheckedLabel(part.checkedAt)}` : `Source snapshot checked ${sourceCheckedLabel(part.checkedAt)}`;
+}

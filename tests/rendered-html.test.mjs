@@ -300,6 +300,23 @@ test("catalog category tabs show build-ready and loaded choice counts", async ()
   assert.match(css, /\.category-tabs \[data-state=active\] \.tab-count/);
 });
 
+test("catalog visibility controls can reveal every loaded choice", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(source, /currentCategoryStats=categoryStats\[category\]/);
+  assert.match(source, /hiddenByCatalogView=currentCategoryStats\.loaded>filtered\.length/);
+  assert.match(source, /showingFullCategory=showExcluded&&!activeCatalogFilter&&filtered\.length===currentCategoryStats\.loaded/);
+  assert.match(source, /function showAllCategoryChoices\(\)\{clearCatalogFilters\(\);setShowBuildConflicts\(false\);setShowExcluded\(true\);\}/);
+  assert.match(source, /function showReadyCatalogChoices\(\)\{setShowExcluded\(false\);setShowBuildConflicts\(false\);\}/);
+  assert.match(source, /aria-label="Catalog visibility controls"/);
+  assert.match(source, /Show all loaded/);
+  assert.match(source, /Ready only/);
+  assert.match(source, /hidden by fitment, build or filter settings/);
+  assert.match(css, /\.catalog-reveal/);
+  assert.match(css, /\.catalog-reveal-actions/);
+});
+
 test("comparison dialog can open the selected saved build", async () => {
   const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
   const dialog = await readFile(new URL("../app/components/build-comparison.tsx", import.meta.url), "utf8");

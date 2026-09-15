@@ -14,7 +14,7 @@ The iOS build destination is [johnprodromidis1-creator/-jeep-build-lab-ios](http
 - Quote-readiness panel that turns selected parts, fitment conflicts, open stance picks, allowances and matched partner applications into the next best action.
 - Source-confidence layer across catalog cards, quote summary, detail dialog, print view, shop brief, commerce pack and CSV exports, carrying checked dates, price basis, retailer links and planner coverage.
 - Explicit year, trim, powertrain, diameter and listed tire-limit conflicts, plus unresolved installation dependencies. Vehicle edits that would leave selected parts needing review ask for confirmation first.
-- Three-step navigation, best-fit default catalog sorting, rim-first compatible browsing with stance-matching tire, rim and suspension shortcuts, category ready/loaded choice counts, current-category market snapshot, one-tap full-category reveal, thumbnail-backed individual product-variant cards with key spec chips, device-local favorite parts filtering, quantity-inclusive card prices and replacement price deltas.
+- Three-step navigation, an adaptive next-best-pick guide, best-fit default catalog sorting, rim-first compatible browsing with stance-matching tire, rim and suspension shortcuts, category ready/loaded choice counts, current-category market snapshot, one-tap full-category reveal, thumbnail-backed individual product-variant cards with key spec chips, device-local favorite parts filtering, quantity-inclusive card prices and replacement price deltas.
 - First-time 2024 Sahara 4xe starter build that loads a sourced tire/lift plan on stock 20-inch rims while preserving saved garage entries.
 - Side-by-side current/saved build comparison with differing-parts filter; both columns use the same catalog and personal quotes.
 - Buy now/later/owned/installed stages with a summary breakdown, remaining upgrade budget and optional user-entered vehicle price. All allowances are reserved in the first phase; installation sequence is not verified.
@@ -48,7 +48,7 @@ Run npm run db:generate when schema changes. Build with Sites build helper. Run 
 ## Build & Price benchmark
 Official Jeep Build & Price (https://www.jeep.com/bmo.html) is the benchmark for clear vehicle configuration and pricing. This app focuses on aftermarket ownership planning: compatible combinations, staged purchases, owner-supplied quotes and comparison of saved options. No claim is made that Jeep lacks any particular feature or that its full interactive flow has been browser-tested.
 
-Version 2 preserves the limited vehicle/catalog scope and illustrative preview. Pricing, compatibility and owner-isolation tests cover the planning features. The September 14 public Sites deployment was smoke-tested in-browser for the starter 4xe flow, fitment summary, support page and privacy page. The September 15 catalog-depth pass expands the planner to 104 sourced variants and adds stance-matching next steps for tires, rims and suspension. No paid service was added.
+Version 2 preserves the limited vehicle/catalog scope and illustrative preview. Pricing, compatibility and owner-isolation tests cover the planning features. The September 14 public Sites deployment was smoke-tested in-browser for the starter 4xe flow, fitment summary, support page and privacy page. The September 15 catalog-depth pass expands the planner to 104 sourced variants and adds next-best-pick guidance for rims, tires, suspension and quote export. No paid service was added.
 
 ## iOS / App Store preparation (0.2.0)
 

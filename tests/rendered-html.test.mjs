@@ -392,6 +392,23 @@ test("stance guidance jumps to matching rims and supporting suspension", async (
   assert.match(css, /\.stance-action/);
 });
 
+test("builder shows an adaptive next-best-pick guide", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(source, /const nextOpenCategory=\(\["bumpers","winches","armor"\] as Category\[\]\)\.find/);
+  assert.match(source, /const nextPick=wheelNeedsMatchingTires\?/);
+  assert.match(source, /title:"Start with rims"/);
+  assert.match(source, /title:"Choose tires next"/);
+  assert.match(source, /title:"Check suspension clearance"/);
+  assert.match(source, /title:"Ready for shop quotes"/);
+  assert.match(source, /aria-label="Next best build step"/);
+  assert.match(source, /NEXT BEST PICK/);
+  assert.match(source, /onClick=\{nextPick\.onClick\}/);
+  assert.match(css, /\.build-coach/);
+  assert.match(css, /\.build-coach \[data-slot=button\]/);
+});
+
 test("catalog visibility controls can reveal every loaded choice", async () => {
   const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");

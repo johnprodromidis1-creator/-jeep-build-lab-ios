@@ -316,6 +316,23 @@ test("builder surfaces source confidence and export proof fields", async () => {
   assert.match(css, /\.source-confidence/);
 });
 
+test("part detail dialog can directly update the build selection", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(source, /buildErrorsForOption/);
+  assert.match(source, /function partSelectionSummary\(part:Part,state:BuildState,parts:Part\[\]\)/);
+  assert.match(source, /const detailSelection=detail\?partSelectionSummary\(detail,state,parts\):null/);
+  assert.match(source, /aria-label="Part selection action"/);
+  assert.match(source, /detailSelection\.active\?"selected":detailSelection\.excluded\?"blocked":detailSelection\.conflicts\.length\?"warning":""/);
+  assert.match(source, /disabled=\{!!detailSelection\.excluded&&!detailSelection\.active\}/);
+  assert.match(source, /onClick=\{\(\)=>selectPart\(detail\)\}/);
+  assert.match(source, /detailSelection\.active\?<><Trash2 size=\{15\}\/>Remove<\/>:<><Plus size=\{15\}\/>\{detailSelection\.action\}<\/>/);
+  assert.match(css, /\.detail-action-row/);
+  assert.match(css, /\.detail-action-row\.warning/);
+  assert.match(css, /@media\(max-width:600px\).*\.detail-action-row\{grid-template-columns:1fr\}/);
+});
+
 test("catalog category tabs show build-ready and loaded choice counts", async () => {
   const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");

@@ -46,6 +46,7 @@ test("serves the builder with production metadata and the initial catalog", asyn
   assert.doesNotMatch(html, developmentPreviewMeta);
   assert.match(html, /<title>Jeep Build Lab/);
   assert.match(html, /Choose your upgrades/);
+  assert.match(html, /Quote readiness/);
   assert.match(html, /Load a 2024 Sahara 4xe sample/);
   assert.match(html, /Save to my garage/);
   assert.match(html, /Filter by brand/);
@@ -195,6 +196,21 @@ test("catalog supports device-local favorite parts filtering", async () => {
   assert.match(partFamily, /aria-pressed=\{favorite\}/);
   assert.match(partFamily, /onFavorite\(p\)/);
   assert.match(css, /\.favorite-button/);
+});
+
+test("build summary surfaces quote readiness actions", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(source, /const readinessState=/);
+  assert.match(source, /aria-label="Quote readiness"/);
+  assert.match(source, /Ready for quote/);
+  assert.match(source, /Needs fitment review/);
+  assert.match(source, /Review first issue/);
+  assert.match(source, /Download shop brief/);
+  assert.match(source, /partner application/);
+  assert.match(css, /\.quote-readiness/);
+  assert.match(css, /\.quote-readiness\.needs-review/);
 });
 
 test("comparison dialog can open the selected saved build", async () => {

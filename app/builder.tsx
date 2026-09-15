@@ -142,6 +142,19 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
  const activeGarageFilter=hasGarageFilter(garageFilters);
  const visibleGarage=useMemo(()=>filterGarageBuilds(garage,parts,garageFilters),[garage,parts,garageFilters]);
  const detailOffers=detail?commerceOffersForPart(detail):[];
+ const readinessState=errors.length?"needs-review":selected.length?"ready":"empty";
+ const ReadinessIcon=readinessState==="needs-review"?TriangleAlert:readinessState==="ready"?CheckCheck:ClipboardList;
+ const firstErrorCategory=errors.find(issue=>issue.category)?.category;
+ const missingCore=(["wheels","tires","lift"] as Category[]).filter(c=>!state.picks[c]);
+ const readinessTitle=readinessState==="needs-review"?"Needs fitment review":readinessState==="ready"?"Ready for quote":"Start a quote sheet";
+ const readinessDetail=readinessState==="needs-review"?"Resolve the flagged combination before sharing with a shop.":readinessState==="ready"?"Your current build can be exported or sent for real quotes.":"Choose at least one upgrade to start pricing the build.";
+ const readinessItems=[
+  {status:selected.length?"ready":"open",label:selected.length?`${selected.length} upgrade${selected.length===1?"":"s"} selected`:"No upgrades selected yet"},
+  {status:errors.length?"needs-review":"ready",label:errors.length?`${errors.length} fitment conflict${errors.length===1?"":"s"} flagged`:"Current checks show no fitment conflicts"},
+  {status:missingCore.length?"open":"ready",label:missingCore.length?`Open stance picks: ${missingCore.map(c=>categoryNames[c].toLowerCase()).join(", ")}`:"Wheel, tire and lift picks are set"},
+  {status:state.labor||state.extras?"ready":"open",label:state.labor||state.extras?"Labor, tax or shipping allowances included":"Add allowances when quotes arrive"},
+  {status:selected.length?"ready":"open",label:selected.length?`${relevantPartnerPrograms.length} partner application${relevantPartnerPrograms.length===1?"":"s"} matched`:"Partner applications narrow after parts are selected"}
+ ];
  function markTouched(){touched.current=true;setTouchedDraft(true);}
  function clearCatalogFilters(){setQuery("");setBrandFilter(allCatalogFilter);setPriceFilter(allCatalogFilter);setDimensionFilter(allCatalogFilter);setFavoritesOnly(false);}
  function clearGarageFilters(){setGarageQuery("");setGaragePowertrain(allGarageFilter);setGarageConflicts(allGarageFilter);}
@@ -288,6 +301,7 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
  <aside className="build-sidebar" id="build-summary"><div className="summary-card">
  <div className="summary-heading"><span className="eyebrow">PLAN & PRICE</span><span className="count-badge">{selected.length}</span></div>
  <h2>{name}</h2><p className="save-state">{dirty?"Draft · save a named version to compare it later":id?"Named version saved in your garage":"Your upgrade plan"}</p>
+ <div className={`quote-readiness ${readinessState}`} aria-label="Quote readiness"><div className="quote-readiness-head"><ReadinessIcon size={17}/><div><strong>{readinessTitle}</strong><span>{readinessDetail}</span></div></div><ul>{readinessItems.map(item=><li key={item.label} className={item.status}>{item.label}</li>)}</ul><Button variant="outline" size="sm" onClick={()=>readinessState==="needs-review"?reviewCategory(firstErrorCategory??category):readinessState==="ready"?void exportShopBrief():reviewCategory(category)}>{readinessState==="needs-review"?"Review first issue":readinessState==="ready"?isNative()?"Share shop brief":"Download shop brief":"Choose parts"}</Button></div>
  <div className="summary-list">{selected.length?selected.map(p=><div className="summary-item" key={p.id}><div><span>{categoryNames[p.category]}{quantityFor(p,state)>1?` × ${quantityFor(p,state)}`:""}</span><button type="button" onClick={()=>openDetail(p)}>{p.brand} {p.name}</button><small>{p.variant}</small><Select value={stageFor(state,p.category)} onValueChange={v=>update({stages:{...state.stages,[p.category]:v as Stage}})}><SelectTrigger className="stage-select" aria-label={`${p.name} purchase stage`}><SelectValue/></SelectTrigger><SelectContent>{Object.entries(stageNames).map(([value,label])=><SelectItem key={value} value={value}>{label}</SelectItem>)}</SelectContent></Select></div><div><strong>{money(p.priceCents*quantityFor(p,state))}</strong><button type="button" className="remove-button" aria-label={`Remove ${p.name}`} onClick={()=>removePart(p.category)}><Trash2 size={14}/></button></div></div>):<div className="build-empty"><Plus size={22}/><p>Your next upgrade goes here.</p><span>Pick a part below the preview to start building.</span></div>}</div>
  <div className="quantity-row"><div><strong>Matching spare</strong><span>Wheel & tire quantity</span></div><div className="quantity-control" role="group" aria-label="Wheel and tire quantity">{[4,5].map(q=><button key={q} type="button" aria-pressed={state.quantity===q} className={state.quantity===q?"active":""} onClick={()=>update({quantity:q as 4|5})}>{q}</button>)}</div></div>
  <div className="budget-fields"><CashField label="Upgrade budget" value={state.budget} onChange={n=>update({budget:n})}/><div className="budget-two"><CashField label="Labor allowance" value={state.labor} onChange={n=>update({labor:n})}/><CashField label="Tax, shipping & extras" value={state.extras} onChange={n=>update({extras:n})}/></div></div>

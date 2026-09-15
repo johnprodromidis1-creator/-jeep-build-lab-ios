@@ -446,6 +446,20 @@ test("catalog advisor picks can be compared side by side", async () => {
   assert.match(css, /\.catalog-compare table\{width:100%;min-width:620px/);
 });
 
+test("catalog advisor picks can directly update the build", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(source, /function advisorActionLabel\(part:Part,state:BuildState\)\{return state\.picks\[part\.category\]\?"Replace":"Add";\}/);
+  assert.match(source, /catalogHighlights\.map\(highlight=>\{const active=state\.picks\[highlight\.part\.category\]===highlight\.part\.id;return <div className=\{`catalog-highlight \$\{active\?"selected":""\}`\}/);
+  assert.match(source, /className="catalog-highlight-actions"/);
+  assert.match(source, /onClick=\{\(\)=>selectPart\(highlight\.part\)\}/);
+  assert.match(source, /active\?<><CheckCheck size=\{13\}\/>Added<\/>:advisorActionLabel\(highlight\.part,state\)/);
+  assert.match(css, /\.catalog-highlight\.selected/);
+  assert.match(css, /\.catalog-highlight-actions\{display:flex/);
+  assert.match(css, /\.catalog-highlight-actions \[data-slot=button\]\{flex:1;min-width:104px\}/);
+});
+
 test("catalog visibility controls can reveal every loaded choice", async () => {
   const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");

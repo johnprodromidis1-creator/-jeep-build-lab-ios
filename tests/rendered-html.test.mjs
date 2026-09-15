@@ -316,6 +316,22 @@ test("catalog category tabs show build-ready and loaded choice counts", async ()
   assert.match(css, /\.category-tabs \[data-state=active\] \.tab-count/);
 });
 
+test("catalog surfaces a current-category market snapshot", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const model = await readFile(new URL("../lib/model.ts", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(model, /export function linePriceRangeLabel/);
+  assert.match(source, /categoryMarketRange=linePriceRangeLabel\(categoryPool,state\)/);
+  assert.match(source, /aria-label="Current category market snapshot"/);
+  assert.match(source, /shown of \{currentCategoryStats\.loaded\} loaded/);
+  assert.match(source, /selection range/);
+  assert.match(source, /ready for this build/);
+  assert.match(css, /\.catalog-market/);
+  assert.match(css, /\.catalog-market strong/);
+  assert.match(css, /@media\(max-width:430px\)\{\.catalog-market\{grid-template-columns:1fr\}\}/);
+});
+
 test("catalog visibility controls can reveal every loaded choice", async () => {
   const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");

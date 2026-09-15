@@ -303,6 +303,14 @@ export function optionAddsBuildError(p: Part, s: BuildState, parts: Part[] = bas
 
 export const money = (cents: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 }).format(cents / 100);
 
+export function linePriceRangeLabel(parts: readonly Part[], state: BuildState) {
+  const prices = parts.map(part => part.priceCents * quantityFor(part, state));
+  if (!prices.length) return "No prices";
+  const low = Math.min(...prices);
+  const high = Math.max(...prices);
+  return low === high ? money(low) : `${money(low)} - ${money(high)}`;
+}
+
 export function sourceCheckedLabel(value: string) {
   if (!value) return "not checked";
   return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(new Date(`${value}T00:00:00Z`));

@@ -45,7 +45,7 @@ const catalogFilters=await module("lib/catalog-filters.ts","catalog-filters");
 const garageFilters=await module("lib/garage-filters.ts","garage-filters");
 const shopBrief=await module("lib/shop-brief.ts","shop-brief");
 const commerce=await module("lib/commerce.ts","commerce");
-const {initialState,baseCatalog,categories,totalFor,buildIssues,stateSchema,fitsVehicle,partCompatibility,partSpecBadges,publicBuildState,encodeSharedBuildState,decodeSharedBuildStatePayload,buildErrorsForOption,optionAddsBuildError}=model;
+const {initialState,baseCatalog,categories,totalFor,buildIssues,stateSchema,fitsVehicle,partCompatibility,partSpecBadges,linePriceRangeLabel,publicBuildState,encodeSharedBuildState,decodeSharedBuildStatePayload,buildErrorsForOption,optionAddsBuildError}=model;
 const {dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
 const {buildShopBrief}=shopBrief;
@@ -79,6 +79,12 @@ test("part spec badges expose key comparison details by category",()=>{
  assert.ok(partSpecBadges(bumper).includes("Stubby"));
  assert.ok(partSpecBadges(winch).some(label=>label.includes("lb pull")));
  assert.ok(partSpecBadges(armor).includes("JL 4-door"));
+});
+test("line price ranges reflect selected rim and tire quantity",()=>{
+ const tire=baseCatalog.find(p=>p.id==="nitto-217180");
+ const choices=[{...tire,priceCents:100},{...tire,id:"test-tire-high",priceCents:250}];
+ assert.equal(linePriceRangeLabel(choices,base()),"$5.00 - $12.50");
+ assert.equal(linePriceRangeLabel([],base()),"No prices");
 });
 test("commerce partner directory covers all affiliate reseller dealer and distributor paths",()=>{
  assert.equal(partnerPrograms.length,13);

@@ -362,7 +362,23 @@ test("catalog surfaces a current-category market snapshot", async () => {
   assert.match(source, /ready for this build/);
   assert.match(css, /\.catalog-market/);
   assert.match(css, /\.catalog-market strong/);
-  assert.match(css, /@media\(max-width:430px\)\{\.catalog-market\{grid-template-columns:1fr\}\}/);
+  assert.match(css, /@media\(max-width:430px\).*\.catalog-market\{grid-template-columns:1fr\}/);
+});
+
+test("catalog inventory makes loaded category depth scannable", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(source, /categoryInventory=categories\.map\(c=>\{/);
+  assert.match(source, /linePriceRangeLabel\(categoryParts,state\)/);
+  assert.match(source, /aria-label="Catalog inventory by category"/);
+  assert.match(source, /\{row\.loaded\} loaded · \{row\.ready\} ready/);
+  assert.match(source, /aria-pressed=\{active\}/);
+  assert.match(source, /onClick=\{\(\)=>changeCategory\(row\.category\)\}/);
+  assert.match(css, /\.catalog-inventory\{display:grid;grid-template-columns:repeat\(6,minmax\(0,1fr\)\)/);
+  assert.match(css, /\.inventory-tile\.picked/);
+  assert.match(css, /@media\(max-width:1100px\)\{\.catalog-inventory\{grid-template-columns:repeat\(3,minmax\(0,1fr\)\)\}\}/);
+  assert.match(css, /@media\(max-width:760px\).*\.catalog-inventory\{display:flex;overflow:auto/);
 });
 
 test("catalog defaults to best-fit sorting", async () => {

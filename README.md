@@ -16,7 +16,7 @@ The iOS build destination is [johnprodromidis1-creator/-jeep-build-lab-ios](http
 - Three-step navigation, grouped product families with variant selectors, device-local favorite parts filtering, quantity-inclusive card prices and replacement price deltas.
 - First-time 2024 Sahara 4xe starter build that loads a sourced tire/lift plan on stock 20-inch wheels while preserving saved garage entries.
 - Side-by-side current/saved build comparison with differing-parts filter; both columns use the same catalog and personal quotes.
-- Buy now/later/owned/installed stages, remaining upgrade budget and optional user-entered vehicle price. All allowances are reserved in the first phase; installation sequence is not verified.
+- Buy now/later/owned/installed stages with a summary breakdown, remaining upgrade budget and optional user-entered vehicle price. All allowances are reserved in the first phase; installation sequence is not verified.
 - Owner-scoped D1 draft recovery with debounced writes and revision checks to prevent stale tab/device overwrites; explicit failure/retry states. Named garage snapshots remain separate.
 - Twenty configuration undo steps per session. Fitment conflicts appear above the preview with review links, including retained-tire/new-wheel mismatches.
 - Partner-commerce directory for source, affiliate, reseller, dealer and distributor paths, narrowed to selected build parts with selected source links and exportable application links. No active affiliate tracking, paid APIs, scraping pipeline, wholesale checkout or dropship fulfillment.

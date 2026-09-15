@@ -135,6 +135,20 @@
 .quote-readiness li.ready:before{background:#9fc795}
 .quote-readiness li.needs-review:before{background:#ff9d78}
 .quote-readiness [data-slot=button]{width:100%;font-size:12px}
+.stage-breakdown{border:1px solid #3d4e55;background:#172126;border-radius:7px;padding:12px;margin:0 0 16px}
+.stage-breakdown-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.stage-breakdown-head strong{font-size:14px;font-weight:600;color:#f2f7f8;line-height:1.35}
+.stage-breakdown-head span{font-size:12px;line-height:1.45;color:#a9bbc3;text-align:right}
+.stage-breakdown-list{display:grid;gap:6px;margin-top:10px}
+.stage-breakdown-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;min-height:47px;border:1px solid #34464d;background:#121e23;border-radius:5px;padding:8px 9px}
+.stage-breakdown-row.now{border-color:#72513e}
+.stage-breakdown-row.later{border-color:#4d5965}
+.stage-breakdown-row.owned,.stage-breakdown-row.installed{border-color:#435b48;background:#14231a}
+.stage-breakdown-row.allowances{border-color:#6c5d3f;background:#2a261b}
+.stage-breakdown-row.empty{opacity:.62}
+.stage-breakdown-row span{display:block;font-size:13px;font-weight:600;color:#edf5f7;line-height:1.35}
+.stage-breakdown-row small{display:block;font-size:12px;color:#9eb1ba;line-height:1.4;margin-top:1px}
+.stage-breakdown-row strong{font-size:13px;color:#f3d0a8;white-space:nowrap}
 .summary-list{border-bottom:1px solid #3b464b}
 .build-empty{text-align:center;background:#171e20;border:1px dashed #3f4e54;border-radius:7px;padding:25px 17px;margin-bottom:20px}
 .build-empty>svg{margin:auto;color:#7f969f}

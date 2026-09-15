@@ -332,6 +332,18 @@ test("catalog surfaces a current-category market snapshot", async () => {
   assert.match(css, /@media\(max-width:430px\)\{\.catalog-market\{grid-template-columns:1fr\}\}/);
 });
 
+test("rims stay browseable before a matching tire choice", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(source, /rimFirstBrowsing=category==="wheels"&&!state\.picks\.tires/);
+  assert.match(source, /browseReady=rimFirstBrowsing\?compatible:buildReady/);
+  assert.match(source, /showExcluded\?categoryMatches:showBuildConflicts\?compatible:browseReady/);
+  assert.match(source, /Rim-first browsing keeps every vehicle-compatible rim visible/);
+  assert.match(css, /\.rim-first-note/);
+  assert.match(css, /\.rim-first-note svg/);
+});
+
 test("catalog visibility controls can reveal every loaded choice", async () => {
   const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");

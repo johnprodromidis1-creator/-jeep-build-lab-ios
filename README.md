@@ -14,7 +14,7 @@ The iOS build destination is [johnprodromidis1-creator/-jeep-build-lab-ios](http
 - Quote-readiness panel that turns selected parts, fitment conflicts, open stance picks, allowances and matched partner applications into the next best action.
 - Source-confidence layer across catalog cards, quote summary, detail dialog, print view, shop brief, commerce pack and CSV exports, carrying checked dates, price basis, retailer links and planner coverage.
 - Explicit year, trim, powertrain, diameter and listed tire-limit conflicts, plus unresolved installation dependencies. Vehicle edits that would leave selected parts needing review ask for confirmation first.
-- Three-step navigation, individual product-variant cards, device-local favorite parts filtering, quantity-inclusive card prices and replacement price deltas.
+- Three-step navigation, thumbnail-backed individual product-variant cards, device-local favorite parts filtering, quantity-inclusive card prices and replacement price deltas.
 - First-time 2024 Sahara 4xe starter build that loads a sourced tire/lift plan on stock 20-inch wheels while preserving saved garage entries.
 - Side-by-side current/saved build comparison with differing-parts filter; both columns use the same catalog and personal quotes.
 - Buy now/later/owned/installed stages with a summary breakdown, remaining upgrade budget and optional user-entered vehicle price. All allowances are reserved in the first phase; installation sequence is not verified.

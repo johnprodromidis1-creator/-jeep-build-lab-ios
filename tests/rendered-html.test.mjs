@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import test from "node:test";
 import { registerHooks } from "node:module";
 // Node render tests do not execute D1 routes. The separate model/API test supplies SQLite.
@@ -199,6 +199,28 @@ test("catalog supports device-local favorite parts filtering", async () => {
   assert.match(partFamily, /aria-pressed=\{favorite\}/);
   assert.match(partFamily, /onFavorite\(p\)/);
   assert.match(css, /\.favorite-button/);
+});
+
+test("part catalog uses thumbnail images beside parts", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const partFamily = await readFile(new URL("../app/components/part-family.tsx", import.meta.url), "utf8");
+  const helper = await readFile(new URL("../lib/part-images.ts", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  const partSheet = await stat(new URL("../public/assets/part-thumbnails.png", import.meta.url));
+  const tireImage = await stat(new URL("../public/assets/tire-thumbnail.png", import.meta.url));
+
+  assert.ok(partSheet.size > 10000);
+  assert.ok(tireImage.size > 10000);
+  assert.match(helper, /partThumbnail/);
+  assert.match(helper, /tire-thumbnail\.png/);
+  assert.match(helper, /part-thumbnails\.png/);
+  assert.match(partFamily, /partThumbnail\(p\)/);
+  assert.match(partFamily, /className=\{`part-art \$\{thumbnail\.className\}`\}/);
+  assert.match(source, /summary-thumb/);
+  assert.match(source, /detail-part-art/);
+  assert.match(css, /\.part-thumb-sprite\.bumpers img/);
+  assert.match(css, /\.summary-thumb/);
+  assert.match(css, /\.part-dialog-hero/);
 });
 
 test("build summary surfaces quote readiness actions", async () => {

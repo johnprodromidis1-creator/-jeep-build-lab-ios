@@ -357,6 +357,22 @@ test("rims stay browseable before a matching tire choice", async () => {
   assert.match(css, /\.rim-first-note svg/);
 });
 
+test("rim-first conflicts can jump straight to matching tires", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(source, /selectedRimDiameter=wheel\?\.specs\.rim\?\?state\.stockRim/);
+  assert.match(source, /wheelNeedsMatchingTires=!!wheel&&!tire&&selectedRimDiameter!==state\.stockRim/);
+  assert.match(source, /function browseMatchingTires\(rim:number=selectedRimDiameter\)/);
+  assert.match(source, /setCategory\("tires"\)/);
+  assert.match(source, /setDimensionFilter\(`rim:\$\{rim\}`\)/);
+  assert.match(source, /setSort\("fit"\)/);
+  assert.match(source, /Find \{selectedRimDiameter\}-inch tires/);
+  assert.match(source, /canMatchTires=issue\.category==="tires"&&wheelNeedsMatchingTires/);
+  assert.match(css, /\.rim-first-note \[data-slot=button\]/);
+  assert.match(css, /\.catalog-reveal,\.rim-first-note\{align-items:flex-start;flex-direction:column\}/);
+});
+
 test("catalog visibility controls can reveal every loaded choice", async () => {
   const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");

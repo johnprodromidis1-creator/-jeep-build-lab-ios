@@ -373,6 +373,25 @@ test("rim-first conflicts can jump straight to matching tires", async () => {
   assert.match(css, /\.catalog-reveal,\.rim-first-note\{align-items:flex-start;flex-direction:column\}/);
 });
 
+test("stance guidance jumps to matching rims and supporting suspension", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(source, /tireNeedsMatchingRims=!!tire&&!wheel&&selectedTireRimDiameter!==state\.stockRim/);
+  assert.match(source, /oversizedTireNeedsLift=!!tire&&!lift&&selectedTireDiameter>state\.stockTire\+\.2/);
+  assert.match(source, /tireExceedsLift=!!tire&&!!lift&&selectedLiftLimit!==undefined&&selectedTireDiameter>selectedLiftLimit/);
+  assert.match(source, /function browseMatchingRims\(rim:number=selectedTireRimDiameter\)/);
+  assert.match(source, /setCategory\("wheels"\)/);
+  assert.match(source, /function browseSupportingLift\(\)/);
+  assert.match(source, /setCategory\("lift"\)/);
+  assert.match(source, /aria-label="Stance match next steps"/);
+  assert.match(source, /Find \{selectedTireRimDiameter\}-inch rims/);
+  assert.match(source, /Find supporting suspension/);
+  assert.match(source, /Find stronger suspension/);
+  assert.match(css, /\.stance-next/);
+  assert.match(css, /\.stance-action/);
+});
+
 test("catalog visibility controls can reveal every loaded choice", async () => {
   const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");

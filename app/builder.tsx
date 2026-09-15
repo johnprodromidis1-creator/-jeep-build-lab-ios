@@ -126,7 +126,13 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
  const errors=issues.filter(i=>i.level==="error");
  const tire=selected.find(p=>p.category==="tires"),wheel=selected.find(p=>p.category==="wheels"),lift=selected.find(p=>p.category==="lift");
  const selectedRimDiameter=wheel?.specs.rim??state.stockRim;
+ const selectedTireRimDiameter=tire?.specs.rim??state.stockRim;
+ const selectedTireDiameter=tire?.specs.diameter??state.stockTire;
+ const selectedLiftLimit=lift?(state.trim==="Rubicon"?lift.specs.maxTireRubicon??lift.specs.maxTire:lift.specs.maxTire):undefined;
  const wheelNeedsMatchingTires=!!wheel&&!tire&&selectedRimDiameter!==state.stockRim;
+ const tireNeedsMatchingRims=!!tire&&!wheel&&selectedTireRimDiameter!==state.stockRim;
+ const oversizedTireNeedsLift=!!tire&&!lift&&selectedTireDiameter>state.stockTire+.2;
+ const tireExceedsLift=!!tire&&!!lift&&selectedLiftLimit!==undefined&&selectedTireDiameter>selectedLiftLimit;
  const vehicleText=vehicleDescription(state);
  const yearOptions=state.powertrain==="4xe"?[2024]:[2018,2019,2020,2021,2022,2023];
  const trimOptions=(state.powertrain==="4xe"?["Sahara"]:["Sport","Sahara","Rubicon"]) as Trim[];
@@ -183,6 +189,12 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
   {status:selected.length?"ready":"open",label:selected.length?`${relevantPartnerPrograms.length} partner application${relevantPartnerPrograms.length===1?"":"s"} matched`:"Partner applications narrow after parts are selected"},
   {status:selected.length?"ready":"open",label:selected.length?`Source evidence checked through ${sourceCheckedLabel(selectedSourceDate)}`:"Source evidence appears after parts are selected"}
  ];
+ const stanceActions=[
+  ...(wheelNeedsMatchingTires?[{key:"matching-tires",title:"Match tires to rims",body:`Your selected rims need ${selectedRimDiameter}-inch tires before quoting.`,label:`Find ${selectedRimDiameter}-inch tires`,onClick:()=>browseMatchingTires(selectedRimDiameter)}]:[]),
+  ...(tireNeedsMatchingRims?[{key:"matching-rims",title:"Match rims to tires",body:`Your selected tires need ${selectedTireRimDiameter}-inch rims before quoting.`,label:`Find ${selectedTireRimDiameter}-inch rims`,onClick:()=>browseMatchingRims(selectedTireRimDiameter)}]:[]),
+  ...(oversizedTireNeedsLift?[{key:"supporting-lift",title:"Clearance still needs a lift",body:`These ${selectedTireDiameter}-inch tires are larger than the current ${state.stockTire}-inch setup.`,label:"Find supporting suspension",onClick:()=>browseSupportingLift()}]:[]),
+  ...(tireExceedsLift?[{key:"stronger-lift",title:"Lift limit is too tight",body:`These ${selectedTireDiameter}-inch tires exceed this lift's listed ${selectedLiftLimit}-inch limit.`,label:"Find stronger suspension",onClick:()=>browseSupportingLift()}]:[])
+ ];
  const stageBreakdown=(["now","later","owned","installed"] as Stage[]).map(stage=>{
   const staged=selected.filter(part=>stageFor(state,part.category)===stage);
   return {stage,count:staged.length,cost:staged.reduce((sum,part)=>sum+part.priceCents*quantityFor(part,state),0)};
@@ -196,7 +208,9 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
  const modified=(next:BuildState)=>{markTouched();undoHistory.current=[...undoHistory.current.slice(-19),state];setUndoCount(undoHistory.current.length);setState(next);setDirty(true);setCompare(false);};
  function undo(){const previous=undoHistory.current.pop();if(!previous)return;markTouched();setState(previous);setUndoCount(undoHistory.current.length);setDirty(true);setCompare(false);}
  function reviewCategory(c:Category){changeCategory(c);document.getElementById('parts-heading')?.focus({preventScroll:true});document.getElementById('parts-section')?.scrollIntoView({behavior:'smooth'});}
+ function browseMatchingRims(rim:number=selectedTireRimDiameter){setCategory("wheels");setQuery("");setBrandFilter(allCatalogFilter);setPriceFilter(allCatalogFilter);setDimensionFilter(`rim:${rim}`);setSort("fit");setFavoritesOnly(false);setShowBuildConflicts(false);setShowExcluded(false);document.getElementById('parts-heading')?.focus({preventScroll:true});document.getElementById('parts-section')?.scrollIntoView({behavior:'smooth'});}
  function browseMatchingTires(rim:number=selectedRimDiameter){setCategory("tires");setQuery("");setBrandFilter(allCatalogFilter);setPriceFilter(allCatalogFilter);setDimensionFilter(`rim:${rim}`);setSort("fit");setFavoritesOnly(false);setShowBuildConflicts(false);setShowExcluded(false);document.getElementById('parts-heading')?.focus({preventScroll:true});document.getElementById('parts-section')?.scrollIntoView({behavior:'smooth'});}
+ function browseSupportingLift(){setCategory("lift");setQuery("");setBrandFilter(allCatalogFilter);setPriceFilter(allCatalogFilter);setDimensionFilter(allCatalogFilter);setSort("fit");setFavoritesOnly(false);setShowBuildConflicts(false);setShowExcluded(false);document.getElementById('parts-heading')?.focus({preventScroll:true});document.getElementById('parts-section')?.scrollIntoView({behavior:'smooth'});}
  function clearUndo(){undoHistory.current=[];setUndoCount(0);markTouched();}
  const update=(patch:Partial<BuildState>)=>modified({...state,...patch});
  function vehicleChangeWarning(next:BuildState){
@@ -310,7 +324,8 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
  <section className="vehicle-bar" aria-label="Your vehicle"><span className="vehicle-number">01</span><div className="vehicle-title"><span className="eyebrow">YOUR VEHICLE</span><strong>{state.year} Wrangler JL <span>Unlimited · 4-door</span></strong></div><div className="vehicle-tags"><span>{state.trim}</span><span>{powertrainNames[state.powertrain]}</span></div><Button variant="ghost" className="change-vehicle" onClick={()=>setVehicleOpen(true)}>Edit vehicle<Settings2 size={16}/></Button></section>
  <section className={`fitment-inline ${errors.length?'has-conflict':''}`} aria-label="Fitment checks" id="fitment-status">
  <div className="fitment-inline-heading"><TriangleAlert size={18}/><strong>{errors.length?`${errors.length} fitment conflict${errors.length===1?'':'s'} to resolve`:selected.length?'No conflicts detected by the current checks':'Fitment checks appear as you build'}</strong></div>
- {errors.map((issue,index)=>{const canMatchTires=issue.category==="tires"&&wheelNeedsMatchingTires;return <div className="fitment-inline-error" key={index}><p>{issue.message}</p>{canMatchTires?<Button size="sm" variant="outline" onClick={()=>browseMatchingTires(selectedRimDiameter)}>Find {selectedRimDiameter}-inch tires</Button>:issue.category&&<Button size="sm" variant="outline" onClick={()=>reviewCategory(issue.category!)}>Review {categoryNames[issue.category].toLowerCase()}</Button>}</div>;})}
+ {errors.map((issue,index)=>{const canMatchTires=issue.category==="tires"&&wheelNeedsMatchingTires,canMatchRims=issue.category==="tires"&&tireNeedsMatchingRims,canFindLift=issue.category==="tires"&&tireExceedsLift;return <div className="fitment-inline-error" key={index}><p>{issue.message}</p>{canMatchTires?<Button size="sm" variant="outline" onClick={()=>browseMatchingTires(selectedRimDiameter)}>Find {selectedRimDiameter}-inch tires</Button>:canMatchRims?<Button size="sm" variant="outline" onClick={()=>browseMatchingRims(selectedTireRimDiameter)}>Find {selectedTireRimDiameter}-inch rims</Button>:canFindLift?<Button size="sm" variant="outline" onClick={browseSupportingLift}>Find stronger suspension</Button>:issue.category&&<Button size="sm" variant="outline" onClick={()=>reviewCategory(issue.category!)}>Review {categoryNames[issue.category].toLowerCase()}</Button>}</div>;})}
+ {stanceActions.length>0&&<div className="stance-next" aria-label="Stance match next steps">{stanceActions.map(action=><div className="stance-action" key={action.key}><div><strong>{action.title}</strong><span>{action.body}</span></div><Button size="sm" variant="outline" onClick={action.onClick}>{action.label}</Button></div>)}</div>}
  <details><summary>{issues.filter(i=>i.level==='note').length} checks still need confirmation</summary><p>Checks apply to the final combination, including parts marked for later. A shop must confirm fitment and installation order.</p>{issues.filter(i=>i.level==='note').map((issue,index)=><p key={index}>• {issue.message}</p>)}{!selected.length&&<p>Add a part to see its fitment checks.</p>}</details>
  </section>
  <div className="build-grid"><div className="build-main">

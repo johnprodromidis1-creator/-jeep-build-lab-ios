@@ -45,7 +45,7 @@ const catalogFilters=await module("lib/catalog-filters.ts","catalog-filters");
 const garageFilters=await module("lib/garage-filters.ts","garage-filters");
 const shopBrief=await module("lib/shop-brief.ts","shop-brief");
 const commerce=await module("lib/commerce.ts","commerce");
-const {initialState,baseCatalog,totalFor,buildIssues,stateSchema,fitsVehicle,partCompatibility,publicBuildState,encodeSharedBuildState,decodeSharedBuildStatePayload,buildErrorsForOption,optionAddsBuildError}=model;
+const {initialState,baseCatalog,categories,totalFor,buildIssues,stateSchema,fitsVehicle,partCompatibility,publicBuildState,encodeSharedBuildState,decodeSharedBuildStatePayload,buildErrorsForOption,optionAddsBuildError}=model;
 const {dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
 const {buildShopBrief}=shopBrief;
@@ -55,9 +55,16 @@ const req=(user,method="GET",body,origin="https://test.local",query="")=>new Req
 const badJson=(path,method="POST")=>new Request("https://test.local/api/"+path,{method,headers:{"oai-authenticated-user-id":"alice",origin:"https://test.local","Content-Type":"application/json"},body:"{"});
 const jsonBody=(path,method,body)=>new Request("https://test.local/api/"+path,{method,headers:{"oai-authenticated-user-id":"alice",origin:"https://test.local","Content-Type":"application/json"},body:JSON.stringify(body)});
 
-test("catalog has 51 unique variants with positive cent prices and HTTPS sources",()=>{
- assert.equal(baseCatalog.length,51);assert.equal(new Set(baseCatalog.map(p=>p.id)).size,51);
+test("catalog has 104 unique variants with positive cent prices and HTTPS sources",()=>{
+ assert.equal(baseCatalog.length,104);assert.equal(new Set(baseCatalog.map(p=>p.id)).size,104);
  for(const p of baseCatalog){assert.ok(Number.isInteger(p.priceCents)&&p.priceCents>0);assert.equal(new URL(p.url).protocol,"https:");}
+});
+test("catalog exposes at least fifteen visible choices per major part category",()=>{
+ for(const category of categories){
+  const categoryParts=baseCatalog.filter(p=>p.category===category);
+  assert.ok(categoryParts.length>=15,`${category} only has ${categoryParts.length} variants`);
+  assert.ok(planning.groupParts(categoryParts).length>=15,`${category} only shows ${planning.groupParts(categoryParts).length} choices`);
+ }
 });
 test("commerce partner directory covers all affiliate reseller dealer and distributor paths",()=>{
  assert.equal(partnerPrograms.length,13);
@@ -289,7 +296,7 @@ test("legacy saved configurations gain defaults and comparisons include quantity
  restored.picks={tires:"nitto-217020"};const other=structuredClone(restored);other.quantity=4;
  const rows=planning.compareRows(restored,other,baseCatalog);assert.equal(rows.filter(r=>r.changed).length,1);assert.equal(rows.find(r=>r.category==="tires").leftCost,43200*5);
  other.quantity=5;other.stages.tires="owned";assert.equal(planning.compareRows(restored,other,baseCatalog).find(r=>r.category==="tires").changed,true);
- assert.equal(planning.groupParts(baseCatalog).reduce((n,g)=>n+g.variants.length,0),51);
+ assert.equal(planning.groupParts(baseCatalog).reduce((n,g)=>n+g.variants.length,0),104);
  assert.equal(stateSchema.safeParse({...base(),stages:{wheels:"free"}}).success,false);
  assert.equal(stateSchema.safeParse({...base(),picks:{tires:"nitto-217020"},stages:{tires:"owned"}}).success,true);
 });

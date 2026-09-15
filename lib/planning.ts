@@ -10,9 +10,7 @@ export function costPlan(state:BuildState,parts:Part[]) {
  return {...byStage,allowances,remaining,dueNow:byStage.now+allowances,covered:byStage.owned+byStage.installed,project:remaining+(state.vehicleCost??0),fullValue:totalFor(state,parts).total};
 }
 export function groupParts(parts:Part[]) {
- const groups=new Map<string,Part[]>();
- for(const p of parts){const key=[p.category,p.brand,p.name].join('|');groups.set(key,[...(groups.get(key)??[]),p]);}
- return Array.from(groups.entries()).map(([key,variants])=>({key,variants}));
+ return parts.map(p=>({key:p.id,variants:[p]}));
 }
 export function compareRows(a:BuildState,b:BuildState,parts:Part[]) {
  return categories.map(category=>{

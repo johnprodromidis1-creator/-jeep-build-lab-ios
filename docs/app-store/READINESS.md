@@ -1,6 +1,6 @@
 # Jeep Build Lab — App Store preparation
 
-Status: baseline unsigned iOS simulator compilation passed. Source prepared for an initial signed iOS device build; no signed IPA or TestFlight upload has been verified. The current source now includes first-batch 2024 Sahara 4xe catalog support, and the public Sites build is live at https://jeep-build-lab.johnprodromidis1.chatgpt.site. A signed archive and physical-device tests are still required before TestFlight/App Store submission.
+Status: baseline unsigned iOS simulator compilation passed. Source prepared for an initial signed iOS device build; no signed IPA or TestFlight upload has been verified. The current source now includes first-batch 2024 Sahara 4xe catalog support plus a 104-variant catalog-depth pass, and the public Sites build is live at https://jeep-build-lab.johnprodromidis1.chatgpt.site. A signed archive and physical-device tests are still required before TestFlight/App Store submission.
 
 ## Implemented for the first iOS candidate
 
@@ -35,7 +35,11 @@ TypeScript passes with `node node_modules/typescript/bin/tsc --noEmit`. ESLint e
 
 Capacitor `sync ios` succeeded after a local-only monkeypatch for Node's `os.userInfo()` failing with `ENOMEM` in this Windows sandbox. The sync copied generated mobile assets, but those outputs are intentionally ignored and rebuilt in CI. Running the normal Codemagic/npm path on macOS remains the authoritative iOS sync/archive check.
 
-On September 14, the public Sites deployment succeeded and the live URL was smoke-tested in the in-app browser. The builder rendered the 51-variant catalog, loaded the 2024 Sahara 4xe starter build, showed the Nitto tire and Mopar lift with $4,150.40 left to fund, reported no fitment conflicts while retaining three shop-confirmation checks, and served the live `/privacy` and `/support` pages without console errors.
+On September 14, the public Sites deployment succeeded and the live URL was smoke-tested in the in-app browser. The builder rendered the then-current 51-variant catalog, loaded the 2024 Sahara 4xe starter build, showed the Nitto tire and Mopar lift with $4,150.40 left to fund, reported no fitment conflicts while retaining three shop-confirmation checks, and served the live `/privacy` and `/support` pages without console errors.
+
+## September 15 catalog-depth pass
+
+The catalog now contains 104 sourced variants and at least 15 visible choices in each major part category: wheels, tires, suspension, bumpers, winches and side armor. The UI renders individual product-variant cards instead of collapsing multiple SKUs into one brand/name family. This pass adds source snapshots and source-confidence fields only; it does not add active affiliate tracking, checkout, wholesale ordering, dropship fulfillment or a new external API. The expanded 54-test suite, production web build, App Store preflight and mobile Vite build passed on September 15.
 
 On September 14, TestFlight build attempt 1 started from GitHub `main` at `c8e787c` and failed before archive/signing because Codemagic found no matching App Store provisioning profile for `com.johnprodromidis.jeepbuildlab`.
 

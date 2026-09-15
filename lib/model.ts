@@ -1,5 +1,6 @@
 import { z } from "zod";
 import catalog from "./catalog.json";
+import catalogExpansion from "./catalog-expansion";
 
 export const categories = ["wheels", "tires", "lift", "bumpers", "winches", "armor"] as const;
 export type Category = typeof categories[number];
@@ -50,7 +51,7 @@ export type Part = {
   customPrice?: boolean;
 };
 
-export const baseCatalog = catalog as Part[];
+export const baseCatalog = [...(catalog as Part[]), ...(catalogExpansion as Part[])];
 const stageValue = z.enum(["now", "later", "owned", "installed"]);
 const stagesSchema = z.object({
   wheels: stageValue.optional(),

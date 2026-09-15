@@ -53,6 +53,8 @@ test("serves the builder with production metadata and the initial catalog", asyn
   assert.match(html, /Filter by brand/);
   assert.match(html, /Filter by price/);
   assert.match(html, /Favorites only/);
+  assert.match(html, /104(?:<!-- -->)? curated variants/);
+  assert.match(html, /104 sourced variants - latest check Sep 15, 2026/);
   assert.match(html, /assets\/jeep-body\.png/);
   assert.match(html, /701 Trail Series/);
 });

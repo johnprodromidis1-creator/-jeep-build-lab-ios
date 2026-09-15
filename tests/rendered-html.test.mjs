@@ -48,6 +48,9 @@ test("serves the builder with production metadata and the initial catalog", asyn
   assert.match(html, /Choose your upgrades/);
   assert.match(html, /Quote readiness/);
   assert.match(html, /Purchase stages/);
+  assert.match(html, /STARTER BUILDS/);
+  assert.match(html, /daily trail rim-and-tire plan/i);
+  assert.match(html, /recovery-ready trail plan/i);
   assert.match(html, /Load a 2024 Sahara 4xe sample/);
   assert.match(html, /Save to my garage/);
   assert.match(html, /Filter by brand/);
@@ -475,6 +478,24 @@ test("builder shows an adaptive next-best-pick guide", async () => {
   assert.match(source, /onClick=\{nextPick\.onClick\}/);
   assert.match(css, /\.build-coach/);
   assert.match(css, /\.build-coach \[data-slot=button\]/);
+});
+
+test("builder exposes complete starter build recipes", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const recipes = await readFile(new URL("../lib/build-recipes.ts", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(source, /buildRecipes\.map\(recipe=>/);
+  assert.match(source, /function loadRecipe\(recipe:BuildRecipe/);
+  assert.match(source, /function requestRecipe\(recipe:BuildRecipe\)/);
+  assert.match(source, /confirm\?\.kind==="recipe"/);
+  assert.match(source, /aria-label="Starter build recipes"/);
+  assert.match(recipes, /Daily trail starter/);
+  assert.match(recipes, /Recovery-ready trail build/);
+  assert.match(recipes, /2024 Sahara 4xe starter/);
+  assert.match(css, /\.recipe-list/);
+  assert.match(css, /\.recipe-row/);
+  assert.match(css, /@media\(max-width:900px\).*\.recipe-list\{grid-template-columns:1fr\}/);
 });
 
 test("catalog advisor picks surface fit price and source-path choices", async () => {

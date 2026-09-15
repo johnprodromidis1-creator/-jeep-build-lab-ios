@@ -45,11 +45,13 @@ const catalogFilters=await module("lib/catalog-filters.ts","catalog-filters");
 const garageFilters=await module("lib/garage-filters.ts","garage-filters");
 const shopBrief=await module("lib/shop-brief.ts","shop-brief");
 const commerce=await module("lib/commerce.ts","commerce");
-const {initialState,baseCatalog,categories,totalFor,buildIssues,stateSchema,fitsVehicle,partCompatibility,partSpecBadges,linePriceRangeLabel,publicBuildState,encodeSharedBuildState,decodeSharedBuildStatePayload,buildErrorsForOption,optionAddsBuildError}=model;
+const recipes=await module("lib/build-recipes.ts","build-recipes");
+const {initialState,baseCatalog,categories,selectedParts,totalFor,buildIssues,stateSchema,fitsVehicle,partCompatibility,partSpecBadges,linePriceRangeLabel,publicBuildState,encodeSharedBuildState,decodeSharedBuildStatePayload,buildErrorsForOption,optionAddsBuildError}=model;
 const {catalogFitScore,catalogSortOptions,compareCatalogParts,dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
 const {buildShopBrief}=shopBrief;
 const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildCommerceApplicationPack,buildPartnerApplicationLinks,commerceApplicationChecklist}=commerce;
+const {buildRecipes}=recipes;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
 const badJson=(path,method="POST")=>new Request("https://test.local/api/"+path,{method,headers:{"oai-authenticated-user-id":"alice",origin:"https://test.local","Content-Type":"application/json"},body:"{"});
@@ -64,6 +66,20 @@ test("catalog exposes at least fifteen visible choices per major part category",
   const categoryParts=baseCatalog.filter(p=>p.category===category);
   assert.ok(categoryParts.length>=15,`${category} only has ${categoryParts.length} variants`);
   assert.ok(planning.groupParts(categoryParts).length>=15,`${category} only shows ${planning.groupParts(categoryParts).length} choices`);
+ }
+});
+test("starter build recipes use known compatible catalog selections",()=>{
+ assert.ok(buildRecipes.length>=3);
+ const catalogIds=new Set(baseCatalog.map(p=>p.id));
+ for(const recipe of buildRecipes){
+  const parsed=stateSchema.safeParse(recipe.state);
+  assert.equal(parsed.success,true,parsed.success?"":`${recipe.name}: ${parsed.error.message}`);
+  assert.ok(categories.includes(recipe.focus),`${recipe.name} uses unknown focus ${recipe.focus}`);
+  const pickIds=Object.values(recipe.state.picks);
+  assert.ok(pickIds.length>=2,`${recipe.name} should load a useful starting point`);
+  for(const id of pickIds)assert.ok(catalogIds.has(id),`${recipe.name} references unknown part ${id}`);
+  assert.equal(selectedParts(recipe.state,baseCatalog).length,pickIds.length,`${recipe.name} has unresolved selected parts`);
+  assert.deepEqual(buildIssues(recipe.state,baseCatalog).filter(i=>i.level==="error"),[],`${recipe.name} should not start with hard fitment errors`);
  }
 });
 test("part spec badges expose key comparison details by category",()=>{

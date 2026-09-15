@@ -39,7 +39,7 @@ On September 14, the public Sites deployment succeeded and the live URL was smok
 
 ## September 15 catalog-depth pass
 
-The catalog now contains 104 sourced variants and at least 15 visible choices in each major part category: rims, tires, suspension, bumpers, winches and side armor. The UI renders individual product-variant cards instead of collapsing multiple SKUs into one brand/name family, with category-tab counts making that depth visible before filtering. This pass adds source snapshots and source-confidence fields only; it does not add active affiliate tracking, checkout, wholesale ordering, dropship fulfillment or a new external API. The expanded 56-test suite, production web build, App Store preflight and mobile Vite build passed on September 15.
+The catalog now contains 104 sourced variants and at least 15 visible choices in each major part category: rims, tires, suspension, bumpers, winches and side armor. The UI renders individual product-variant cards instead of collapsing multiple SKUs into one brand/name family, with category-tab counts showing build-ready choices against loaded depth before filtering. This pass adds source snapshots and source-confidence fields only; it does not add active affiliate tracking, checkout, wholesale ordering, dropship fulfillment or a new external API. The expanded 56-test suite, production web build, App Store preflight and mobile Vite build passed on September 15.
 
 On September 14, TestFlight build attempt 1 started from GitHub `main` at `c8e787c` and failed before archive/signing because Codemagic found no matching App Store provisioning profile for `com.johnprodromidis.jeepbuildlab`.
 

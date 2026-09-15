@@ -284,14 +284,19 @@ test("builder surfaces source confidence and export proof fields", async () => {
   assert.match(css, /\.source-confidence/);
 });
 
-test("catalog category tabs show per-category choice counts", async () => {
+test("catalog category tabs show build-ready and loaded choice counts", async () => {
   const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
 
-  assert.match(source, /categoryTotals/);
+  assert.match(source, /categoryStats/);
+  assert.match(source, /loaded:0,ready:0,fit:0,blocked:0,excluded:0/);
+  assert.match(source, /optionAddsBuildError\(part,state,parts\)/);
   assert.match(source, /className="tab-count"/);
-  assert.match(source, /aria-label=\{`\$\{categoryTotals\[c\]\} choices`\}/);
+  assert.match(source, /title=\{`\$\{stats\.ready\} ready for this build; \$\{stats\.loaded\} loaded`\}/);
+  assert.match(source, /aria-label=\{`\$\{stats\.ready\} ready choices, \$\{stats\.loaded\} loaded choices`\}/);
+  assert.match(source, /<strong>\{stats\.ready\}<\/strong><small>of \{stats\.loaded\}<\/small>/);
   assert.match(css, /\.tab-count/);
+  assert.match(css, /\.tab-count small/);
   assert.match(css, /\.category-tabs \[data-state=active\] \.tab-count/);
 });
 

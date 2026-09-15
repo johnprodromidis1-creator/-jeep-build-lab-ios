@@ -129,12 +129,20 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
  const yearOptions=state.powertrain==="4xe"?[2024]:[2018,2019,2020,2021,2022,2023];
  const trimOptions=(state.powertrain==="4xe"?["Sahara"]:["Sport","Sahara","Rubicon"]) as Trim[];
  const categoryPool=parts.filter(p=>p.category===category);
- const categoryTotals=useMemo(()=>{
-  const totals={} as Record<Category,number>;
-  for(const c of categories)totals[c]=0;
-  for(const part of parts)totals[part.category]+=1;
-  return totals;
- },[parts]);
+ const categoryStats=useMemo(()=>{
+  const stats={} as Record<Category,{loaded:number;ready:number;fit:number;blocked:number;excluded:number}>;
+  for(const c of categories)stats[c]={loaded:0,ready:0,fit:0,blocked:0,excluded:0};
+  const picked=new Set(Object.values(state.picks));
+  for(const part of parts){
+   const row=stats[part.category];
+   row.loaded+=1;
+   if(!fitsVehicle(part,state)){row.excluded+=1;continue;}
+   row.fit+=1;
+   if(picked.has(part.id)||!optionAddsBuildError(part,state,parts))row.ready+=1;
+   else row.blocked+=1;
+  }
+  return stats;
+ },[parts,state]);
  const brandOptions=Array.from(new Set(categoryPool.map(p=>p.brand))).sort((a,b)=>a.localeCompare(b));
  const dimensionOptions=dimensionFilterOptions(categoryPool,category);
  const catalogFilters={category,query,brand:brandFilter,price:priceFilter,dimension:dimensionFilter};
@@ -303,7 +311,7 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
  </section>
  <section id="parts-section" className="parts-section" aria-labelledby="parts-heading">
  <div className="section-heading"><div><span className="eyebrow">AFTERMARKET PARTS</span><h2 id="parts-heading" tabIndex={-1}>Choose your upgrades</h2></div><span className="catalog-count">{parts.length} curated variants</span></div>
- <Tabs value={category} onValueChange={v=>changeCategory(v as Category)}><TabsList className="category-tabs">{categories.map(c=>{const Icon=icons[c];return <TabsTrigger key={c} value={c}><Icon size={16}/><span className="tab-label">{categoryNames[c]}</span><span className="tab-count" aria-label={`${categoryTotals[c]} choices`}>{categoryTotals[c]}</span>{state.picks[c]&&<span className="tab-dot"/>}</TabsTrigger>;})}</TabsList></Tabs>
+ <Tabs value={category} onValueChange={v=>changeCategory(v as Category)}><TabsList className="category-tabs">{categories.map(c=>{const Icon=icons[c],stats=categoryStats[c];return <TabsTrigger key={c} value={c} title={`${stats.ready} ready for this build; ${stats.loaded} loaded`}><Icon size={16}/><span className="tab-label">{categoryNames[c]}</span><span className="tab-count" aria-label={`${stats.ready} ready choices, ${stats.loaded} loaded choices`}><strong>{stats.ready}</strong><small>of {stats.loaded}</small></span>{state.picks[c]&&<span className="tab-dot"/>}</TabsTrigger>;})}</TabsList></Tabs>
  <div className="source-status" aria-label="Catalog source status"><span><CheckCheck size={14}/>{catalogSourceText}</span><span><DollarSign size={14}/>Prices are dated snapshots, not live quotes.</span><span><Shield size={14}/>Planner fitment is coverage, not certification.</span></div>
  <div className="catalog-toolbar"><div className="search-box"><Search size={17}/><Input aria-label="Search parts" placeholder={`Search ${categoryNames[category].toLowerCase()}…`} value={query} onChange={e=>setQuery(e.target.value)}/></div><Select value={sort} onValueChange={setSort}><SelectTrigger aria-label="Sort parts"><SlidersHorizontal size={14}/><SelectValue/></SelectTrigger><SelectContent><SelectItem value="curated">Curated order</SelectItem><SelectItem value="low">Price: low to high</SelectItem><SelectItem value="high">Price: high to low</SelectItem></SelectContent></Select><label className="catalog-toggle favorite-toggle"><input type="checkbox" checked={favoritesOnly} onChange={e=>setFavoritesOnly(e.target.checked)}/><span>Favorites only</span>{favoriteCount>0&&<strong>{favoriteCount}</strong>}</label><label className="catalog-toggle"><input type="checkbox" checked={showBuildConflicts} onChange={e=>setShowBuildConflicts(e.target.checked)}/><span>Show conflicts</span>{buildConflicting.length>0&&<strong>{buildConflicting.length}</strong>}</label><label className="catalog-toggle"><input type="checkbox" checked={showExcluded} onChange={e=>setShowExcluded(e.target.checked)}/><span>Show excluded</span>{excluded.length>0&&<strong>{excluded.length}</strong>}</label></div>
  <div className="catalog-filters" aria-label="Catalog filters"><Select value={brandFilter} onValueChange={setBrandFilter}><SelectTrigger aria-label="Filter by brand"><Tag size={14}/><SelectValue/></SelectTrigger><SelectContent><SelectItem value={allCatalogFilter}>All brands</SelectItem>{brandOptions.map(brand=><SelectItem key={brand} value={brand}>{brand}</SelectItem>)}</SelectContent></Select><Select value={priceFilter} onValueChange={setPriceFilter}><SelectTrigger aria-label="Filter by price"><DollarSign size={14}/><SelectValue/></SelectTrigger><SelectContent>{priceBandOptions.map(option=><SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>)}</SelectContent></Select>{dimensionOptions.length>1&&<Select value={dimensionFilter} onValueChange={setDimensionFilter}><SelectTrigger aria-label="Filter by size or specification"><Ruler size={14}/><SelectValue/></SelectTrigger><SelectContent><SelectItem value={allCatalogFilter}>All sizes</SelectItem>{dimensionOptions.map(option=><SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>)}</SelectContent></Select>}{activeCatalogFilter&&<Button variant="ghost" className="filter-reset" onClick={clearCatalogFilters}><X size={14}/>Clear filters</Button>}</div>

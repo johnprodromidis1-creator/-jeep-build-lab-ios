@@ -409,6 +409,25 @@ test("builder shows an adaptive next-best-pick guide", async () => {
   assert.match(css, /\.build-coach \[data-slot=button\]/);
 });
 
+test("catalog advisor picks surface fit price and source-path choices", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(source, /function uniqueCatalogHighlights/);
+  assert.match(source, /catalogAdvisorPool=filtered\.filter/);
+  assert.match(source, /bestFitPick=\[...catalogAdvisorPool\]\.sort\(compareCatalogParts\("fit",state,parts\)\)\[0\]/);
+  assert.match(source, /lowestShownPick=\[...catalogAdvisorPool\]\.sort/);
+  assert.match(source, /mostPathsPick=\[...catalogAdvisorPool\]\.sort/);
+  assert.match(source, /label:"Best fit"/);
+  assert.match(source, /label:"Lowest shown"/);
+  assert.match(source, /label:"Most source paths"/);
+  assert.match(source, /aria-label="Catalog advisor picks"/);
+  assert.match(source, /onClick=\{\(\)=>openDetail\(highlight\.part\)\}/);
+  assert.match(css, /\.catalog-highlights/);
+  assert.match(css, /\.catalog-highlight/);
+  assert.match(css, /@media\(max-width:760px\).*\.catalog-highlights\{grid-template-columns:1fr\}/);
+});
+
 test("catalog visibility controls can reveal every loaded choice", async () => {
   const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");

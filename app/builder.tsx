@@ -39,6 +39,15 @@ function buildPartsCsv({name,notes,state,parts}:{name:string;notes:string;state:
  const rows=[["Jeep Build Lab",name],["Vehicle",vehicleDescription(state)],["Commerce disclosure",commerceDisclosure],["Commerce status",noActiveCommerceDisclosure],["Category","Brand","Product","Variant","Reference","Quantity","Unit USD","Line USD","Source","Commerce options","Source checked","Planner coverage","Price basis","Purchase stage"],...selected.map(p=>[categoryNames[p.category],p.brand,p.name,p.variant,p.reference,quantityFor(p,state),p.priceCents/100,p.priceCents*quantityFor(p,state)/100,p.url,commerceSummaryForPart(p),p.checkedAt,partCoverage(p),priceBasis(p),stageNames[stageFor(state,p.category)]]),["Parts subtotal",totals.subtotal/100],["Labor allowance",state.labor/100],["Tax, shipping and extras allowance",state.extras/100],["Full selection value incl. allowances",totals.total/100],["Already owned / installed selection value",plan.covered/100],["Buy now parts",plan.now/100],["Buy later parts",plan.later/100],["Upgrades left to fund incl. allowances",plan.remaining/100],["Entered vehicle price",state.vehicleCost/100],["Vehicle plus unfunded upgrades",plan.project/100],["Notes",notes],...issues.map(i=>["Fitment "+i.level,i.message])];
  return rows.map(row=>row.map(csvCell).join(",")).join("\r\n");
 }
+type CatalogHighlightDraft={key:string;label:string;part?:Part;detail:(part:Part)=>string};
+function uniqueCatalogHighlights(entries:CatalogHighlightDraft[]){
+ const seen=new Set<string>(),highlights:{key:string;label:string;part:Part;detail:string}[]=[];
+ for(const entry of entries){
+  if(!entry.part||seen.has(entry.part.id))continue;
+  seen.add(entry.part.id);highlights.push({key:entry.key,label:entry.label,part:entry.part,detail:entry.detail(entry.part)});
+ }
+ return highlights;
+}
 function Choice({label,value,onChange,options}:{label:string;value:string;onChange:(v:string)=>void;options:{value:string;label:string}[]}){
  return <div className="field"><Label>{label}</Label><Select value={value} onValueChange={onChange}><SelectTrigger aria-label={label}><SelectValue/></SelectTrigger><SelectContent>{options.map(o=><SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent></Select></div>;
 }
@@ -170,6 +179,15 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
  const hiddenByCatalogView=currentCategoryStats.loaded>filtered.length;
  const showingFullCategory=showExcluded&&!activeCatalogFilter&&filtered.length===currentCategoryStats.loaded;
  const categoryMarketRange=linePriceRangeLabel(categoryPool,state);
+ const catalogAdvisorPool=filtered.filter(p=>fitsVehicle(p,state)&&(pickedIds.has(p.id)||!optionAddsBuildError(p,state,parts)));
+ const bestFitPick=[...catalogAdvisorPool].sort(compareCatalogParts("fit",state,parts))[0];
+ const lowestShownPick=[...catalogAdvisorPool].sort((a,b)=>a.priceCents*quantityFor(a,state)-b.priceCents*quantityFor(b,state))[0];
+ const mostPathsPick=[...catalogAdvisorPool].sort((a,b)=>commerceOffersForPart(b).length-commerceOffersForPart(a).length||a.priceCents-b.priceCents)[0];
+ const catalogHighlights=uniqueCatalogHighlights([
+  {key:"fit",label:"Best fit",part:bestFitPick,detail:part=>`${money(part.priceCents*quantityFor(part,state))} · closest to this build`},
+  {key:"budget",label:"Lowest shown",part:lowestShownPick,detail:part=>`${money(part.priceCents*quantityFor(part,state))} · compatible option`},
+  {key:"paths",label:"Most source paths",part:mostPathsPick,detail:part=>`${commerceOffersForPart(part).length} source and partner paths`}
+ ]);
  const garageFilters=useMemo(()=>({query:garageQuery,powertrain:garagePowertrain,conflicts:garageConflicts,sort:garageSort}),[garageQuery,garagePowertrain,garageConflicts,garageSort]);
  const activeGarageFilter=hasGarageFilter(garageFilters);
  const visibleGarage=useMemo(()=>filterGarageBuilds(garage,parts,garageFilters),[garage,parts,garageFilters]);
@@ -354,6 +372,7 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
  <div className="catalog-filters" aria-label="Catalog filters"><Select value={brandFilter} onValueChange={setBrandFilter}><SelectTrigger aria-label="Filter by brand"><Tag size={14}/><SelectValue/></SelectTrigger><SelectContent><SelectItem value={allCatalogFilter}>All brands</SelectItem>{brandOptions.map(brand=><SelectItem key={brand} value={brand}>{brand}</SelectItem>)}</SelectContent></Select><Select value={priceFilter} onValueChange={setPriceFilter}><SelectTrigger aria-label="Filter by price"><DollarSign size={14}/><SelectValue/></SelectTrigger><SelectContent>{priceBandOptions.map(option=><SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>)}</SelectContent></Select>{dimensionOptions.length>1&&<Select value={dimensionFilter} onValueChange={setDimensionFilter}><SelectTrigger aria-label="Filter by size or specification"><Ruler size={14}/><SelectValue/></SelectTrigger><SelectContent><SelectItem value={allCatalogFilter}>All sizes</SelectItem>{dimensionOptions.map(option=><SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>)}</SelectContent></Select>}{activeCatalogFilter&&<Button variant="ghost" className="filter-reset" onClick={clearCatalogFilters}><X size={14}/>Clear filters</Button>}</div>
  <div className="catalog-market" aria-label="Current category market snapshot"><span><strong>{filtered.length}</strong><small>shown of {currentCategoryStats.loaded} loaded</small></span><span><strong>{brandOptions.length}</strong><small>{brandOptions.length===1?'brand':'brands'} loaded</small></span><span><strong>{categoryMarketRange}</strong><small>selection range</small></span><span><strong>{currentCategoryStats.ready}</strong><small>ready for this build</small></span></div>
  <div className="catalog-subtitle"><span>{families.length} products · {buildReady.length} fit your current build</span><span>{activeCatalogFilter?'Filters active · ':''}{buildConflicting.length} need another build change · {excluded.length} excluded by vehicle fitment · USD · Selection prices include quantity</span></div>
+ {catalogHighlights.length>0&&<div className="catalog-highlights" aria-label="Catalog advisor picks">{catalogHighlights.map(highlight=><div className="catalog-highlight" key={highlight.key}><div><span>{highlight.label}</span><strong>{highlight.part.brand} {highlight.part.name}</strong><small>{highlight.detail}</small></div><Button size="sm" variant="ghost" onClick={()=>openDetail(highlight.part)}>Review</Button></div>)}</div>}
  {rimFirstBrowsing&&!showExcluded&&!showBuildConflicts&&!activeCatalogFilter&&<div className="rim-first-note"><span><Info size={14}/>Rim-first browsing keeps every vehicle-compatible rim visible. Add matching tires next for non-stock diameters.</span>{wheelNeedsMatchingTires&&<Button size="sm" variant="outline" onClick={()=>browseMatchingTires(selectedRimDiameter)}>Find {selectedRimDiameter}-inch tires</Button>}</div>}
  {(hiddenByCatalogView||showingFullCategory)&&<div className="catalog-reveal" aria-label="Catalog visibility controls"><span>{showingFullCategory?`Showing all ${currentCategoryStats.loaded} loaded ${categoryNames[category].toLowerCase()} choices.`:`${currentCategoryStats.loaded-filtered.length} loaded ${categoryNames[category].toLowerCase()} choices are hidden by fitment, build or filter settings.`}</span><div className="catalog-reveal-actions">{!showingFullCategory&&<Button variant="outline" size="sm" onClick={showAllCategoryChoices}>Show all loaded</Button>}{(showExcluded||showBuildConflicts)&&<Button variant="ghost" size="sm" onClick={showReadyCatalogChoices}>Ready only</Button>}</div></div>}
  {catalogWarning&&<div className="inline-warning"><TriangleAlert size={16}/>{catalogWarning}</div>}

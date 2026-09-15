@@ -284,6 +284,17 @@ test("builder surfaces source confidence and export proof fields", async () => {
   assert.match(css, /\.source-confidence/);
 });
 
+test("catalog category tabs show per-category choice counts", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(source, /categoryTotals/);
+  assert.match(source, /className="tab-count"/);
+  assert.match(source, /aria-label=\{`\$\{categoryTotals\[c\]\} choices`\}/);
+  assert.match(css, /\.tab-count/);
+  assert.match(css, /\.category-tabs \[data-state=active\] \.tab-count/);
+});
+
 test("comparison dialog can open the selected saved build", async () => {
   const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
   const dialog = await readFile(new URL("../app/components/build-comparison.tsx", import.meta.url), "utf8");

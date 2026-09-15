@@ -53,6 +53,8 @@ test("serves the builder with production metadata and the initial catalog", asyn
   assert.match(html, /Filter by brand/);
   assert.match(html, /Filter by price/);
   assert.match(html, /Favorites only/);
+  assert.match(html, /Fit \+ conflicts/);
+  assert.match(html, /All loaded/);
   assert.match(html, /Rims/);
   assert.match(html, /Search Rims/i);
   assert.match(html, /RIMS/);
@@ -379,6 +381,23 @@ test("catalog inventory makes loaded category depth scannable", async () => {
   assert.match(css, /\.inventory-tile\.picked/);
   assert.match(css, /@media\(max-width:1100px\)\{\.catalog-inventory\{grid-template-columns:repeat\(3,minmax\(0,1fr\)\)\}\}/);
   assert.match(css, /@media\(max-width:760px\).*\.catalog-inventory\{display:flex;overflow:auto/);
+});
+
+test("catalog view switch exposes ready conflict and all-loaded modes", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(source, /catalogView=showExcluded\?"all":showBuildConflicts\?"review":"ready"/);
+  assert.match(source, /function showConflictCatalogChoices\(\)\{setShowExcluded\(false\);setShowBuildConflicts\(true\);\}/);
+  assert.match(source, /role="group" aria-label="Catalog view"/);
+  assert.match(source, /aria-pressed=\{catalogView==="ready"\}/);
+  assert.match(source, /Fit \+ conflicts/);
+  assert.match(source, /All loaded/);
+  assert.match(source, /\{buildConflicting\.length>0&&<em>\{buildConflicting\.length\}<\/em>\}/);
+  assert.match(css, /\.catalog-view-switch/);
+  assert.match(css, /\.catalog-view-switch button\[aria-pressed=true\]/);
+  assert.match(css, /@media\(max-width:760px\).*\.catalog-view-switch\{order:4;width:100%;flex-basis:100%\}/);
+  assert.match(css, /@media\(max-width:390px\).*\.catalog-view-switch button\{font-size:11px/);
 });
 
 test("catalog defaults to best-fit sorting", async () => {

@@ -22,7 +22,7 @@ Sources:
 Use English metadata and fresh demo data. Keep the coverage honest: 2018-2023 JL Unlimited 3.6L gas plus first-batch 2024 Sahara 4xe support only.
 
 1. Builder overview: clean install, tap **Load starter**, show the 2024 Sahara 4xe starter with preview, 33-inch tires, 2-inch lift and budget total visible.
-2. Catalog fitment: open **Show excluded** on Tires or Rims so compatible options and excluded reasons are visible.
+2. Catalog fitment: open **All loaded** on Tires or Rims so compatible options and excluded reasons are visible.
 3. Plan and price: show buy now/buy later stages, matching spare quantity and allowance fields.
 4. Garage: save the starter as a named build, create one second lightweight variation, then show **My garage** with saved estimates.
 5. Compare: open side-by-side comparison with differing parts enabled.

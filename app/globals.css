@@ -186,6 +186,19 @@
 .quote-readiness li.ready:before{background:#9fc795}
 .quote-readiness li.needs-review:before{background:#ff9d78}
 .quote-readiness [data-slot=button]{width:100%;font-size:12px}
+.build-checklist{border:1px solid #3e5057;background:#151f24;border-radius:7px;padding:11px 12px;margin:0 0 16px}
+.build-checklist-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin:0 0 9px}
+.build-checklist-head strong{font-size:14px;font-weight:600;color:#f3f8f9;line-height:1.35}
+.build-checklist-head span{font-size:12px;color:#9fb3bc;line-height:1.45;text-align:right}
+.build-checklist-row{width:100%;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;min-height:42px;border:1px solid #33464e;background:#121d22;border-radius:5px;padding:7px 8px;text-align:left;color:#d6e2e6}
+.build-checklist-row+.build-checklist-row{margin-top:6px}
+.build-checklist-row svg{color:#9fb5bd}
+.build-checklist-row.picked{border-color:#4d5d47;background:#16241b}
+.build-checklist-row.picked svg{color:#a9cfa2}
+.build-checklist-row strong{display:block;font-size:13px;font-weight:600;line-height:1.35;color:#eff6f7}
+.build-checklist-row small{display:block;font-size:12px;line-height:1.35;color:#9fb3bc;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.build-checklist-row em{font-style:normal;font-size:12px;color:#dfb887;white-space:nowrap}
+.build-checklist-row:hover{border-color:#5f7179;background:#17252b}
 .source-readiness{border:1px solid #40515a;background:#151f24;border-radius:7px;padding:11px 12px;margin:0 0 16px}
 .source-readiness strong{display:block;font-size:14px;font-weight:600;color:#f3f8f9;line-height:1.35}
 .source-readiness span{display:block;font-size:12px;color:#dfb887;line-height:1.45;margin-top:2px}

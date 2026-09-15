@@ -271,6 +271,22 @@ test("build summary breaks costs into purchase stages", async () => {
   assert.match(css, /\.stage-breakdown-row\.allowances/);
 });
 
+test("build summary exposes a category completion checklist", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(source, /const buildChecklist=categories\.map\(c=>\(\{category:c,part:selected\.find\(p=>p\.category===c\),ready:categoryStats\[c\]\.ready\}\)\)/);
+  assert.match(source, /aria-label="Build category checklist"/);
+  assert.match(source, /Build checklist/);
+  assert.match(source, /\{selected\.length\} of \{categories\.length\} categories selected/);
+  assert.match(source, /buildChecklist\.map\(row=>\{const Icon=icons\[row\.category\]/);
+  assert.match(source, /onClick=\{\(\)=>reviewCategory\(row\.category\)\}/);
+  assert.match(source, /row\.part\?"Swap":"Browse"/);
+  assert.match(css, /\.build-checklist/);
+  assert.match(css, /\.build-checklist-row\.picked/);
+  assert.match(css, /\.build-checklist-row small/);
+});
+
 test("builder surfaces source confidence and export proof fields", async () => {
   const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
   const partFamily = await readFile(new URL("../app/components/part-family.tsx", import.meta.url), "utf8");

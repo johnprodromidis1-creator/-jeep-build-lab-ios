@@ -428,6 +428,24 @@ test("catalog advisor picks surface fit price and source-path choices", async ()
   assert.match(css, /@media\(max-width:760px\).*\.catalog-highlights\{grid-template-columns:1fr\}/);
 });
 
+test("catalog advisor picks can be compared side by side", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(source, /partSpecBadges/);
+  assert.match(source, /function partSpecSummary\(part:Part\)/);
+  assert.match(source, /catalogHighlights\.length>1&&<details className="catalog-compare"/);
+  assert.match(source, /aria-label="Compare catalog advisor picks"/);
+  assert.match(source, /Compare advisor picks/);
+  assert.match(source, /Selection price/);
+  assert.match(source, /Checked \{sourceCheckedLabel\(highlight\.part\.checkedAt\)\}/);
+  assert.match(source, /partCoverage\(highlight\.part\)/);
+  assert.match(source, /onClick=\{\(\)=>openDetail\(highlight\.part\)\}/);
+  assert.match(css, /\.catalog-compare/);
+  assert.match(css, /\.catalog-compare-scroll\{overflow:auto/);
+  assert.match(css, /\.catalog-compare table\{width:100%;min-width:620px/);
+});
+
 test("catalog visibility controls can reveal every loaded choice", async () => {
   const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");

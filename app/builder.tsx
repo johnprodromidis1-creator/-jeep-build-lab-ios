@@ -30,6 +30,7 @@ const icons={wheels:CircleDot,tires:CircleDot,lift:MoveVertical,bumpers:PanelTop
 const starter4xeName="2024 Sahara 4xe starter";
 const starter4xeNotes="Sample plan using the sourced Mopar 2-inch 4xe lift and a 33-inch Ridge Grappler for stock 20-inch wheels. Confirm the complete combination before buying.";
 const starter4xeState:BuildState={...initialState,year:2024,trim:"Sahara",powertrain:"4xe",stockRim:20,stockTire:32,stages:{tires:"now",lift:"later"},picks:{tires:"nitto-217310-4xe",lift:"mopar-77072522ae-4xe"}};
+const favoriteStorageKey="jeep-build-lab:favorites:v1";
 function copiedBuildName(name:string){const base=name.trim()||"Untitled build",suffix=" copy";return base.length+suffix.length<=80?base+suffix:base.slice(0,80-suffix.length).trimEnd()+suffix;}
 function csvCell(value:unknown){return '"'+String(value).replace(/^[=+@-]/,"'$&").replaceAll('"','""')+'"';}
 function buildPartsCsv({name,notes,state,parts}:{name:string;notes:string;state:BuildState;parts:Part[]}){
@@ -76,6 +77,9 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
  const [priceFilter,setPriceFilter]=useState(allCatalogFilter);
  const [dimensionFilter,setDimensionFilter]=useState(allCatalogFilter);
  const [sort,setSort]=useState("curated");
+ const [favoritePartIds,setFavoritePartIds]=useState<Set<string>>(new Set());
+ const favoritesLoaded=useRef(false);
+ const [favoritesOnly,setFavoritesOnly]=useState(false);
  const [showBuildConflicts,setShowBuildConflicts]=useState(false);
  const [showExcluded,setShowExcluded]=useState(false);
  const [name,setName]=useState("My JL build");
@@ -124,8 +128,9 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
  const brandOptions=Array.from(new Set(categoryPool.map(p=>p.brand))).sort((a,b)=>a.localeCompare(b));
  const dimensionOptions=dimensionFilterOptions(categoryPool,category);
  const catalogFilters={category,query,brand:brandFilter,price:priceFilter,dimension:dimensionFilter};
- const activeCatalogFilter=hasCatalogFilter(catalogFilters);
- const categoryMatches=categoryPool.filter(p=>matchesCatalogFilters(p,state,catalogFilters));
+ const activeCatalogFilter=hasCatalogFilter(catalogFilters)||favoritesOnly;
+ const favoriteCount=parts.filter(p=>favoritePartIds.has(p.id)).length;
+ const categoryMatches=categoryPool.filter(p=>matchesCatalogFilters(p,state,catalogFilters)).filter(p=>!favoritesOnly||favoritePartIds.has(p.id));
  const compatible=categoryMatches.filter(p=>fitsVehicle(p,state));
  const pickedIds=new Set(Object.values(state.picks));
  const buildConflicting=compatible.filter(p=>!pickedIds.has(p.id)&&optionAddsBuildError(p,state,parts));
@@ -138,7 +143,7 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
  const visibleGarage=useMemo(()=>filterGarageBuilds(garage,parts,garageFilters),[garage,parts,garageFilters]);
  const detailOffers=detail?commerceOffersForPart(detail):[];
  function markTouched(){touched.current=true;setTouchedDraft(true);}
- function clearCatalogFilters(){setQuery("");setBrandFilter(allCatalogFilter);setPriceFilter(allCatalogFilter);setDimensionFilter(allCatalogFilter);}
+ function clearCatalogFilters(){setQuery("");setBrandFilter(allCatalogFilter);setPriceFilter(allCatalogFilter);setDimensionFilter(allCatalogFilter);setFavoritesOnly(false);}
  function clearGarageFilters(){setGarageQuery("");setGaragePowertrain(allGarageFilter);setGarageConflicts(allGarageFilter);}
  function changeCategory(c:Category){setCategory(c);clearCatalogFilters();}
  const modified=(next:BuildState)=>{markTouched();undoHistory.current=[...undoHistory.current.slice(-19),state];setUndoCount(undoHistory.current.length);setState(next);setDirty(true);setCompare(false);};
@@ -170,6 +175,20 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
  }
  function updateTrim(trim:Trim){requestVehicleUpdate({trim,...defaultEquipment(trim,state.powertrain)});}
  useEffect(()=>{
+  queueMicrotask(()=>{
+   try{
+    const raw=localStorage.getItem(favoriteStorageKey);
+    const ids=raw?JSON.parse(raw):[];
+    if(Array.isArray(ids))setFavoritePartIds(new Set(ids.filter((id):id is string=>typeof id==="string")));
+   }catch{}
+   favoritesLoaded.current=true;
+  });
+ },[]);
+ useEffect(()=>{
+  if(!favoritesLoaded.current)return;
+  try{localStorage.setItem(favoriteStorageKey,JSON.stringify([...favoritePartIds]));}catch{}
+ },[favoritePartIds]);
+ useEffect(()=>{
  storage.catalog().then(setParts).catch((e:Error)=>setCatalogWarning(e.message));
  if(window.location.hash.startsWith("#build=")){
    try{const raw=window.location.hash.slice(7);if(raw.length>5000)throw new Error();const parsed=decodeSharedBuildStatePayload(raw);queueMicrotask(()=>{setState(parsed);setName("Linked JL build");setDirty(true);toast.success("Build loaded from link.");});}catch{toast.error("This build link is invalid or uses unsupported parts.");}
@@ -178,6 +197,11 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
  useEffect(()=>{if(!dirty||draft.status==="saved")return;const handler=(e:BeforeUnloadEvent)=>{e.preventDefault();};window.addEventListener("beforeunload",handler);return()=>window.removeEventListener("beforeunload",handler);},[dirty,draft.status]);
  async function loadGarage(){setGarageBusy(true);setGarageError('');try{setGarage(await storage.list());}catch(e){setGarageError(e instanceof Error?e.message:'Could not load garage.');}finally{setGarageBusy(false);}}
  function selectPart(p:Part){const picks={...state.picks},stages={...state.stages};if(picks[p.category]===p.id){delete picks[p.category];delete stages[p.category];}else{picks[p.category]=p.id;stages[p.category]='now';}update({picks,stages});}
+ function toggleFavoritePart(part:Part){
+  const saved=favoritePartIds.has(part.id);
+  setFavoritePartIds(ids=>{const next=new Set(ids);if(saved)next.delete(part.id);else next.add(part.id);return next;});
+  toast.success(saved?"Removed from favorites.":"Saved to favorites.");
+ }
  function removePart(c:Category){const picks={...state.picks},stages={...state.stages};delete picks[c];delete stages[c];update({picks,stages});}
  async function saveBuild(){if(!name.trim())return;setSaving(true);try{const data=await storage.save({id:saveCopy?undefined:id,name:name.trim(),notes,state});setId(data.id);setLastSavedTotal(data.savedTotal);setName(name.trim());markTouched();setDirty(false);setSaveOpen(false);toast.success(storage.mode==='device'?'Build saved on this device.':'Build saved in your cloud garage.');}catch(e){toast.error(e instanceof Error?e.message:'Could not save build.');}finally{setSaving(false);}}
  function loadBuild(b:SavedBuild){const parsed=stateSchema.safeParse(b.state);if(!parsed.success){toast.error("This saved build has unsupported data.");return;}clearUndo();setState(parsed.data);setLastSavedTotal(b.savedTotal);setId(b.id);setName(b.name);setNotes(b.notes);setDirty(false);setView("builder");setCompare(false);history.replaceState(null,"",location.pathname);toast.success("Build opened.");}
@@ -251,13 +275,13 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
  <section id="parts-section" className="parts-section" aria-labelledby="parts-heading">
  <div className="section-heading"><div><span className="eyebrow">AFTERMARKET PARTS</span><h2 id="parts-heading" tabIndex={-1}>Choose your upgrades</h2></div><span className="catalog-count">{parts.length} curated variants</span></div>
  <Tabs value={category} onValueChange={v=>changeCategory(v as Category)}><TabsList className="category-tabs">{categories.map(c=>{const Icon=icons[c];return <TabsTrigger key={c} value={c}><Icon size={16}/>{categoryNames[c]}{state.picks[c]&&<span className="tab-dot"/>}</TabsTrigger>;})}</TabsList></Tabs>
- <div className="catalog-toolbar"><div className="search-box"><Search size={17}/><Input aria-label="Search parts" placeholder={`Search ${categoryNames[category].toLowerCase()}…`} value={query} onChange={e=>setQuery(e.target.value)}/></div><Select value={sort} onValueChange={setSort}><SelectTrigger aria-label="Sort parts"><SlidersHorizontal size={14}/><SelectValue/></SelectTrigger><SelectContent><SelectItem value="curated">Curated order</SelectItem><SelectItem value="low">Price: low to high</SelectItem><SelectItem value="high">Price: high to low</SelectItem></SelectContent></Select><label className="catalog-toggle"><input type="checkbox" checked={showBuildConflicts} onChange={e=>setShowBuildConflicts(e.target.checked)}/><span>Show conflicts</span>{buildConflicting.length>0&&<strong>{buildConflicting.length}</strong>}</label><label className="catalog-toggle"><input type="checkbox" checked={showExcluded} onChange={e=>setShowExcluded(e.target.checked)}/><span>Show excluded</span>{excluded.length>0&&<strong>{excluded.length}</strong>}</label></div>
+ <div className="catalog-toolbar"><div className="search-box"><Search size={17}/><Input aria-label="Search parts" placeholder={`Search ${categoryNames[category].toLowerCase()}…`} value={query} onChange={e=>setQuery(e.target.value)}/></div><Select value={sort} onValueChange={setSort}><SelectTrigger aria-label="Sort parts"><SlidersHorizontal size={14}/><SelectValue/></SelectTrigger><SelectContent><SelectItem value="curated">Curated order</SelectItem><SelectItem value="low">Price: low to high</SelectItem><SelectItem value="high">Price: high to low</SelectItem></SelectContent></Select><label className="catalog-toggle favorite-toggle"><input type="checkbox" checked={favoritesOnly} onChange={e=>setFavoritesOnly(e.target.checked)}/><span>Favorites only</span>{favoriteCount>0&&<strong>{favoriteCount}</strong>}</label><label className="catalog-toggle"><input type="checkbox" checked={showBuildConflicts} onChange={e=>setShowBuildConflicts(e.target.checked)}/><span>Show conflicts</span>{buildConflicting.length>0&&<strong>{buildConflicting.length}</strong>}</label><label className="catalog-toggle"><input type="checkbox" checked={showExcluded} onChange={e=>setShowExcluded(e.target.checked)}/><span>Show excluded</span>{excluded.length>0&&<strong>{excluded.length}</strong>}</label></div>
  <div className="catalog-filters" aria-label="Catalog filters"><Select value={brandFilter} onValueChange={setBrandFilter}><SelectTrigger aria-label="Filter by brand"><Tag size={14}/><SelectValue/></SelectTrigger><SelectContent><SelectItem value={allCatalogFilter}>All brands</SelectItem>{brandOptions.map(brand=><SelectItem key={brand} value={brand}>{brand}</SelectItem>)}</SelectContent></Select><Select value={priceFilter} onValueChange={setPriceFilter}><SelectTrigger aria-label="Filter by price"><DollarSign size={14}/><SelectValue/></SelectTrigger><SelectContent>{priceBandOptions.map(option=><SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>)}</SelectContent></Select>{dimensionOptions.length>1&&<Select value={dimensionFilter} onValueChange={setDimensionFilter}><SelectTrigger aria-label="Filter by size or specification"><Ruler size={14}/><SelectValue/></SelectTrigger><SelectContent><SelectItem value={allCatalogFilter}>All sizes</SelectItem>{dimensionOptions.map(option=><SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>)}</SelectContent></Select>}{activeCatalogFilter&&<Button variant="ghost" className="filter-reset" onClick={clearCatalogFilters}><X size={14}/>Clear filters</Button>}</div>
  <div className="catalog-subtitle"><span>{families.length} products · {buildReady.length} fit your current build</span><span>{activeCatalogFilter?'Filters active · ':''}{buildConflicting.length} need another build change · {excluded.length} excluded by vehicle fitment · USD · Selection prices include quantity</span></div>
  {catalogWarning&&<div className="inline-warning"><TriangleAlert size={16}/>{catalogWarning}</div>}
  {category==="tires"&&<p className="category-note">Choose a tire with the same wheel diameter as your build: <strong>{wheel?.specs.rim??state.stockRim} inches.</strong></p>}
- <div className="parts-grid">{families.map(family=><PartFamily key={family.key} variants={family.variants} state={state} parts={parts} onSelect={selectPart} onDetail={openDetail} compatibilityReason={p=>partCompatibility(p,state)}/>)}</div>
- {!filtered.length&&<div className="empty-state"><Search/><h3>No matching parts</h3><p>{categoryMatches.length&&!compatible.length?'All matching parts are excluded for this vehicle. Turn on Show excluded to see why.':compatible.length&&!buildReady.length&&!showBuildConflicts?'Matching parts fit this vehicle, but they create a current-build conflict. Turn on Show conflicts to review them.':activeCatalogFilter?'No parts match those filters. Clear filters or broaden the search.':'Try a brand, size or part number.'}</p><Button variant="outline" onClick={clearCatalogFilters}>{activeCatalogFilter?'Clear filters':'Clear search'}</Button></div>}
+ <div className="parts-grid">{families.map(family=><PartFamily key={family.key} variants={family.variants} state={state} parts={parts} favoriteIds={favoritePartIds} onFavorite={toggleFavoritePart} onSelect={selectPart} onDetail={openDetail} compatibilityReason={p=>partCompatibility(p,state)}/>)}</div>
+ {!filtered.length&&<div className="empty-state"><Search/><h3>No matching parts</h3><p>{favoritesOnly&&!favoriteCount?'Tap the star on any part to save favorites on this device.':categoryMatches.length&&!compatible.length?'All matching parts are excluded for this vehicle. Turn on Show excluded to see why.':compatible.length&&!buildReady.length&&!showBuildConflicts?'Matching parts fit this vehicle, but they create a current-build conflict. Turn on Show conflicts to review them.':activeCatalogFilter?'No parts match those filters. Clear filters or broaden the search.':'Try a brand, size or part number.'}</p><Button variant="outline" onClick={clearCatalogFilters}>{activeCatalogFilter?'Clear filters':'Clear search'}</Button></div>}
  <p className="catalog-footnote">Source prices checked September 8 and September 13, 2026. Prices and availability may change. Product artwork is illustrative. Lighting, tops and interior parts are planned for a later catalog.</p>
  </section>
  </div>

@@ -50,6 +50,7 @@ test("serves the builder with production metadata and the initial catalog", asyn
   assert.match(html, /Save to my garage/);
   assert.match(html, /Filter by brand/);
   assert.match(html, /Filter by price/);
+  assert.match(html, /Favorites only/);
   assert.match(html, /assets\/jeep-body\.png/);
   assert.match(html, /701 Trail Series/);
 });
@@ -176,6 +177,24 @@ test("vehicle edits warn before selected parts become invalid", async () => {
   assert.match(source, /Confirm vehicle change/);
   assert.match(source, /Change vehicle/);
   assert.match(source, /Vehicle changes that affect selected parts ask for confirmation first/);
+});
+
+test("catalog supports device-local favorite parts filtering", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const partFamily = await readFile(new URL("../app/components/part-family.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(source, /favoriteStorageKey/);
+  assert.match(source, /localStorage\.getItem\(favoriteStorageKey\)/);
+  assert.match(source, /localStorage\.setItem\(favoriteStorageKey/);
+  assert.match(source, /Favorites only/);
+  assert.match(source, /setFavoritesOnly\(false\)/);
+  assert.match(source, /favoritePartIds\.has\(p\.id\)/);
+  assert.match(source, /favoriteIds=\{favoritePartIds\}/);
+  assert.match(partFamily, /Star/);
+  assert.match(partFamily, /aria-pressed=\{favorite\}/);
+  assert.match(partFamily, /onFavorite\(p\)/);
+  assert.match(css, /\.favorite-button/);
 });
 
 test("comparison dialog can open the selected saved build", async () => {

@@ -79,6 +79,7 @@
 .catalog-toggle{min-height:42px;display:flex;align-items:center;gap:8px;border:1px solid #354248;border-radius:6px;background:#1b2225;padding:8px 11px;color:#bac7cc;font-size:12px;white-space:nowrap;cursor:pointer}
 .catalog-toggle input{width:16px;height:16px;accent-color:var(--primary)}
 .catalog-toggle strong{min-width:22px;text-align:center;border:1px solid #604f42;background:#403125;color:#ffd0b5;border-radius:999px;padding:1px 6px;font-size:12px}
+.favorite-toggle strong{border-color:#6b6040;background:#3b3523;color:#ffe0a7}
 .catalog-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:10px;margin:0 0 12px}
 .catalog-filters [data-slot=select-trigger]{width:100%;min-height:42px;background:#1b2225;font-size:12px;border-color:#354248;gap:7px}
 .filter-reset{justify-content:center;color:#bbcbd3}
@@ -88,10 +89,14 @@
 .part-card{position:relative;border:1px solid #354147;border-radius:9px;background:#1c2326;padding:17px;transition:border-color .15s,background .15s}
 .part-card:hover{border-color:#62747b;background:#20292d}
 .part-card.selected{border-color:#e47f55;background:#272925;box-shadow:inset 0 0 0 1px #e47f5522}
+.part-card.favorite:not(.selected){border-color:#5b5640;box-shadow:inset 0 0 0 1px #efc69022}
 .part-card.excluded{border-color:#4a4f50;background:#171d1f;opacity:.76}
 .part-card.excluded:hover{border-color:#6b5c52;opacity:1}
 .part-card.excluded .part-art{filter:grayscale(.75)}
 .part-card-top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.part-card-actions{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.favorite-button{width:32px;height:32px;display:grid;place-items:center;border:1px solid #46535a;border-radius:6px;background:#182226;color:#98a8ae;transition:color .15s,border-color .15s,background .15s}
+.favorite-button:hover,.favorite-button.active{color:#efc690;border-color:#735f42;background:#2b251c}
 .part-brand{font-size:12px;letter-spacing:1.1px;font-weight:700;text-transform:uppercase;color:#c4cfd4}
 .part-type{font-size:12px;color:#95aaa3;border:1px solid #45534e;background:#26322d66;padding:2px 4px;border-radius:3px;white-space:nowrap;letter-spacing:.3px}
 .part-content{display:flex;gap:14px;align-items:center;margin:20px 0 13px;min-height:87px}

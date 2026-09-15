@@ -12,7 +12,7 @@ The iOS build destination is [johnprodromidis1-creator/-jeep-build-lab-ios](http
 - D1 personal price overrides; curated specifications remain immutable.
 - Quantity-aware totals, budget, labor and other allowances, current-build shop brief, commerce pack and CSV export, print sheet, URL configuration.
 - Explicit year, trim, powertrain, diameter and listed tire-limit conflicts, plus unresolved installation dependencies. Vehicle edits that would leave selected parts needing review ask for confirmation first.
-- Three-step navigation, grouped product families with variant selectors, quantity-inclusive card prices and replacement price deltas.
+- Three-step navigation, grouped product families with variant selectors, device-local favorite parts filtering, quantity-inclusive card prices and replacement price deltas.
 - First-time 2024 Sahara 4xe starter build that loads a sourced tire/lift plan on stock 20-inch wheels while preserving saved garage entries.
 - Side-by-side current/saved build comparison with differing-parts filter; both columns use the same catalog and personal quotes.
 - Buy now/later/owned/installed stages, remaining upgrade budget and optional user-entered vehicle price. All allowances are reserved in the first phase; installation sequence is not verified.

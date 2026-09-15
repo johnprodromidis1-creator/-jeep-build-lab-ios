@@ -332,6 +332,19 @@ test("catalog surfaces a current-category market snapshot", async () => {
   assert.match(css, /@media\(max-width:430px\)\{\.catalog-market\{grid-template-columns:1fr\}\}/);
 });
 
+test("catalog defaults to best-fit sorting", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const filters = await readFile(new URL("../lib/catalog-filters.ts", import.meta.url), "utf8");
+
+  assert.match(filters, /catalogSortOptions/);
+  assert.match(filters, /Best fit first/);
+  assert.match(filters, /export function catalogFitScore/);
+  assert.match(filters, /export function compareCatalogParts/);
+  assert.match(source, /useState<CatalogSort>\("fit"\)/);
+  assert.match(source, /compareCatalogParts\(sort,state,parts\)/);
+  assert.match(source, /catalogSortOptions\.map/);
+});
+
 test("rims stay browseable before a matching tire choice", async () => {
   const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");

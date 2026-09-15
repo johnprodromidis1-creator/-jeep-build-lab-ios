@@ -46,7 +46,7 @@ const garageFilters=await module("lib/garage-filters.ts","garage-filters");
 const shopBrief=await module("lib/shop-brief.ts","shop-brief");
 const commerce=await module("lib/commerce.ts","commerce");
 const {initialState,baseCatalog,categories,totalFor,buildIssues,stateSchema,fitsVehicle,partCompatibility,partSpecBadges,linePriceRangeLabel,publicBuildState,encodeSharedBuildState,decodeSharedBuildStatePayload,buildErrorsForOption,optionAddsBuildError}=model;
-const {dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
+const {catalogFitScore,catalogSortOptions,compareCatalogParts,dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
 const {buildShopBrief}=shopBrief;
 const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildCommerceApplicationPack,buildPartnerApplicationLinks,commerceApplicationChecklist}=commerce;
@@ -230,6 +230,20 @@ test("catalog filters combine brand, line price, search terms and dimensions",()
  assert.equal(matchesCatalogFilters(tire,state,{category:"tires",query:"ridge",brand:"Nitto",price:"1000-2500",dimension:"rim:17"}),false);
  const options=dimensionFilterOptions(baseCatalog.filter(p=>p.category==="tires"),"tires");
  assert.ok(options.some(option=>option.value==="rim:20"&&/20-inch/.test(option.label)));
+});
+test("best-fit catalog sort promotes selected parts and matching build dimensions",()=>{
+ const stock18={...base(),trim:"Sahara",stockRim:18,picks:{}};
+ const wheel17=baseCatalog.find(p=>p.id==="method-MR70178550900");
+ const wheel17Other=baseCatalog.find(p=>p.id==="method-MR70178550500");
+ const tire17=baseCatalog.find(p=>p.id==="nitto-217020");
+ const tire18=baseCatalog.find(p=>p.id==="nitto-217130");
+ assert.equal(catalogSortOptions[0].value,"fit");
+ assert.ok(catalogFitScore(tire18,stock18,baseCatalog)<catalogFitScore(tire17,stock18,baseCatalog));
+ assert.equal([tire17,tire18].sort(compareCatalogParts("fit",stock18,baseCatalog))[0].id,"nitto-217130");
+ assert.equal([tire17,tire18].sort(compareCatalogParts("low",stock18,baseCatalog))[0].id,"nitto-217020");
+ const withSelectedWheel={...stock18,picks:{wheels:"method-MR70178550900"}};
+ assert.ok(catalogFitScore(wheel17,withSelectedWheel,baseCatalog)<catalogFitScore(wheel17Other,withSelectedWheel,baseCatalog));
+ assert.ok(catalogFitScore(tire17,withSelectedWheel,baseCatalog)<catalogFitScore(tire18,withSelectedWheel,baseCatalog));
 });
 test("garage filters search saved builds by vehicle, notes, parts, status and value",()=>{
  const mismatch={...base(),trim:"Sahara",stockRim:18,picks:{wheels:"method-MR70178550900"}};

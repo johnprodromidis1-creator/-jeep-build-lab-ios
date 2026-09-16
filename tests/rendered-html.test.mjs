@@ -186,6 +186,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /pauseNextPartnerApplication/);
   assert.match(source, /blockNextPartnerApplication/);
   assert.match(source, /resetNextPartnerApplication/);
+  assert.match(source, /defaultPartnerApplicationBlockerText/);
   assert.match(source, /defaultPartnerApplicationBlockerNote/);
   assert.match(source, /Impact account setup blocked/);
   assert.match(source, /An unknown error occurred/);
@@ -219,6 +220,8 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /Application answer kit/);
   assert.match(source, /Blocked application notes/);
   assert.match(source, /blocked-application-notes/);
+  assert.match(source, /blockedPartnerApplications/);
+  assert.match(source, /blockedPartnerApplications\.length>0/);
   assert.match(source, /blockedPartnerApplicationNotes/);
   assert.match(source, /blockedPartnerApplicationNotesText/);
   assert.match(source, /blockedPartnerSupportDraftText/);

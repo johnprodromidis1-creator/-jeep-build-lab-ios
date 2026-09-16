@@ -143,9 +143,12 @@ test("garage cards can export saved-build parts CSV files", async () => {
   assert.match(source, /function buildPartsCsv\(\{name,notes,state,parts\}/);
   assert.match(source, /function exportSavedCSV\(build:SavedBuild\)/);
   assert.match(source, /buildPartsCsv\(\{name:build\.name,notes:build\.notes,state:build\.state,parts\}\)/);
+  assert.match(source, /function exportSavedSubmissionReview\(build:SavedBuild\)/);
+  assert.match(source, /buildPartnerSubmissionReviewSheet\(\{name:build\.name,notes:build\.notes,state:build\.state,parts,applicationStatuses:partnerApplicationStatus\}\)/);
   assert.match(source, /Commerce options/);
   assert.match(source, /commerceSummaryForPart\(p\)/);
   assert.match(source, /Export parts CSV for/);
+  assert.match(source, /Export submission review for/);
   assert.match(source, /FileSpreadsheet/);
   assert.match(source, /text\/csv;charset=utf-8/);
 });

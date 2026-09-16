@@ -15,6 +15,11 @@ test("App Store preflight keeps release guardrails aligned", async () => {
 
   assert.equal(report.expected.bundleId, EXPECTED_BUNDLE_ID);
   assert.equal(report.expected.version, EXPECTED_VERSION);
-  assert.ok(report.checks.length >= 30);
+  const labels = new Set(report.checks.map((item) => item.label));
+  assert.ok(labels.has("screenshot plan covers iPhone and iPad targets"));
+  assert.ok(labels.has("screenshot plan requires native signed/TestFlight captures"));
+  assert.ok(labels.has("screenshot plan rejects browser or generated final screenshots"));
+  assert.ok(labels.has("screenshot plan protects private capture data"));
+  assert.ok(report.checks.length >= 37);
   assert.equal(report.ok, true, failures);
 });

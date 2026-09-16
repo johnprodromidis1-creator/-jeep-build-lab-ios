@@ -52,6 +52,7 @@ export async function runPreflight(projectRoot = scriptRoot) {
     readiness,
     codemagicDoc,
     testflightDoc,
+    screenshotsDoc,
   ] = await Promise.all([
     source(projectRoot, "package.json"),
     source(projectRoot, "codemagic.yaml"),
@@ -64,6 +65,7 @@ export async function runPreflight(projectRoot = scriptRoot) {
     source(projectRoot, "docs/app-store/READINESS.md"),
     source(projectRoot, "docs/app-store/CODEMAGIC.md"),
     source(projectRoot, "docs/app-store/TESTFLIGHT.md"),
+    source(projectRoot, "docs/app-store/SCREENSHOTS.md"),
   ]);
   const packageJson = JSON.parse(packageSource);
 
@@ -112,6 +114,13 @@ export async function runPreflight(projectRoot = scriptRoot) {
   check(checks, has(codemagicDoc, /matching provisioning profile/i), "Codemagic guide calls out the app-specific profile");
   check(checks, has(codemagicDoc, /No automatic push triggers or paid plan changes are configured/i), "Codemagic guide keeps cost/trigger guardrail");
   check(checks, has(testflightDoc, /This app's Apple record and provisioning profile remain unverified/i), "TestFlight guide keeps account-owner signing gate");
+  check(checks, has(screenshotsDoc, /one to 10 screenshots per device size/i), "screenshot plan keeps App Store count limits");
+  check(checks, has(screenshotsDoc, /cannot include alpha\/transparency/i), "screenshot plan forbids alpha transparency");
+  check(checks, has(screenshotsDoc, /iPhone 6\.9-inch/i) && has(screenshotsDoc, /iPad 13-inch/i), "screenshot plan covers iPhone and iPad targets");
+  check(checks, has(screenshotsDoc, /Use raw screenshots from the actual signed or TestFlight app first/i), "screenshot plan requires native signed/TestFlight captures");
+  check(checks, has(screenshotsDoc, /do not submit browser captures or generated mockups/i), "screenshot plan rejects browser or generated final screenshots");
+  check(checks, countMatches(screenshotsDoc, /^\d+\. /gm) >= 5 && countMatches(screenshotsDoc, /^\d+\. /gm) <= 10, "screenshot plan has a bounded capture sequence");
+  check(checks, has(screenshotsDoc, /Do not include real personal build notes, email inboxes, passwords, Apple IDs, notification banners or browser chrome/i), "screenshot plan protects private capture data");
 
   return {
     ok: checks.every((item) => item.ok),

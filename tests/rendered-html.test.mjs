@@ -167,11 +167,14 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /partnerApplicationStatusNames/);
   assert.match(source, /partnerApplicationTrackerStatusNames/);
   assert.match(source, /cyclePartnerApplicationStatus/);
+  assert.match(source, /nextPartnerApplication/);
   assert.match(source, /applicationStatuses:partnerApplicationStatus/);
   assert.match(source, /Suggested application order/);
   assert.match(source, /Apply first/);
   assert.match(source, /Application tracker/);
+  assert.match(source, /Next application/);
   assert.match(source, /Partner application tracker/);
+  assert.match(source, /All tracked programs are submitted or approved on this device/);
   assert.match(source, /partner-status-list/);
   assert.match(source, /Track \$\{trackedPartnerApplications\.length\} program/);
   assert.match(source, /Download profile/);
@@ -215,6 +218,8 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(css, /\.partner-priority/);
   assert.match(css, /\.priority-program/);
   assert.match(css, /\.partner-status-tracker/);
+  assert.match(css, /\.partner-next-link/);
+  assert.match(css, /\.partner-next-complete/);
   assert.match(css, /\.partner-status-list/);
   assert.match(css, /\.partner-status/);
 });

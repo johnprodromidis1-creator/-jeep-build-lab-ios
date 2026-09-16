@@ -167,6 +167,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /buildAffiliateApplicationProfile/);
   assert.match(source, /buildPaidLinkDisclosurePack/);
   assert.match(source, /exportPaidLinkDisclosure/);
+  assert.match(source, /copyPaidLinkDisclosure/);
   assert.match(source, /partnerApplicationPrioritiesForBuild/);
   assert.match(source, /allPartnerApplicationPriorities/);
   assert.match(source, /partnerApplicationStorageKey/);
@@ -229,6 +230,9 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /RealTruck path: Impact application/);
   assert.match(source, /Download application pack/);
   assert.match(source, /Download disclosure/);
+  assert.match(source, /Copy disclosure/);
+  assert.match(source, /Disclosure pack copied/);
+  assert.match(source, /Download the disclosure, then copy from the text file/);
   assert.match(source, /jeep-build-paid-link-disclosure\.txt/);
   assert.match(source, /The paid-link disclosure could not be exported/);
   assert.match(source, /buildCommerceApplicationPack/);
@@ -276,6 +280,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
   assert.match(css, /\.sponsor-readiness/);
   assert.match(css, /\.paid-disclosure-preview/);
+  assert.match(css, /\.paid-disclosure-preview \[data-slot=button\]/);
   assert.match(css, /\.application-profile-preview/);
   assert.match(css, /\.application-answer-kit/);
   assert.match(css, /\.application-answer-target/);

@@ -50,7 +50,7 @@ const {initialState,baseCatalog,categories,selectedParts,totalFor,buildIssues,st
 const {catalogFitScore,catalogSortOptions,compareCatalogParts,dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
 const {buildShopBrief}=shopBrief;
-const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationAnswers,buildAffiliateApplicationProfile,buildCommerceApplicationPack,buildPartnerApplicationLinks,buildPaidLinkDisclosurePack,buildPartnerOutreachEmailDraft,commerceApplicationChecklist,affiliateApplicationAnswers,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist,paidLinkDisclosureSnippet,paidLinkLaunchChecklist}=commerce;
+const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationAnswers,buildAffiliateApplicationProfile,buildCommerceApplicationPack,buildPartnerApplicationLinks,buildPartnerApplicationTrackerCsv,buildPaidLinkDisclosurePack,buildPartnerOutreachEmailDraft,commerceApplicationChecklist,affiliateApplicationAnswers,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist,paidLinkDisclosureSnippet,paidLinkLaunchChecklist}=commerce;
 const {buildRecipes}=recipes;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
@@ -198,6 +198,16 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(links,/Turn 14 Distribution - Distributor/);
  assert.match(links,/Application tracker: Approved/);
  assert.doesNotMatch(links,/MORryde Jeep/);
+ const tracker=buildPartnerApplicationTrackerCsv({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses});
+ assert.match(tracker,/"Jeep Build Lab partner application tracker"/);
+ assert.match(tracker,/"Build","Commission plan"/);
+ assert.match(tracker,/"Scope","2 selected parts \(Tires, Suspension\)"/);
+ assert.match(tracker,/"Rank","Program","Network","Relationship","Tracker status","Commerce status","Matched categories","Selected part count","Match reason","Application link","Requirements","Prep note","Next action"/);
+ assert.match(tracker,/"1","RealTruck","Impact","Affiliate","Submitted","Application needed","Tires; Suspension","2","Matches 2 selected parts across Tires, Suspension\."/);
+ assert.match(tracker,/"Tire Rack","","Affiliate","Profile ready","Application needed","Tires","1"/);
+ assert.match(tracker,/"Submit the application after private business, tax, traffic and contact fields are verified\."/);
+ assert.match(tracker,/"Use only approved tested tracking links and keep paid labels visible\."/);
+ assert.doesNotMatch(tracker,/MORryde Jeep/);
  const profile=buildAffiliateApplicationProfile({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses});
  assert.match(profile,/Jeep Build Lab affiliate application profile template/);
  assert.match(profile,/Audience: Jeep Wrangler JL owners comparing rims, tires, suspension, bumpers, winches and armor before buying/);

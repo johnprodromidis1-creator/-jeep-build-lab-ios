@@ -243,11 +243,17 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /The paid-link disclosure could not be exported/);
   assert.match(source, /buildCommerceApplicationPack/);
   assert.match(source, /buildPartnerApplicationLinks/);
+  assert.match(source, /buildPartnerApplicationTrackerCsv/);
+  assert.match(source, /exportPartnerApplicationTracker/);
+  assert.match(source, /jeep-build-partner-application-tracker\.csv/);
+  assert.match(source, /The application tracker could not be exported/);
   assert.match(source, /partnerProgramsForBuild/);
   assert.match(source, /copyPartnerLinks/);
   assert.match(source, /Partner links copied/);
   assert.match(source, /Download partner links, then copy from the text file/);
   assert.match(source, /Copy partner links/);
+  assert.match(source, /Download tracker CSV/);
+  assert.match(source, /Download application tracker/);
   assert.match(source, /Download commerce pack/);
   assert.match(source, /Download partner links/);
   assert.match(source, /applications for selected parts/);
@@ -266,6 +272,10 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(privacy, /no affiliate tracking, wholesale checkout or dropship fulfillment is active/);
   assert.match(commerce, /Jeep Build Lab partner application pack/);
   assert.match(commerce, /Jeep Build Lab partner application links/);
+  assert.match(commerce, /buildPartnerApplicationTrackerCsv/);
+  assert.match(commerce, /Jeep Build Lab partner application tracker/);
+  assert.match(commerce, /Tracker status/);
+  assert.match(commerce, /Next action/);
   assert.match(commerce, /Network: \$\{program\.network\}/);
   assert.match(commerce, /affiliateApplicationAnswers/);
   assert.match(commerce, /Jeep Build Lab affiliate application answer kit/);

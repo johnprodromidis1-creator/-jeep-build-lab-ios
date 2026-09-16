@@ -353,6 +353,10 @@ function selectedCategorySummary(parts: readonly Pick<Part, "category">[]) {
   return labels.length ? labels.join(", ") : "No selected categories";
 }
 
+function commerceCsvCell(value: unknown) {
+  return "\"" + String(value ?? "").replace(/^[=+@-]/, "'$&").replaceAll("\"", "\"\"") + "\"";
+}
+
 export function partnerProgramsForBuild(state: BuildState, parts: Part[]): PartnerProgram[] {
   const selected = selectedParts(state, parts);
   return selected.length ? partnerProgramsForParts(selected) : [...partnerPrograms];
@@ -562,6 +566,48 @@ export function buildPartnerApplicationLinks({ name, state, parts, generatedAt =
       ...(program.requirements?.length ? [`   Requirements: ${program.requirements.join(" ")}`] : []),
     ].join("\n")).join("\n"),
   ].join("\n");
+}
+
+function trackerNextAction(status: PartnerApplicationTrackerStatus) {
+  if (status === "approved") return "Use only approved tested tracking links and keep paid labels visible.";
+  if (status === "submitted") return "Watch for approval, terms, tracking-link rules and any requested verification.";
+  if (status === "ready") return "Submit the application after private business, tax, traffic and contact fields are verified.";
+  if (status === "paused") return "Resolve the blocker or confirm this program is still worth pursuing.";
+  return "Prepare the profile, verify private details and apply through the listed link.";
+}
+
+export function buildPartnerApplicationTrackerCsv({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses }: CommerceApplicationPackInput) {
+  const selected = selectedParts(state, parts);
+  const priorities = partnerApplicationPrioritiesForBuild(state, parts);
+  const rows = [
+    ["Jeep Build Lab partner application tracker"],
+    ["Build", name.trim() || "Untitled build"],
+    ["Generated", new Date(generatedAt).toISOString().slice(0, 10)],
+    ["Vehicle", vehicleDescription(state)],
+    ["Scope", selected.length ? `${selected.length} selected part${selected.length === 1 ? "" : "s"} (${selectedCategorySummary(selected)})` : "No selected parts; full partner directory."],
+    ["Commerce status", noActiveCommerceDisclosure],
+    [],
+    ["Rank", "Program", "Network", "Relationship", "Tracker status", "Commerce status", "Matched categories", "Selected part count", "Match reason", "Application link", "Requirements", "Prep note", "Next action"],
+    ...priorities.map((priority, index) => {
+      const status = applicationTrackerStatusKey(applicationStatuses?.[priority.program.id]);
+      return [
+        index + 1,
+        priority.program.name,
+        priority.program.network ?? "",
+        relationshipNames[priority.program.relationship],
+        partnerApplicationTrackerStatusNames[status],
+        commerceStatusNames[priority.program.status],
+        priority.matchedCategories.join("; "),
+        priority.selectedPartCount,
+        priority.reason,
+        safeCommerceUrl(priority.program.url),
+        priority.program.requirements?.join(" ") ?? "",
+        priority.program.note,
+        trackerNextAction(status),
+      ];
+    }),
+  ];
+  return rows.map(row => row.map(commerceCsvCell).join(",")).join("\r\n");
 }
 
 export function buildAffiliateApplicationProfile({ name, notes, state, parts, generatedAt = new Date().toISOString(), applicationStatuses }: CommerceApplicationPackInput) {

@@ -39,7 +39,7 @@ const partnerApplicationStatusNames=partnerApplicationTrackerStatusNames;
 function isPartnerApplicationStatus(value:unknown):value is PartnerApplicationStatus{return typeof value==="string"&&Object.hasOwn(partnerApplicationStatusNames,value);}
 function nextPartnerApplicationStatus(status:PartnerApplicationStatus){const index=partnerApplicationStatusOptions.indexOf(status);return partnerApplicationStatusOptions[(index+1)%partnerApplicationStatusOptions.length];}
 function cleanPartnerApplicationNote(value:string){return value.trim().slice(0,240);}
-function defaultPartnerApplicationBlockerNote(target:ApplicationAnswerTarget){return target.id==="realtruck-affiliate"?"Impact account setup blocked: fix the password format or account creation error inside Impact before retrying.":"Partner form blocked: fix password, account setup, eligibility or network errors before retrying.";}
+function defaultPartnerApplicationBlockerNote(target:ApplicationAnswerTarget){return target.id==="realtruck-affiliate"?"Impact account setup blocked: Impact showed \"An unknown error occurred\" and \"Password format is invalid\". Fix account/password setup before retrying.":"Partner form blocked: fix password, account setup, eligibility or network errors before retrying.";}
 function copiedBuildName(name:string){const base=name.trim()||"Untitled build",suffix=" copy";return base.length+suffix.length<=80?base+suffix:base.slice(0,80-suffix.length).trimEnd()+suffix;}
 function csvCell(value:unknown){return '"'+String(value).replace(/^[=+@-]/,"'$&").replaceAll('"','""')+'"';}
 function buildPartsCsv({name,notes,state,parts}:{name:string;notes:string;state:BuildState;parts:Part[]}){

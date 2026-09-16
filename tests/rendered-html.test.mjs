@@ -185,6 +185,8 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /resetNextPartnerApplication/);
   assert.match(source, /defaultPartnerApplicationBlockerNote/);
   assert.match(source, /Impact account setup blocked/);
+  assert.match(source, /An unknown error occurred/);
+  assert.match(source, /Password format is invalid/);
   assert.match(source, /nextPartnerApplication/);
   assert.match(source, /nextPartnerAnswerTarget/);
   assert.match(source, /partnerApplicationStatusCounts/);

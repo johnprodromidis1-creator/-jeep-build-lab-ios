@@ -170,6 +170,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /cyclePartnerApplicationStatus/);
   assert.match(source, /advanceNextPartnerApplication/);
   assert.match(source, /pauseNextPartnerApplication/);
+  assert.match(source, /resetNextPartnerApplication/);
   assert.match(source, /nextPartnerApplication/);
   assert.match(source, /nextPartnerAnswerTarget/);
   assert.match(source, /applicationStatuses:partnerApplicationStatus/);
@@ -189,7 +190,9 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /Mark profile ready/);
   assert.match(source, /Mark submitted/);
   assert.match(source, /Pause target/);
+  assert.match(source, /Reset target/);
   assert.match(source, /onPauseTarget=\{pauseNextPartnerApplication\}/);
+  assert.match(source, /onResetTarget=\{resetNextPartnerApplication\}/);
   assert.match(source, /onAdvanceTarget=\{advanceNextPartnerApplication\}/);
   assert.match(source, /target=\{nextPartnerAnswerTarget\}/);
   assert.match(source, /Common application answers/);

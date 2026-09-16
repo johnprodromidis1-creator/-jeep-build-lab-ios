@@ -462,6 +462,18 @@ function applicationTrackerSummary(programs: readonly PartnerProgram[], prioriti
   ].join("\n");
 }
 
+function blockedApplicationFollowupSection(priorities: readonly PartnerApplicationPriority[], applicationStatuses: CommerceApplicationPackInput["applicationStatuses"], applicationStatusNotes?: CommerceApplicationPackInput["applicationStatusNotes"]) {
+  const blocked = priorities
+    .filter(priority => applicationTrackerStatusKey(applicationStatuses?.[priority.program.id]) === "blocked")
+    .map(priority => ({ priority, note: applicationTrackerNote(priority.program.id, applicationStatusNotes) }));
+  if (!blocked.length) return "";
+  return [
+    "Blocked application follow-up",
+    ...blocked.map(({ priority, note }) => `- ${partnerProgramLabel(priority.program)}: ${note || "Resolve the partner-site issue before retrying."}`),
+    "- Reset a blocked program only after the password, account, eligibility or partner-site issue is resolved and the application can be reviewed again.",
+  ].join("\n");
+}
+
 function affiliateApplicationAnswerLines() {
   return affiliateApplicationAnswers.map(({ field, answer }, index) => `${index + 1}. ${field}: ${answer}`).join("\n");
 }
@@ -534,6 +546,7 @@ export function buildPartnerOutreachDraftPack({ name, state, parts, generatedAt 
   const selected = selectedParts(state, parts);
   const priorities = partnerApplicationPrioritiesForBuild(state, parts);
   const drafts = priorities.filter(priority => actionableApplicationStatuses.includes(applicationTrackerStatusKey(applicationStatuses?.[priority.program.id])));
+  const blockedFollowup = blockedApplicationFollowupSection(priorities, applicationStatuses, applicationStatusNotes);
   return [
     "Jeep Build Lab partner outreach draft pack",
     `Build: ${name.trim() || "Untitled build"}`,
@@ -541,6 +554,7 @@ export function buildPartnerOutreachDraftPack({ name, state, parts, generatedAt 
     `Vehicle: ${vehicleDescription(state)}`,
     `Scope: ${selected.length ? `${selected.length} selected part${selected.length === 1 ? "" : "s"} (${selectedCategorySummary(selected)})` : "No selected parts; full partner directory."}`,
     `Draft count: ${drafts.length} unsubmitted program${drafts.length === 1 ? "" : "s"} out of ${priorities.length} relevant program${priorities.length === 1 ? "" : "s"}.`,
+    ...(blockedFollowup ? ["", blockedFollowup] : []),
     "",
     drafts.length
       ? drafts.map((priority, index) => [
@@ -565,6 +579,7 @@ export function buildPartnerSubmissionReviewSheet({ name, notes, state, parts, g
   const programs = partnerProgramsForBuild(state, parts);
   const priorities = partnerApplicationPrioritiesForBuild(state, parts);
   const target = nextApplicationPriority(priorities, applicationStatuses) ?? priorities[0] ?? null;
+  const blockedFollowup = blockedApplicationFollowupSection(priorities, applicationStatuses, applicationStatusNotes);
   return [
     "Jeep Build Lab partner submission review sheet",
     `Build: ${name.trim() || "Untitled build"}`,
@@ -584,6 +599,7 @@ export function buildPartnerSubmissionReviewSheet({ name, notes, state, parts, g
     ].join("\n") : "- No relevant partner program found for this build.",
     "",
     applicationTrackerSummary(programs, priorities, applicationStatuses, applicationStatusNotes),
+    ...(blockedFollowup ? ["", blockedFollowup] : []),
     "",
     "Public profile fields ready to reuse after review",
     "- Website URL: https://jeep-build-lab.johnprodromidis1.chatgpt.site/",
@@ -616,6 +632,7 @@ export function buildPartnerSubmissionReviewSheet({ name, notes, state, parts, g
 export function buildAffiliateApplicationAnswers({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses, applicationStatusNotes }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
   const priorities = partnerApplicationPrioritiesForBuild(state, parts);
+  const blockedFollowup = blockedApplicationFollowupSection(priorities, applicationStatuses, applicationStatusNotes);
   return [
     "Jeep Build Lab affiliate application answer kit",
     `Build: ${name.trim() || "Untitled build"}`,
@@ -629,6 +646,7 @@ export function buildAffiliateApplicationAnswers({ name, state, parts, generated
     `- Commerce status: ${noActiveCommerceDisclosure}`,
     "",
     ...nextApplicationTargetLines(priorities, applicationStatuses, applicationStatusNotes),
+    ...(blockedFollowup ? ["", blockedFollowup] : []),
     "",
     "Next outreach email draft",
     buildPartnerOutreachEmailDraft({ name, notes: "", state, parts, generatedAt, applicationStatuses, applicationStatusNotes }),
@@ -667,6 +685,7 @@ export function buildPartnerApplicationLinks({ name, state, parts, generatedAt =
   const programs = partnerProgramsForBuild(state, parts);
   const allPriorities = partnerApplicationPrioritiesForBuild(state, parts);
   const priorities = allPriorities.slice(0, 5);
+  const blockedFollowup = blockedApplicationFollowupSection(allPriorities, applicationStatuses, applicationStatusNotes);
   return [
     "Jeep Build Lab partner application links",
     `Build: ${name.trim() || "Untitled build"}`,
@@ -681,6 +700,7 @@ export function buildPartnerApplicationLinks({ name, state, parts, generatedAt =
     sponsoredLinkReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
     applicationTrackerSummary(programs, allPriorities, applicationStatuses, applicationStatusNotes),
+    ...(blockedFollowup ? ["", blockedFollowup] : []),
     "",
     "Submission review checklist",
     partnerSubmissionReviewChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
@@ -751,6 +771,7 @@ export function buildAffiliateApplicationProfile({ name, notes, state, parts, ge
   const programs = partnerProgramsForBuild(state, parts);
   const allPriorities = partnerApplicationPrioritiesForBuild(state, parts);
   const priorities = allPriorities.slice(0, 5);
+  const blockedFollowup = blockedApplicationFollowupSection(allPriorities, applicationStatuses, applicationStatusNotes);
   return [
     "Jeep Build Lab affiliate application profile template",
     `Build: ${name.trim() || "Untitled build"}`,
@@ -775,6 +796,7 @@ export function buildAffiliateApplicationProfile({ name, notes, state, parts, ge
     sponsoredLinkReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
     applicationTrackerSummary(programs, allPriorities, applicationStatuses, applicationStatusNotes),
+    ...(blockedFollowup ? ["", blockedFollowup] : []),
     "",
     "Submission review checklist",
     partnerSubmissionReviewChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
@@ -809,6 +831,7 @@ export function buildPaidLinkDisclosurePack({ name, notes, state, parts, generat
   const selected = selectedParts(state, parts);
   const programs = partnerProgramsForBuild(state, parts);
   const allPriorities = partnerApplicationPrioritiesForBuild(state, parts);
+  const blockedFollowup = blockedApplicationFollowupSection(allPriorities, applicationStatuses, applicationStatusNotes);
   return [
     "Jeep Build Lab paid-link disclosure pack",
     `Build: ${name.trim() || "Untitled build"}`,
@@ -828,6 +851,7 @@ export function buildPaidLinkDisclosurePack({ name, notes, state, parts, generat
     `- ${selected.length ? selectedCategorySummary(selected) : "No selected parts; use the full Jeep Build Lab audience."}`,
     "",
     applicationTrackerSummary(programs, allPriorities, applicationStatuses, applicationStatusNotes),
+    ...(blockedFollowup ? ["", blockedFollowup] : []),
     "",
     "Pre-publish paid-link checks",
     paidLinkLaunchChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
@@ -848,6 +872,7 @@ export function buildCommerceApplicationPack({ name, notes, state, parts, genera
   const programs = partnerProgramsForBuild(state, parts);
   const allPriorities = partnerApplicationPrioritiesForBuild(state, parts);
   const priorities = allPriorities.slice(0, 5);
+  const blockedFollowup = blockedApplicationFollowupSection(allPriorities, applicationStatuses, applicationStatusNotes);
   return [
     "Jeep Build Lab partner application pack",
     `Build: ${name.trim() || "Untitled build"}`,
@@ -874,6 +899,7 @@ export function buildCommerceApplicationPack({ name, notes, state, parts, genera
     paidLinkLaunchChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
     applicationTrackerSummary(programs, allPriorities, applicationStatuses, applicationStatusNotes),
+    ...(blockedFollowup ? ["", blockedFollowup] : []),
     "",
     "Submission review checklist",
     partnerSubmissionReviewChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),

@@ -326,6 +326,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(commerce, /partnerApplicationTrackerStatusNames/);
   assert.match(commerce, /Application tracker/);
   assert.match(commerce, /Tracker note/);
+  assert.match(commerce, /Blocked application follow-up/);
   assert.match(commerce, /Application tracker summary/);
   assert.match(commerce, /Next application/);
   assert.match(commerce, /Submission review checklist/);

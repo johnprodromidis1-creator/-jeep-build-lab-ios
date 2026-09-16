@@ -519,10 +519,13 @@
 .partner-status-summary .paused{border-color:#596169;background:#1a2025}
 .partner-status-summary .blocked{border-color:#725046;background:#261815}
 .partner-status-list{display:grid;gap:7px;max-height:220px;overflow:auto;padding-right:2px}
+.partner-status-row{display:grid;gap:6px}
 .partner-status{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;width:100%;border:1px solid #33474f;background:#17262d;color:#dce7eb;border-radius:5px;padding:7px 8px;text-align:left;cursor:pointer}
 .partner-status span{font-size:12px;line-height:1.35;overflow-wrap:anywhere}
 .partner-status span small{display:block;color:#8fa5ae;font-size:11px;line-height:1.35;margin-top:2px}
 .partner-status strong{font-size:12px;font-weight:700;color:#efc690;border:1px solid #66593d;background:#332d21;border-radius:999px;padding:2px 7px;white-space:nowrap}
+.partner-status-note{height:32px;border-color:#30444c;background:#0d171c;color:#dce7eb;font-size:12px}
+.partner-status-note::placeholder{color:#78909a}
 .partner-status.ready strong{color:#dce8de;border-color:#55664f;background:#101b14}
 .partner-status.submitted strong{color:#d3e7f0;border-color:#48616c;background:#10212a}
 .partner-status.approved strong{color:#d9f3dc;border-color:#4a704d;background:#102316}

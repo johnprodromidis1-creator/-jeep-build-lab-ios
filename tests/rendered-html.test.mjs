@@ -596,6 +596,23 @@ test("builder surfaces source confidence and export proof fields", async () => {
   assert.match(css, /\.advisor-proof-row\.needs-review/);
 });
 
+test("builder shows submitted and approved partner launch follow-up", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(source, /function partnerLaunchFollowupText/);
+  assert.match(source, /launchPartnerApplications=trackedPartnerApplications\.filter\(\(\{status\}\)=>status==="submitted"\|\|status==="approved"\)/);
+  assert.match(source, /aria-label="Submitted and approved application follow-up"/);
+  assert.match(source, /Submitted \/ approved follow-up/);
+  assert.match(source, /Keep paid links inactive until every approved tracking URL is partner-issued, tested and visibly labeled/);
+  assert.match(source, /Copy disclosure pack/);
+  assert.match(source, /Share disclosure pack/);
+  assert.match(source, /Download disclosure pack/);
+  assert.match(css, /\.launch-application-notes/);
+  assert.match(css, /\.launch-application-notes div/);
+  assert.match(css, /\.launch-application-notes \[data-slot=button\]/);
+});
+
 test("part detail dialog can directly update the build selection", async () => {
   const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");

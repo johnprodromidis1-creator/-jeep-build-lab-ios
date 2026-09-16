@@ -7,7 +7,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 export const EXPECTED_BUNDLE_ID = "com.johnprodromidis.jeepbuildlab";
 export const EXPECTED_VERSION = "0.2.0";
 export const LIVE_SITE_URL = "https://jeep-build-lab.johnprodromidis1.chatgpt.site";
-export const EXPECTED_LIVE_SITES_VERSION = 114;
+export const EXPECTED_LIVE_SITES_VERSION = 115;
 
 const nativeSafeTests =
   "node --test tests/model.test.mjs tests/device-storage.test.mjs tests/ios-metadata.test.mjs tests/platform.test.mjs";
@@ -134,6 +134,7 @@ export async function runPreflight(projectRoot = scriptRoot) {
   check(checks, has(readme, /visible paused application notes panel/i), "README records paused application notes panel");
   check(checks, has(readme, /status-filtered actionable application order/i), "README records status-filtered application order");
   check(checks, has(readme, /blocked and paused reset controls/i), "README records blocked and paused reset controls");
+  check(checks, has(readme, /submitted and approved launch follow-up panel/i), "README records submitted and approved launch follow-up panel");
   check(checks, readiness.includes(LIVE_SITE_URL), "readiness handoff includes the live public site");
   check(checks, readiness.includes(`Sites version ${EXPECTED_LIVE_SITES_VERSION}`), "readiness records the latest Sites version");
   check(checks, has(readiness, /no signed IPA or TestFlight upload has been verified/i), "readiness keeps signed-build status honest");
@@ -146,6 +147,7 @@ export async function runPreflight(projectRoot = scriptRoot) {
   check(checks, has(readiness, /visible paused application notes panel/i), "readiness records paused application notes panel");
   check(checks, has(readiness, /status-filtered actionable application order/i), "readiness records status-filtered application order");
   check(checks, has(readiness, /blocked and paused reset controls/i), "readiness records blocked and paused reset controls");
+  check(checks, has(readiness, /submitted and approved launch follow-up panel/i), "readiness records submitted and approved launch follow-up panel");
   check(checks, has(codemagicDoc, /matching provisioning profile/i), "Codemagic guide calls out the app-specific profile");
   check(checks, codemagicDoc.includes(`Sites version ${EXPECTED_LIVE_SITES_VERSION}`), "Codemagic guide records the latest Sites version");
   check(checks, has(codemagicDoc, /expanded 77-test regression suite/i), "Codemagic guide records the current regression count");
@@ -156,6 +158,7 @@ export async function runPreflight(projectRoot = scriptRoot) {
   check(checks, has(codemagicDoc, /visible paused application notes panel/i), "Codemagic guide records paused application notes panel");
   check(checks, has(codemagicDoc, /status-filtered actionable application order/i), "Codemagic guide records status-filtered application order");
   check(checks, has(codemagicDoc, /blocked and paused reset controls/i), "Codemagic guide records blocked and paused reset controls");
+  check(checks, has(codemagicDoc, /submitted and approved launch follow-up panel/i), "Codemagic guide records submitted and approved launch follow-up panel");
   check(checks, has(codemagicDoc, /No automatic push triggers or paid plan changes are configured/i), "Codemagic guide keeps cost/trigger guardrail");
   check(checks, has(testflightDoc, /This app's Apple record and provisioning profile remain unverified/i), "TestFlight guide keeps account-owner signing gate");
   check(checks, has(screenshotsDoc, /one to 10 screenshots per device size/i), "screenshot plan keeps App Store count limits");

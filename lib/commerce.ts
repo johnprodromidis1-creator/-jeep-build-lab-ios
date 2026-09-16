@@ -114,6 +114,37 @@ export const affiliateApplicationProfileFields = [
   "Tax classification, resale certificate and banking/payment details when requested",
 ] as const;
 
+export const affiliateApplicationAnswers = [
+  {
+    field: "Website or app description",
+    answer: "Jeep Build Lab is an independent Wrangler JL build planner that helps owners compare sourced rim, tire, suspension, recovery and armor options before they click out to a retailer or partner program.",
+  },
+  {
+    field: "Audience",
+    answer: "Jeep Wrangler JL owners and shoppers who want neutral upgrade planning, fitment checks, staged budgets, source-backed exports and shop-ready build briefs.",
+  },
+  {
+    field: "Promotion methods",
+    answer: "Build guides, product comparisons, quote sheets, saved-build exports, partner-directory links and social posts that point users to approved retailer or partner pages.",
+  },
+  {
+    field: "Traffic or sales estimate",
+    answer: "Use the current verified site analytics, follower counts or launch-stage estimate before submitting. Do not invent volume for an application.",
+  },
+  {
+    field: "Compliance disclosure",
+    answer: "Paid links will stay inactive until the partner account is approved, tracking links are tested, and sponsored or affiliate disclosures are shown near the outbound link.",
+  },
+  {
+    field: "Pricing and inventory basis",
+    answer: "Catalog prices are dated source snapshots or user-entered notes, not live quotes, checkout totals, inventory promises or dealer pricing.",
+  },
+  {
+    field: "Fulfillment role",
+    answer: "Jeep Build Lab is currently a planning and referral experience. It does not process checkout, hold inventory, promise dropship fulfillment or handle returns.",
+  },
+] as const;
+
 export const sponsoredLinkReadinessChecklist = [
   "Apply through the partner program and wait for approval before replacing source links with tracking links.",
   "Label every paid outbound link as sponsored or affiliate before it can earn commission.",
@@ -387,6 +418,10 @@ function applicationTrackerSummary(programs: readonly PartnerProgram[], prioriti
   ].join("\n");
 }
 
+function affiliateApplicationAnswerLines() {
+  return affiliateApplicationAnswers.map(({ field, answer }, index) => `${index + 1}. ${field}: ${answer}`).join("\n");
+}
+
 function partnerProgramApplicationLine(program: PartnerProgram, applicationStatuses: CommerceApplicationPackInput["applicationStatuses"]) {
   return [
     `- ${program.name} (${relationshipNames[program.relationship]})`,
@@ -462,6 +497,9 @@ export function buildAffiliateApplicationProfile({ name, notes, state, parts, ge
     "Fields to verify before submitting",
     affiliateApplicationProfileFields.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
+    "Common application answers",
+    affiliateApplicationAnswerLines(),
+    "",
     "Application guardrails",
     sponsoredLinkReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
@@ -506,6 +544,9 @@ export function buildCommerceApplicationPack({ name, notes, state, parts, genera
     "",
     "Affiliate application profile fields",
     affiliateApplicationProfileFields.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    "Common application answers",
+    affiliateApplicationAnswerLines(),
     "",
     "Sponsored-link readiness",
     sponsoredLinkReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),

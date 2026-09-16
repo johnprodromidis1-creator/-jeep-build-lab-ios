@@ -50,7 +50,7 @@ const {initialState,baseCatalog,categories,selectedParts,totalFor,buildIssues,st
 const {catalogFitScore,catalogSortOptions,compareCatalogParts,dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
 const {buildShopBrief}=shopBrief;
-const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationProfile,buildCommerceApplicationPack,buildPartnerApplicationLinks,commerceApplicationChecklist,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist}=commerce;
+const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationProfile,buildCommerceApplicationPack,buildPartnerApplicationLinks,commerceApplicationChecklist,affiliateApplicationAnswers,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist}=commerce;
 const {buildRecipes}=recipes;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
@@ -146,6 +146,7 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(priorities[0].reason,/Matches 2 selected parts across Tires, Suspension/);
  assert.ok(priorities[0].score>priorities.at(-1).score);
  assert.ok(commerceApplicationChecklist.length>=5);
+ assert.ok(affiliateApplicationAnswers.length>=7);
  assert.ok(affiliateApplicationProfileFields.length>=8);
  assert.ok(sponsoredLinkReadinessChecklist.length>=5);
  assert.equal(partnerApplicationTrackerStatusNames.submitted,"Submitted");
@@ -155,6 +156,10 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(pack,/Generated: 2026-09-14/);
  assert.match(pack,/Affiliate application profile fields/);
  assert.match(pack,/Website URL: https:\/\/jeep-build-lab\.johnprodromidis1\.chatgpt\.site\//);
+ assert.match(pack,/Common application answers/);
+ assert.match(pack,/Website or app description: Jeep Build Lab is an independent Wrangler JL build planner/);
+ assert.match(pack,/Traffic or sales estimate: Use the current verified site analytics/);
+ assert.match(pack,/Fulfillment role: Jeep Build Lab is currently a planning and referral experience/);
  assert.match(pack,/Sponsored-link readiness/);
  assert.match(pack,/Label every paid outbound link as sponsored or affiliate/);
  assert.match(pack,/Application tracker summary\n- To apply: \d+\n- Profile ready: 1\n- Submitted: 1\n- Approved: 1\n- Paused: 0\n- Next application: /);
@@ -190,6 +195,9 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(profile,/Catalog basis: 104 sourced variants with dated source snapshots/);
  assert.match(profile,/Build focus: Tires, Suspension/);
  assert.match(profile,/Fields to verify before submitting/);
+ assert.match(profile,/Common application answers/);
+ assert.match(profile,/Compliance disclosure: Paid links will stay inactive until the partner account is approved/);
+ assert.match(profile,/Pricing and inventory basis: Catalog prices are dated source snapshots or user-entered notes/);
  assert.match(profile,/Suggested application order/);
  assert.match(profile,/Private fields/);
  assert.match(profile,/Application tracker: Submitted/);

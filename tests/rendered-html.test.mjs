@@ -162,8 +162,17 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /Sponsored-link readiness/);
   assert.match(source, /buildAffiliateApplicationProfile/);
   assert.match(source, /partnerApplicationPrioritiesForBuild/);
+  assert.match(source, /partnerApplicationStorageKey/);
+  assert.match(source, /partnerApplicationStatusNames/);
+  assert.match(source, /cyclePartnerApplicationStatus/);
   assert.match(source, /Suggested application order/);
   assert.match(source, /Apply first/);
+  assert.match(source, /Application tracker/);
+  assert.match(source, /Partner application tracker/);
+  assert.match(source, /Statuses stay on this device only/);
+  assert.match(source, /Profile ready/);
+  assert.match(source, /Submitted/);
+  assert.match(source, /Approved/);
   assert.match(source, /Download profile/);
   assert.match(source, /Affiliate application profile preview/);
   assert.match(source, /Download the profile template or full application pack for partner review/);
@@ -199,6 +208,8 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(css, /\.application-profile-preview/);
   assert.match(css, /\.partner-priority/);
   assert.match(css, /\.priority-program/);
+  assert.match(css, /\.partner-status-tracker/);
+  assert.match(css, /\.partner-status/);
 });
 
 test("vehicle edits warn before selected parts become invalid", async () => {

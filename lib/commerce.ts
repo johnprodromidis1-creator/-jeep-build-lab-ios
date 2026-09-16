@@ -170,6 +170,33 @@ export const futureCheckoutReadinessChecklist = [
   "Verify webhook signatures, separate test/live credentials, Dashboard access controls and account 2FA before any production payment path.",
 ] as const;
 
+export const commerceModeReadinessRows = [
+  {
+    key: "referral",
+    mode: "Affiliate / referral links",
+    status: "Application path",
+    role: "Middleman referral only.",
+    unlock: "Partner approval, partner-issued tracking URL, clean-browser test and visible affiliate or sponsored label.",
+    notActive: "No commission claim until approved tracking is installed.",
+  },
+  {
+    key: "reseller",
+    mode: "Dealer / reseller / dropship terms",
+    status: "Partner terms needed",
+    role: "Potential order-source path after written terms.",
+    unlock: "Written partner terms for resale, dropship, warranty, returns, taxes and customer-support responsibility.",
+    notActive: "No wholesale pricing, inventory ownership, fulfillment or return promise.",
+  },
+  {
+    key: "checkout",
+    mode: "Stripe / payment checkout",
+    status: "Locked",
+    role: "Future payment path only.",
+    unlock: "Approved commerce terms, exact fulfillment proof, tax registrations, secure server integration, verified webhooks and secrets stored outside source or mobile code.",
+    notActive: "No active Stripe checkout, payment collection or client-side secret keys.",
+  },
+] as const;
+
 export const paidLinkDisclosureSnippet =
   "Disclosure: Jeep Build Lab may earn a commission from links clearly labeled affiliate or sponsored. Prices, availability and fitment are not guaranteed; confirm the exact product, current price, shipping, returns and installation requirements with the seller before buying.";
 
@@ -525,7 +552,19 @@ function partnerLaunchEvidenceSection(priorities: readonly PartnerApplicationPri
         `  Risk: ${row.risk}`,
         `  Proof fields: ${row.proof.join("; ")}`,
       ])
-      : ["- No submitted or approved partner programs yet."]),
+    : ["- No submitted or approved partner programs yet."]),
+  ].join("\n");
+}
+
+function commerceModeReadinessSection() {
+  return [
+    "Commerce mode readiness",
+    ...commerceModeReadinessRows.flatMap(row => [
+      `- ${row.mode} - ${row.status}`,
+      `  Role: ${row.role}`,
+      `  Unlock: ${row.unlock}`,
+      `  Not active: ${row.notActive}`,
+    ]),
   ].join("\n");
 }
 
@@ -783,6 +822,8 @@ export function buildPartnerSubmissionReviewSheet({ name, notes, state, parts, g
     "",
     "Future checkout guardrails",
     futureCheckoutReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    commerceModeReadinessSection(),
     "",
     partnerLaunchEvidenceSection(priorities, applicationStatuses),
     "",
@@ -1093,6 +1134,8 @@ export function buildPaidLinkDisclosurePack({ name, notes, state, parts, generat
     "Future checkout guardrails",
     futureCheckoutReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
+    commerceModeReadinessSection(),
+    "",
     "Owner notes",
     notes.trim() || "No notes provided.",
   ].join("\n");
@@ -1127,6 +1170,8 @@ export function buildCommerceApplicationPack({ name, notes, state, parts, genera
     "",
     "Future checkout guardrails",
     futureCheckoutReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    commerceModeReadinessSection(),
     "",
     "Paid-link disclosure snippet",
     paidLinkDisclosureSnippet,

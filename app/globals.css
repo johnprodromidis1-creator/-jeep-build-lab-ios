@@ -492,6 +492,16 @@
 .future-checkout-readiness ul{margin:8px 0 0;padding-left:18px;color:#e3d8b8;font-size:12px;line-height:1.5}
 .future-checkout-readiness li{margin:0}
 .future-checkout-readiness li+li{margin-top:4px}
+.commerce-mode-map{border:1px solid #4b5354;background:#151f20;border-radius:5px;margin-top:10px;padding:9px 10px;display:grid;gap:7px}
+.commerce-mode-map>strong{font-size:13px;color:#eef6f7}
+.commerce-mode-row{border-left:2px solid #557958;display:grid;gap:3px;padding-left:8px}
+.commerce-mode-row.reseller{border-color:#b89158}
+.commerce-mode-row.checkout{border-color:#8f5d4f}
+.commerce-mode-row span{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.commerce-mode-row span strong{font-size:12px;color:#f0f5ef}
+.commerce-mode-row span small{border:1px solid #445257;background:#102027;border-radius:999px;color:#d8e6ea;font-size:11px;padding:1px 7px;white-space:nowrap}
+.commerce-mode-row p,.commerce-mode-row small,.commerce-mode-row em{font-size:12px;line-height:1.4;margin:0;color:#b9c9ca}
+.commerce-mode-row em{color:#dbcda7;font-style:normal}
 .paid-launch-status{border:1px solid #3c5143;background:#102017;border-radius:5px;margin-top:10px;padding:9px 10px}
 .paid-launch-status ul{margin:7px 0 0}
 .paid-launch-status li{color:#cfe0d3}

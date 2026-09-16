@@ -164,7 +164,10 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /sponsoredLinkReadinessChecklist/);
   assert.match(source, /paidLinkDisclosureSnippet/);
   assert.match(source, /paidLinkLaunchChecklist/);
+  assert.match(source, /paidLinkLaunchStatus/);
+  assert.match(source, /paidLinkLaunchLines/);
   assert.match(source, /Sponsored-link readiness/);
+  assert.match(source, /aria-label="Paid-link launch status"/);
   assert.match(source, /Paid-link disclosure/);
   assert.match(source, /Paid-link disclosure preview/);
   assert.match(source, /buildAffiliateApplicationProfile/);
@@ -387,6 +390,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(commerce, /Application prep checklist/);
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
   assert.match(css, /\.sponsor-readiness/);
+  assert.match(css, /\.paid-launch-status/);
   assert.match(css, /\.paid-disclosure-preview/);
   assert.match(css, /\.paid-disclosure-preview \[data-slot=button\]/);
   assert.match(css, /\.application-profile-preview/);

@@ -461,6 +461,9 @@
 .sponsor-readiness p{margin:0;color:#afc1b2}
 .sponsor-readiness ul{margin:9px 0 0;padding-left:18px;color:#c7d6ca;font-size:12px;line-height:1.55}
 .sponsor-readiness li+li{margin-top:4px}
+.paid-launch-status{border:1px solid #3c5143;background:#102017;border-radius:5px;margin-top:10px;padding:9px 10px}
+.paid-launch-status ul{margin:7px 0 0}
+.paid-launch-status li{color:#cfe0d3}
 .paid-disclosure-preview{border:1px solid #3d503f;background:#101b14;border-radius:5px;margin-top:10px;padding:9px 10px}
 .paid-disclosure-preview p{margin:4px 0 0;color:#c7d6ca}
 .paid-disclosure-preview span{display:block;color:#9eb3a5;font-size:12px;line-height:1.45;margin-top:7px}

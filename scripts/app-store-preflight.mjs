@@ -44,6 +44,7 @@ export async function runPreflight(projectRoot = scriptRoot) {
     packageSource,
     codemagic,
     iosVerify,
+    codemagicPrepare,
     project,
     info,
     capacitor,
@@ -57,6 +58,7 @@ export async function runPreflight(projectRoot = scriptRoot) {
     source(projectRoot, "package.json"),
     source(projectRoot, "codemagic.yaml"),
     source(projectRoot, "scripts/ios-verify.sh"),
+    source(projectRoot, "scripts/prepare-codemagic-ios.py"),
     source(projectRoot, "ios/App/App.xcodeproj/project.pbxproj"),
     source(projectRoot, "ios/App/App/Info.plist"),
     source(projectRoot, "capacitor.config.ts"),
@@ -85,6 +87,12 @@ export async function runPreflight(projectRoot = scriptRoot) {
   check(checks, !has(codemagic, /\btriggering:/), "Codemagic workflows remain manual");
   check(checks, has(codemagic, /name: Run release preflight\s+script: npm run release:preflight/), "TestFlight workflow runs release preflight");
   check(checks, has(iosVerify, /npm ci\s+npm run release:preflight\s+npx tsc --noEmit/), "unsigned iOS verify script runs release preflight after install");
+  check(checks, has(codemagicPrepare, /environment\.get\("BUNDLE_ID"\) != expected_bundle/), "Codemagic prep enforces the registered Bundle ID");
+  check(checks, has(codemagicPrepare, /PROJECT_BUILD_NUMBER/) && has(codemagicPrepare, /BUILD_NUMBER_OFFSET/), "Codemagic prep derives build numbers from Codemagic");
+  check(checks, has(codemagicPrepare, /number = int\(sequence\) \+ int\(offset\) \+ 1/), "Codemagic prep increments each uploaded build number");
+  check(checks, has(codemagicPrepare, /config\.get\("appId"\) != expected_bundle/) && has(codemagicPrepare, /config\.get\("server", \{\}\)\.get\("url"\)/), "Codemagic prep rejects wrong IDs and remote shells");
+  check(checks, has(codemagicPrepare, /connect-src 'none'/) && has(codemagicPrepare, /compiled mobile entry point is missing/), "Codemagic prep verifies the offline mobile bundle");
+  check(checks, has(codemagicPrepare, /len\(bundles\) != 2/) && has(codemagicPrepare, /if count != 2:/), "Codemagic prep updates both Xcode build configurations");
 
   check(checks, countMatches(project, new RegExp(`PRODUCT_BUNDLE_IDENTIFIER = ${EXPECTED_BUNDLE_ID.replace(/\./g, "\\.")};`, "g")) === 2, "Debug and Release Bundle IDs match");
   check(checks, has(project, /MARKETING_VERSION = 0\.2\.0;/), "Xcode marketing version is 0.2.0");

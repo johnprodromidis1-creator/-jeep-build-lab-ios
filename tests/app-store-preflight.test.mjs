@@ -20,6 +20,11 @@ test("App Store preflight keeps release guardrails aligned", async () => {
   assert.ok(labels.has("screenshot plan requires native signed/TestFlight captures"));
   assert.ok(labels.has("screenshot plan rejects browser or generated final screenshots"));
   assert.ok(labels.has("screenshot plan protects private capture data"));
-  assert.ok(report.checks.length >= 37);
+  assert.ok(labels.has("Codemagic prep enforces the registered Bundle ID"));
+  assert.ok(labels.has("Codemagic prep derives build numbers from Codemagic"));
+  assert.ok(labels.has("Codemagic prep rejects wrong IDs and remote shells"));
+  assert.ok(labels.has("Codemagic prep verifies the offline mobile bundle"));
+  assert.ok(labels.has("Codemagic prep updates both Xcode build configurations"));
+  assert.ok(report.checks.length >= 43);
   assert.equal(report.ok, true, failures);
 });

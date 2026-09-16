@@ -157,6 +157,7 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(pack,/Website URL: https:\/\/jeep-build-lab\.johnprodromidis1\.chatgpt\.site\//);
  assert.match(pack,/Sponsored-link readiness/);
  assert.match(pack,/Label every paid outbound link as sponsored or affiliate/);
+ assert.match(pack,/Application tracker summary\n- To apply: \d+\n- Profile ready: 1\n- Submitted: 1\n- Approved: 1\n- Paused: 0\n- Next application: /);
  assert.match(pack,/Suggested application order/);
  assert.match(pack,/1\. RealTruck via Impact - Matches 2 selected parts across Tires, Suspension\. Tracker: Submitted\./);
  assert.match(pack,/Selected build source links/);
@@ -173,6 +174,8 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(links,/Scope: 2 selected parts \(Tires, Suspension\)/);
  assert.match(links,/Paid links must be clearly labeled/);
  assert.match(links,/Sponsored-link readiness/);
+ assert.match(links,/Application tracker summary/);
+ assert.match(links,/Next application: /);
  assert.match(links,/Suggested application order/);
  assert.match(links,/RealTruck via Impact - Matches 2 selected parts across Tires, Suspension\. Tracker: Submitted\./);
  assert.match(links,/1\. Tire Rack - Affiliate/);
@@ -191,6 +194,8 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(profile,/Private fields/);
  assert.match(profile,/Application tracker: Submitted/);
  assert.match(profile,/Application tracker: Profile ready/);
+ assert.match(profile,/Application tracker summary/);
+ assert.match(profile,/Next application: /);
  assert.match(profile,/Do not store passwords, banking info, tax IDs, private phone numbers or affiliate tracking credentials in the public app source/);
  assert.match(profile,/RealTruck via Impact/);
  assert.doesNotMatch(profile,/MORryde Jeep/);

@@ -353,10 +353,38 @@ function selectedPartCommerceLine(part: Part, state: BuildState) {
   ].join("\n");
 }
 
+const applicationTrackerStatuses = Object.keys(partnerApplicationTrackerStatusNames) as PartnerApplicationTrackerStatus[];
+const actionableApplicationStatuses: readonly PartnerApplicationTrackerStatus[] = ["todo", "ready", "paused"];
+
+function applicationTrackerStatusKey(status: unknown): PartnerApplicationTrackerStatus {
+  return typeof status === "string" && Object.prototype.hasOwnProperty.call(partnerApplicationTrackerStatusNames, status)
+    ? status as PartnerApplicationTrackerStatus
+    : "todo";
+}
+
 function applicationTrackerStatusLabel(status: unknown) {
-  return typeof status === "string" && status in partnerApplicationTrackerStatusNames
-    ? partnerApplicationTrackerStatusNames[status as PartnerApplicationTrackerStatus]
-    : partnerApplicationTrackerStatusNames.todo;
+  return partnerApplicationTrackerStatusNames[applicationTrackerStatusKey(status)];
+}
+
+function partnerProgramLabel(program: PartnerProgram) {
+  return `${program.name}${program.network ? ` via ${program.network}` : ""}`;
+}
+
+function nextApplicationPriority(priorities: readonly PartnerApplicationPriority[], applicationStatuses: CommerceApplicationPackInput["applicationStatuses"]) {
+  return priorities.find(priority => actionableApplicationStatuses.includes(applicationTrackerStatusKey(applicationStatuses?.[priority.program.id]))) ?? null;
+}
+
+function applicationTrackerSummary(programs: readonly PartnerProgram[], priorities: readonly PartnerApplicationPriority[], applicationStatuses: CommerceApplicationPackInput["applicationStatuses"]) {
+  const counts = Object.fromEntries(applicationTrackerStatuses.map(status => [status, 0])) as Record<PartnerApplicationTrackerStatus, number>;
+  for (const program of programs) counts[applicationTrackerStatusKey(applicationStatuses?.[program.id])] += 1;
+  const next = nextApplicationPriority(priorities, applicationStatuses);
+  return [
+    "Application tracker summary",
+    ...applicationTrackerStatuses.map(status => `- ${partnerApplicationTrackerStatusNames[status]}: ${counts[status]}`),
+    next
+      ? `- Next application: ${partnerProgramLabel(next.program)} (${applicationTrackerStatusLabel(applicationStatuses?.[next.program.id])})`
+      : "- Next application: All tracked programs are submitted or approved.",
+  ].join("\n");
 }
 
 function partnerProgramApplicationLine(program: PartnerProgram, applicationStatuses: CommerceApplicationPackInput["applicationStatuses"]) {
@@ -373,13 +401,14 @@ function partnerProgramApplicationLine(program: PartnerProgram, applicationStatu
 }
 
 function suggestedApplicationLine(priority: PartnerApplicationPriority, index: number, applicationStatuses: CommerceApplicationPackInput["applicationStatuses"]) {
-  return `${index + 1}. ${priority.program.name}${priority.program.network ? ` via ${priority.program.network}` : ""} - ${priority.reason} Tracker: ${applicationTrackerStatusLabel(applicationStatuses?.[priority.program.id])}.`;
+  return `${index + 1}. ${partnerProgramLabel(priority.program)} - ${priority.reason} Tracker: ${applicationTrackerStatusLabel(applicationStatuses?.[priority.program.id])}.`;
 }
 
 export function buildPartnerApplicationLinks({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
   const programs = partnerProgramsForBuild(state, parts);
-  const priorities = partnerApplicationPrioritiesForBuild(state, parts).slice(0, 5);
+  const allPriorities = partnerApplicationPrioritiesForBuild(state, parts);
+  const priorities = allPriorities.slice(0, 5);
   return [
     "Jeep Build Lab partner application links",
     `Build: ${name.trim() || "Untitled build"}`,
@@ -392,6 +421,8 @@ export function buildPartnerApplicationLinks({ name, state, parts, generatedAt =
     "",
     "Sponsored-link readiness",
     sponsoredLinkReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    applicationTrackerSummary(programs, allPriorities, applicationStatuses),
     "",
     "Suggested application order",
     priorities.map((priority, index) => suggestedApplicationLine(priority, index, applicationStatuses)).join("\n"),
@@ -412,7 +443,8 @@ export function buildPartnerApplicationLinks({ name, state, parts, generatedAt =
 export function buildAffiliateApplicationProfile({ name, notes, state, parts, generatedAt = new Date().toISOString(), applicationStatuses }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
   const programs = partnerProgramsForBuild(state, parts);
-  const priorities = partnerApplicationPrioritiesForBuild(state, parts).slice(0, 5);
+  const allPriorities = partnerApplicationPrioritiesForBuild(state, parts);
+  const priorities = allPriorities.slice(0, 5);
   return [
     "Jeep Build Lab affiliate application profile template",
     `Build: ${name.trim() || "Untitled build"}`,
@@ -432,6 +464,8 @@ export function buildAffiliateApplicationProfile({ name, notes, state, parts, ge
     "",
     "Application guardrails",
     sponsoredLinkReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    applicationTrackerSummary(programs, allPriorities, applicationStatuses),
     "",
     "Suggested application order",
     priorities.map((priority, index) => suggestedApplicationLine(priority, index, applicationStatuses)).join("\n"),
@@ -458,7 +492,8 @@ export function buildAffiliateApplicationProfile({ name, notes, state, parts, ge
 export function buildCommerceApplicationPack({ name, notes, state, parts, generatedAt = new Date().toISOString(), applicationStatuses }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
   const programs = partnerProgramsForBuild(state, parts);
-  const priorities = partnerApplicationPrioritiesForBuild(state, parts).slice(0, 5);
+  const allPriorities = partnerApplicationPrioritiesForBuild(state, parts);
+  const priorities = allPriorities.slice(0, 5);
   return [
     "Jeep Build Lab partner application pack",
     `Build: ${name.trim() || "Untitled build"}`,
@@ -474,6 +509,8 @@ export function buildCommerceApplicationPack({ name, notes, state, parts, genera
     "",
     "Sponsored-link readiness",
     sponsoredLinkReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    applicationTrackerSummary(programs, allPriorities, applicationStatuses),
     "",
     "Suggested application order",
     priorities.map((priority, index) => suggestedApplicationLine(priority, index, applicationStatuses)).join("\n"),

@@ -162,6 +162,14 @@ export const sponsoredLinkReadinessChecklist = [
   "Keep a plain-language FTC disclosure visible near paid links and in exports.",
 ] as const;
 
+export const futureCheckoutReadinessChecklist = [
+  "Keep checkout disabled until partner terms explicitly approve resale, dealer ordering, dropship or referral checkout for this site.",
+  "If Stripe is added later, prefer Stripe-hosted checkout or Payment Links and keep all secret or restricted keys in Sites secrets, never public source or the mobile app.",
+  "Do not collect payment until final price, stock, shipping, return, warranty and installer-fitment responsibility are confirmed for the exact part.",
+  "Do not turn on tax calculation or tax language until business registrations and supported jurisdictions are verified.",
+  "Verify webhook signatures, separate test/live credentials, Dashboard access controls and account 2FA before any production payment path.",
+] as const;
+
 export const paidLinkDisclosureSnippet =
   "Disclosure: Jeep Build Lab may earn a commission from links clearly labeled affiliate or sponsored. Prices, availability and fitment are not guaranteed; confirm the exact product, current price, shipping, returns and installation requirements with the seller before buying.";
 
@@ -773,6 +781,9 @@ export function buildPartnerSubmissionReviewSheet({ name, notes, state, parts, g
     "Submission review checklist",
     partnerSubmissionReviewChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
+    "Future checkout guardrails",
+    futureCheckoutReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
     partnerLaunchEvidenceSection(priorities, applicationStatuses),
     "",
     "Before marking Submitted",
@@ -1079,6 +1090,9 @@ export function buildPaidLinkDisclosurePack({ name, notes, state, parts, generat
     "- Keep source-price snapshots and checkout claims separate.",
     "- Remove paid labels from links that are still only application or source references.",
     "",
+    "Future checkout guardrails",
+    futureCheckoutReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
     "Owner notes",
     notes.trim() || "No notes provided.",
   ].join("\n");
@@ -1110,6 +1124,9 @@ export function buildCommerceApplicationPack({ name, notes, state, parts, genera
     "",
     "Sponsored-link readiness",
     sponsoredLinkReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    "Future checkout guardrails",
+    futureCheckoutReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
     "Paid-link disclosure snippet",
     paidLinkDisclosureSnippet,

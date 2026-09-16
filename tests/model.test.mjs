@@ -50,7 +50,7 @@ const {initialState,baseCatalog,categories,selectedParts,totalFor,buildIssues,st
 const {catalogFitScore,catalogSortOptions,compareCatalogParts,dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
 const {buildShopBrief,installerQuoteChecklist}=shopBrief;
-const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,partnerLaunchEvidenceRows,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,independenceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationAnswers,buildAffiliateApplicationProfile,buildBlockedApplicationSupportDraft,buildBlockedApplicationSupportMailtoUrl,buildCommerceApplicationPack,buildPartnerApplicationLinks,buildPartnerApplicationTrackerCsv,buildPartnerApplicationTrackerText,buildPaidLinkDisclosurePack,buildPartnerOutreachDraftPack,buildPartnerOutreachEmailDraft,buildPartnerOutreachMailtoUrl,buildPartnerSubmissionReviewSheet,commerceApplicationChecklist,affiliateApplicationAnswers,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist,partnerSubmissionReviewChecklist,partnerSubmissionPrivateFields,paidLinkDisclosureSnippet,paidLinkLaunchChecklist,paidLinkLaunchProofFields,paidLinkLaunchStatus}=commerce;
+const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,partnerLaunchEvidenceRows,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,independenceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationAnswers,buildAffiliateApplicationProfile,buildBlockedApplicationSupportDraft,buildBlockedApplicationSupportMailtoUrl,buildCommerceApplicationPack,buildPartnerApplicationLinks,buildPartnerApplicationTrackerCsv,buildPartnerApplicationTrackerText,buildPaidLinkDisclosurePack,buildPartnerOutreachDraftPack,buildPartnerOutreachEmailDraft,buildPartnerOutreachMailtoUrl,buildPartnerSubmissionReviewSheet,commerceApplicationChecklist,affiliateApplicationAnswers,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist,futureCheckoutReadinessChecklist,partnerSubmissionReviewChecklist,partnerSubmissionPrivateFields,paidLinkDisclosureSnippet,paidLinkLaunchChecklist,paidLinkLaunchProofFields,paidLinkLaunchStatus}=commerce;
 const {buildRecipes}=recipes;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
@@ -157,6 +157,9 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.ok(affiliateApplicationAnswers.length>=7);
  assert.ok(affiliateApplicationProfileFields.length>=8);
  assert.ok(sponsoredLinkReadinessChecklist.length>=5);
+ assert.ok(futureCheckoutReadinessChecklist.length>=5);
+ assert.ok(futureCheckoutReadinessChecklist.some(item=>/Stripe-hosted checkout or Payment Links/.test(item)));
+ assert.ok(futureCheckoutReadinessChecklist.some(item=>/tax calculation/.test(item)));
  assert.ok(paidLinkLaunchChecklist.length>=5);
  assert.ok(paidLinkLaunchProofFields.length>=5);
  assert.ok(partnerSubmissionReviewChecklist.length>=5);
@@ -191,6 +194,9 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(pack,/Fulfillment role: Jeep Build Lab is currently a planning and referral experience/);
  assert.match(pack,/Sponsored-link readiness/);
  assert.match(pack,/Label every paid outbound link as sponsored or affiliate/);
+ assert.match(pack,/Future checkout guardrails/);
+ assert.match(pack,/Stripe-hosted checkout or Payment Links/);
+ assert.match(pack,/Do not collect payment until final price, stock, shipping, return, warranty and installer-fitment responsibility are confirmed/);
  assert.match(pack,/Paid-link disclosure snippet/);
  assert.match(pack,/Disclosure: Jeep Build Lab may earn a commission from links clearly labeled affiliate or sponsored/);
  assert.match(pack,/Pre-publish paid-link checks/);
@@ -312,6 +318,8 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(disclosure,/Turn 14 Distribution - Approved/);
  assert.match(disclosure,/Approved still needs a partner-issued tracking URL/);
  assert.match(disclosure,/Partner has approved the account and program terms/);
+ assert.match(disclosure,/Future checkout guardrails/);
+ assert.match(disclosure,/Keep checkout disabled until partner terms explicitly approve resale, dealer ordering, dropship or referral checkout/);
  assert.match(disclosure,/Placement rules/);
  assert.match(disclosure,/Label each individual paid link or button as sponsored or affiliate/);
  assert.match(disclosure,/Owner notes\nApply before linking\./);
@@ -343,6 +351,8 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(review,/Program agreement acceptance, privacy terms and email marketing opt-in choices/);
  assert.match(review,/Submission review checklist/);
  assert.match(review,/Confirm the application is on the expected partner or network domain/);
+ assert.match(review,/Future checkout guardrails/);
+ assert.match(review,/Verify webhook signatures, separate test\/live credentials/);
  assert.match(review,/Partner launch evidence/);
  assert.match(review,/RealTruck via Impact - Submitted/);
  assert.match(review,/Turn 14 Distribution - Approved/);

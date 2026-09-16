@@ -7,7 +7,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 export const EXPECTED_BUNDLE_ID = "com.johnprodromidis.jeepbuildlab";
 export const EXPECTED_VERSION = "0.2.0";
 export const LIVE_SITE_URL = "https://jeep-build-lab.johnprodromidis1.chatgpt.site";
-export const EXPECTED_LIVE_SITES_VERSION = 122;
+export const EXPECTED_LIVE_SITES_VERSION = 123;
 
 const nativeSafeTests =
   "node --test tests/model.test.mjs tests/device-storage.test.mjs tests/ios-metadata.test.mjs tests/platform.test.mjs";
@@ -151,6 +151,7 @@ export async function runPreflight(projectRoot = scriptRoot) {
   check(checks, has(readme, /submitted and approved launch follow-up panel/i), "README records submitted and approved launch follow-up panel");
   check(checks, has(readme, /launch proof checklist/i), "README records paid-link launch proof checklist");
   check(checks, has(readme, /partner launch evidence rows/i), "README records partner launch evidence rows");
+  check(checks, has(readme, /future checkout guardrails/i), "README records future checkout guardrails");
   check(checks, has(readme, /market-positioning memo/i), "README records market-positioning memo");
   check(checks, has(readme, /six source-backed owner-intent starter packs/i), "README records owner-intent starter packs");
   check(checks, has(readme, /installer quote checklist/i), "README records installer quote checklist");
@@ -170,6 +171,7 @@ export async function runPreflight(projectRoot = scriptRoot) {
   check(checks, has(readiness, /submitted and approved launch follow-up panel/i), "readiness records submitted and approved launch follow-up panel");
   check(checks, has(readiness, /launch proof checklist/i), "readiness records paid-link launch proof checklist");
   check(checks, has(readiness, /partner launch evidence rows/i), "readiness records partner launch evidence rows");
+  check(checks, has(readiness, /future checkout guardrails/i), "readiness records future checkout guardrails");
   check(checks, has(readiness, /neutral build-advisor layer/i), "readiness records neutral build-advisor positioning");
   check(checks, has(readiness, /six source-backed owner-intent starter packs/i), "readiness records owner-intent starter packs");
   check(checks, has(readiness, /installer quote checklist/i), "readiness records installer quote checklist");
@@ -187,6 +189,7 @@ export async function runPreflight(projectRoot = scriptRoot) {
   check(checks, has(codemagicDoc, /submitted and approved launch follow-up panel/i), "Codemagic guide records submitted and approved launch follow-up panel");
   check(checks, has(codemagicDoc, /launch proof checklist/i), "Codemagic guide records paid-link launch proof checklist");
   check(checks, has(codemagicDoc, /partner launch evidence rows/i), "Codemagic guide records partner launch evidence rows");
+  check(checks, has(codemagicDoc, /future checkout guardrails/i), "Codemagic guide records future checkout guardrails");
   check(checks, has(codemagicDoc, /market-positioning memo/i), "Codemagic guide records market-positioning memo");
   check(checks, has(codemagicDoc, /six source-backed owner-intent starter packs/i), "Codemagic guide records owner-intent starter packs");
   check(checks, has(codemagicDoc, /installer quote checklist/i), "Codemagic guide records installer quote checklist");
@@ -201,11 +204,14 @@ export async function runPreflight(projectRoot = scriptRoot) {
   check(checks, has(builderDoc, /aria-label="Installer quote checklist"/) && has(builderDoc, /installerQuoteItems=installerQuoteChecklist/), "builder surfaces installer quote checklist");
   check(checks, has(builderDoc, /independenceDisclosure/) && has(builderDoc, /Independence disclosure/), "builder surfaces shared independence disclosure");
   check(checks, has(builderDoc, /partnerLaunchEvidenceRows/) && has(builderDoc, /Launch evidence to collect/), "builder surfaces partner launch evidence rows");
+  check(checks, has(builderDoc, /futureCheckoutReadinessChecklist/) && has(builderDoc, /Future checkout guardrails/), "builder surfaces future checkout guardrails");
   check(checks, has(commerceDoc, /function partnerLaunchEvidenceRows/) && has(commerceDoc, /Partner launch evidence/), "commerce exports partner launch evidence rows");
+  check(checks, has(commerceDoc, /futureCheckoutReadinessChecklist/) && has(commerceDoc, /Stripe-hosted checkout or Payment Links/), "commerce exports future checkout guardrails");
   check(checks, has(shopBriefDoc, /independenceDisclosure/), "shop brief exports shared independence disclosure");
   check(checks, has(privacyContent, /independenceDisclosure/), "privacy and support copy reuse shared independence disclosure");
   check(checks, has(globalCss, /\.installer-quote-checklist/) && has(globalCss, /\.installer-quote-row\.needs-review/), "styles cover installer quote checklist states");
   check(checks, has(globalCss, /\.launch-evidence-list/) && has(globalCss, /\.launch-evidence-row\.approved/) && has(globalCss, /\.launch-evidence-row\.submitted/), "styles cover partner launch evidence rows");
+  check(checks, has(globalCss, /\.future-checkout-readiness/) && has(globalCss, /\.future-checkout-readiness ul/), "styles cover future checkout guardrails");
   check(checks, has(testflightDoc, /This app's Apple record and provisioning profile remain unverified/i), "TestFlight guide keeps account-owner signing gate");
   check(checks, has(screenshotsDoc, /one to 10 screenshots per device size/i), "screenshot plan keeps App Store count limits");
   check(checks, has(screenshotsDoc, /cannot include alpha\/transparency/i), "screenshot plan forbids alpha transparency");

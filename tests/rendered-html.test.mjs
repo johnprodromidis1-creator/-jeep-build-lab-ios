@@ -170,6 +170,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /Partner-ready offers/);
   assert.match(source, /affiliateApplicationProfileFields/);
   assert.match(source, /sponsoredLinkReadinessChecklist/);
+  assert.match(source, /futureCheckoutReadinessChecklist/);
   assert.match(source, /paidLinkDisclosureSnippet/);
   assert.match(source, /paidLinkLaunchChecklist/);
   assert.match(source, /paidLinkLaunchProofFields/);
@@ -178,6 +179,9 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /partnerLaunchEvidenceRows/);
   assert.match(source, /partnerLaunchEvidence/);
   assert.match(source, /Sponsored-link readiness/);
+  assert.match(source, /aria-label="Future checkout readiness"/);
+  assert.match(source, /Future checkout guardrails/);
+  assert.match(source, /No checkout is active/);
   assert.match(source, /aria-label="Paid-link launch status"/);
   assert.match(source, /aria-label="Paid-link launch proof"/);
   assert.match(source, /aria-label="Partner launch evidence"/);
@@ -424,6 +428,9 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(commerce, /Password format is invalid/);
   assert.match(commerce, /keeps Continue disabled before the account-details step advances/);
   assert.match(commerce, /Sponsored-link readiness/);
+  assert.match(commerce, /futureCheckoutReadinessChecklist/);
+  assert.match(commerce, /Future checkout guardrails/);
+  assert.match(commerce, /Stripe-hosted checkout or Payment Links/);
   assert.match(commerce, /paidLinkDisclosureSnippet/);
   assert.match(commerce, /paidLinkLaunchChecklist/);
   assert.match(commerce, /paidLinkLaunchProofFields/);
@@ -439,6 +446,8 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(commerce, /Application prep checklist/);
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
   assert.match(css, /\.sponsor-readiness/);
+  assert.match(css, /\.future-checkout-readiness/);
+  assert.match(css, /\.future-checkout-readiness ul/);
   assert.match(css, /\.paid-launch-status/);
   assert.match(css, /\.paid-launch-proof/);
   assert.match(css, /\.paid-launch-proof ul/);

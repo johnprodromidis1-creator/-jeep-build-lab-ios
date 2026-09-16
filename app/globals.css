@@ -479,6 +479,7 @@
 .blocked-application-notes p{margin:0;display:grid;gap:2px;font-size:12px;line-height:1.35}
 .blocked-application-notes span{color:#fff0ec;font-weight:700}
 .blocked-application-notes small{color:#e7bdb2;font-size:12px;line-height:1.4}
+.blocked-application-notes div{display:flex;flex-wrap:wrap;gap:7px}
 .blocked-application-notes [data-slot=button]{justify-self:start}
 .application-answer-requirements{margin:1px 0 0;padding-left:15px;display:grid;gap:3px;color:#b8c9c3;font-size:12px;line-height:1.45}
 .application-answer-target.complete{border-color:#6aa36e;color:#d9f3dc}

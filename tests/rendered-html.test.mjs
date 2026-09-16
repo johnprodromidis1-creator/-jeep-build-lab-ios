@@ -208,8 +208,13 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /Blocked application notes/);
   assert.match(source, /blocked-application-notes/);
   assert.match(source, /blockedPartnerApplicationNotes/);
+  assert.match(source, /blockedPartnerApplicationNotesText/);
   assert.match(source, /copyBlockedApplicationNotes/);
+  assert.match(source, /exportBlockedApplicationNotes/);
   assert.match(source, /Copy blocked notes/);
+  assert.match(source, /Share blocked notes/);
+  assert.match(source, /Download blocked notes/);
+  assert.match(source, /jeep-build-blocked-application-notes\.txt/);
   assert.match(source, /Next application target/);
   assert.match(source, /Target requirements/);
   assert.match(source, /application-answer-requirements/);
@@ -359,6 +364,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(css, /\.application-answer-target/);
   assert.match(css, /\.application-answer-note/);
   assert.match(css, /\.blocked-application-notes/);
+  assert.match(css, /\.blocked-application-notes div/);
   assert.match(css, /\.blocked-application-notes \[data-slot=button\]/);
   assert.match(css, /\.application-answer-requirements/);
   assert.match(css, /\.application-answer-actions/);

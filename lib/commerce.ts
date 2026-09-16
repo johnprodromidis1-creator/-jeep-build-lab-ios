@@ -474,6 +474,46 @@ function blockedApplicationFollowupSection(priorities: readonly PartnerApplicati
   ].join("\n");
 }
 
+export function buildBlockedApplicationSupportDraft({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses, applicationStatusNotes }: CommerceApplicationPackInput) {
+  const priorities = partnerApplicationPrioritiesForBuild(state, parts);
+  const blocked = priorities
+    .filter(priority => applicationTrackerStatusKey(applicationStatuses?.[priority.program.id]) === "blocked")
+    .map(priority => ({ priority, note: applicationTrackerNote(priority.program.id, applicationStatusNotes) }));
+  if (!blocked.length) return "No blocked partner applications need a support ticket draft right now.";
+  return [
+    "Jeep Build Lab blocked partner support ticket drafts",
+    `Build: ${name.trim() || "Untitled build"}`,
+    `Generated: ${new Date(generatedAt).toISOString().slice(0, 10)}`,
+    `Vehicle: ${vehicleDescription(state)}`,
+    "",
+    blocked.map(({ priority, note }, index) => [
+      `Draft ${index + 1}: ${partnerProgramLabel(priority.program)}`,
+      `Subject: Partner application support - ${partnerProgramLabel(priority.program)}`,
+      "",
+      `Hi ${priority.program.network ?? priority.program.name} support team,`,
+      "",
+      `I'm trying to continue the ${partnerProgramLabel(priority.program)} partner application for Jeep Build Lab, an independent Wrangler JL build planner.`,
+      "",
+      "Public site: https://jeep-build-lab.johnprodromidis1.chatgpt.site/",
+      `Application path: ${safeCommerceUrl(priority.program.url)}`,
+      `Tracker status: ${partnerApplicationTrackerStatusNames.blocked}`,
+      `Tracker note: ${note || "The partner form is blocked before the application can be reviewed."}`,
+      `Fit for program: ${priority.reason}`,
+      "",
+      "Could you confirm the required next step so I can complete the application review without creating duplicate accounts or entering credentials into the wrong flow?",
+      "",
+      "I can provide account-identifying details inside the partner portal or a secure support channel if needed.",
+      "",
+      "Thanks,",
+      "John",
+    ].join("\n")).join("\n\n"),
+    "",
+    "Do not include in an ordinary support email",
+    "- Passwords, tax IDs, banking details, payout credentials or tracking IDs.",
+    "- Claims that affiliate tracking, dealer pricing, checkout, inventory ownership or dropship fulfillment is already approved.",
+  ].join("\n");
+}
+
 function affiliateApplicationAnswerLines() {
   return affiliateApplicationAnswers.map(({ field, answer }, index) => `${index + 1}. ${field}: ${answer}`).join("\n");
 }
@@ -555,6 +595,7 @@ export function buildPartnerOutreachDraftPack({ name, state, parts, generatedAt 
     `Scope: ${selected.length ? `${selected.length} selected part${selected.length === 1 ? "" : "s"} (${selectedCategorySummary(selected)})` : "No selected parts; full partner directory."}`,
     `Draft count: ${drafts.length} unsubmitted program${drafts.length === 1 ? "" : "s"} out of ${priorities.length} relevant program${priorities.length === 1 ? "" : "s"}.`,
     ...(blockedFollowup ? ["", blockedFollowup] : []),
+    ...(blockedFollowup ? ["", buildBlockedApplicationSupportDraft({ name, notes: "", state, parts, generatedAt, applicationStatuses, applicationStatusNotes })] : []),
     "",
     drafts.length
       ? drafts.map((priority, index) => [

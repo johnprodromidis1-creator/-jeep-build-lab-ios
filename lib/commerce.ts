@@ -422,7 +422,7 @@ function selectedPartCommerceLine(part: Part, state: BuildState) {
 }
 
 const applicationTrackerStatuses = Object.keys(partnerApplicationTrackerStatusNames) as PartnerApplicationTrackerStatus[];
-const actionableApplicationStatuses: readonly PartnerApplicationTrackerStatus[] = ["todo", "ready", "paused"];
+const actionableApplicationStatuses: readonly PartnerApplicationTrackerStatus[] = ["todo", "ready"];
 
 function applicationTrackerStatusKey(status: unknown): PartnerApplicationTrackerStatus {
   return typeof status === "string" && Object.prototype.hasOwnProperty.call(partnerApplicationTrackerStatusNames, status)
@@ -591,7 +591,7 @@ export function buildPartnerOutreachEmailDraft({ name, state, parts, application
   if (!next) {
     return [
       "No outreach draft needed right now.",
-      "All tracked partner programs for this build are submitted or approved. Keep approved tracking links labeled and tested before publishing.",
+      "No unblocked or unpaused partner application is ready to pursue. Reset a paused or blocked program only after it can move again, and keep approved tracking links labeled and tested before publishing.",
     ].join("\n");
   }
   return partnerOutreachEmailDraftForPriority(next, name, state);

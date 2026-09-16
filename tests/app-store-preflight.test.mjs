@@ -15,7 +15,7 @@ test("App Store preflight keeps release guardrails aligned", async () => {
 
   assert.equal(report.expected.bundleId, EXPECTED_BUNDLE_ID);
   assert.equal(report.expected.version, EXPECTED_VERSION);
-  assert.equal(EXPECTED_LIVE_SITES_VERSION, 109);
+  assert.equal(EXPECTED_LIVE_SITES_VERSION, 110);
   const labels = new Set(report.checks.map((item) => item.label));
   assert.ok(labels.has("screenshot plan covers iPhone and iPad targets"));
   assert.ok(labels.has("screenshot plan requires native signed/TestFlight captures"));
@@ -26,10 +26,12 @@ test("App Store preflight keeps release guardrails aligned", async () => {
   assert.ok(labels.has("readiness records the latest Sites version"));
   assert.ok(labels.has("readiness records the signing-profile gate"));
   assert.ok(labels.has("readiness records blank blocked-target guidance"));
+  assert.ok(labels.has("readiness records paused partner-target guidance"));
   assert.ok(labels.has("README handoff includes the live public site"));
   assert.ok(labels.has("README records the latest Sites version"));
   assert.ok(labels.has("README records the signing-profile gate"));
   assert.ok(labels.has("README records blank blocked-target guidance"));
+  assert.ok(labels.has("README records paused partner-target guidance"));
   assert.ok(labels.has("Codemagic prep enforces the registered Bundle ID"));
   assert.ok(labels.has("Codemagic prep derives build numbers from Codemagic"));
   assert.ok(labels.has("Codemagic prep rejects wrong IDs and remote shells"));
@@ -42,6 +44,7 @@ test("App Store preflight keeps release guardrails aligned", async () => {
   assert.ok(labels.has("Codemagic guide records the catalog depth proof strip"));
   assert.ok(labels.has("Codemagic guide records the latest Sites version"));
   assert.ok(labels.has("Codemagic guide records blank blocked-target guidance"));
+  assert.ok(labels.has("Codemagic guide records paused partner-target guidance"));
   assert.ok(report.checks.length >= 43);
   assert.equal(report.ok, true, failures);
 });

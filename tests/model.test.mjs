@@ -357,6 +357,18 @@ test("commerce application pack exports selected partner paths and prep checklis
  const blockedTracker=buildPartnerApplicationTrackerCsv({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses:blockedStatuses,applicationStatusNotes:blockedNotes});
  assert.match(blockedTracker,/"CARiD","","Affiliate","Blocked","Partner network password screen rejected the account setup\.","Application needed"/);
  assert.match(blockedTracker,/"Resolve password, account, eligibility or partner-site errors before retrying this application\."/);
+ const pausedStatuses={...applicationStatuses,"realtruck-affiliate":"paused"};
+ const pausedAnswers=buildAffiliateApplicationAnswers({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses:pausedStatuses});
+ assert.match(pausedAnswers,/Next application target\n- Program: CARiD/);
+ assert.match(pausedAnswers,/Subject: Jeep Build Lab partner application - CARiD/);
+ const pausedLinks=buildPartnerApplicationLinks({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses:pausedStatuses});
+ assert.match(pausedLinks,/Application tracker summary\n- To apply: \d+\n- Profile ready: 1\n- Submitted: 0\n- Approved: 1\n- Paused: 1\n- Blocked: 0\n- Next application: CARiD \(To apply\)/);
+ const pausedDraftPack=buildPartnerOutreachDraftPack({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses:pausedStatuses});
+ assert.match(pausedDraftPack,/Draft 1: CARiD/);
+ assert.doesNotMatch(pausedDraftPack,/Draft 1: RealTruck/);
+ const allPausedStatuses=Object.fromEntries(priorities.map(priority=>[priority.program.id,"paused"]));
+ const noPausedDraft=buildPartnerOutreachEmailDraft({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses:allPausedStatuses});
+ assert.match(noPausedDraft,/No unblocked or unpaused partner application is ready to pursue/);
 });
 test("totals multiply individual wheels/tires, count kits once, and include allowances",()=>{
  const s=base();s.picks={wheels:"method-MR70178550900",tires:"nitto-217020",lift:"lift-16400-0073"};s.labor=50000;s.extras=30000;

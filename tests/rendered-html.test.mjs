@@ -194,6 +194,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /The account owner must fix the password\/account setup directly in Impact/);
   assert.match(source, /Partner Program Agreement acceptance advanced/);
   assert.match(source, /nextPartnerApplication/);
+  assert.match(source, /trackedPartnerApplications\.find\(\(\{status\}\)=>status==="todo"\|\|status==="ready"\)/);
   assert.match(source, /nextPartnerAnswerTarget/);
   assert.match(source, /partnerApplicationStatusCounts/);
   assert.match(source, /partnerApplicationExportState/);

@@ -21,8 +21,10 @@ export type PartnerProgram = {
   relationship: Exclude<CommerceRelationship, "source">;
   status: "application-needed";
   url: string;
+  network?: string;
   categories: readonly Category[];
   note: string;
+  requirements?: readonly string[];
 };
 
 export type CommerceOffer = {
@@ -75,6 +77,26 @@ export const commerceApplicationChecklist = [
   "Confirm sales-tax, warranty, return, shipping-liability and dropship terms with the partner and your professional advisors before taking orders.",
 ] as const;
 
+export const affiliateApplicationProfileFields = [
+  "Legal applicant name and business name",
+  "Contact email and mobile number",
+  "Business mailing address and support email",
+  "Website URL: https://jeep-build-lab.johnprodromidis1.chatgpt.site/",
+  "Social channels and content platforms",
+  "Audience description and Jeep/off-road content plan",
+  "Monthly visitors, followers or email list estimate",
+  "Promotion methods: build guides, part comparisons, quote sheets and social posts",
+  "Tax classification, resale certificate and banking/payment details when requested",
+] as const;
+
+export const sponsoredLinkReadinessChecklist = [
+  "Apply through the partner program and wait for approval before replacing source links with tracking links.",
+  "Label every paid outbound link as sponsored or affiliate before it can earn commission.",
+  "Keep source snapshot prices separate from live price, stock, shipping or checkout promises.",
+  "Store approved tracking IDs outside the public catalog and test each link before publishing.",
+  "Keep a plain-language FTC disclosure visible near paid links and in exports.",
+] as const;
+
 export const partnerPrograms = [
   {
     id: "tire-rack-affiliate",
@@ -91,8 +113,14 @@ export const partnerPrograms = [
     relationship: "affiliate",
     status: "application-needed",
     url: "https://realtruck.com/affiliate/",
+    network: "Impact",
     categories: allCategories,
-    note: "Affiliate network path for truck and Jeep accessory referrals after approval.",
+    note: "Impact affiliate application path for truck and Jeep accessory referrals after approval.",
+    requirements: [
+      "Review the RealTruck offer terms inside Impact before submitting.",
+      "Use Jeep Build Lab's public URL and off-road build-planning audience description.",
+      "Do not add RealTruck tracking links until Impact approval and link testing are complete.",
+    ],
   },
   {
     id: "carid-affiliate",
@@ -280,9 +308,11 @@ function partnerProgramApplicationLine(program: PartnerProgram) {
   return [
     `- ${program.name} (${relationshipNames[program.relationship]})`,
     `  Status: ${commerceStatusNames[program.status]}`,
+    ...(program.network ? [`  Network: ${program.network}`] : []),
     `  Categories: ${programCategories(program)}`,
     `  Application link: ${safeCommerceUrl(program.url)}`,
     `  Prep note: ${program.note}`,
+    ...(program.requirements?.length ? [`  Requirements: ${program.requirements.join(" ")}`] : []),
   ].join("\n");
 }
 
@@ -296,14 +326,20 @@ export function buildPartnerApplicationLinks({ name, state, parts, generatedAt =
     `Vehicle: ${vehicleDescription(state)}`,
     `Scope: ${selected.length ? `${selected.length} selected part${selected.length === 1 ? "" : "s"} (${selectedCategorySummary(selected)})` : "No selected parts; full partner directory."}`,
     "",
+    commerceDisclosure,
     noActiveCommerceDisclosure,
+    "",
+    "Sponsored-link readiness",
+    sponsoredLinkReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
     programs.map((program, index) => [
       `${index + 1}. ${program.name} - ${relationshipNames[program.relationship]}`,
+      ...(program.network ? [`   Network: ${program.network}`] : []),
       `   Categories: ${programCategories(program)}`,
       `   Status: ${commerceStatusNames[program.status]}`,
       `   Link: ${safeCommerceUrl(program.url)}`,
       `   Note: ${program.note}`,
+      ...(program.requirements?.length ? [`   Requirements: ${program.requirements.join(" ")}`] : []),
     ].join("\n")).join("\n"),
   ].join("\n");
 }
@@ -320,6 +356,12 @@ export function buildCommerceApplicationPack({ name, notes, state, parts, genera
     "Commerce status",
     `- ${commerceDisclosure}`,
     `- ${noActiveCommerceDisclosure}`,
+    "",
+    "Affiliate application profile fields",
+    affiliateApplicationProfileFields.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    "Sponsored-link readiness",
+    sponsoredLinkReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
     "Selected build source links",
     selected.length ? selected.map(part => selectedPartCommerceLine(part, state)).join("\n") : "- No parts are selected yet. The program directory below is not narrowed to a build.",

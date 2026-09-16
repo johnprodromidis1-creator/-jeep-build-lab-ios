@@ -157,6 +157,11 @@ test("builder surfaces partner commerce disclosure and program links", async () 
 
   assert.match(source, /Partner commerce/);
   assert.match(source, /Partner-ready offers/);
+  assert.match(source, /affiliateApplicationProfileFields/);
+  assert.match(source, /sponsoredLinkReadinessChecklist/);
+  assert.match(source, /Sponsored-link readiness/);
+  assert.match(source, /RealTruck path: Impact application/);
+  assert.match(source, /Download application pack/);
   assert.match(source, /buildCommerceApplicationPack/);
   assert.match(source, /buildPartnerApplicationLinks/);
   assert.match(source, /partnerProgramsForBuild/);
@@ -171,13 +176,19 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /ClipboardList/);
   assert.match(source, /partnerPrograms\.length/);
   assert.match(source, /Application links do not create a sale, commission or dealer order/);
+  assert.match(source, /Affiliate links are inactive until approved, tested and labeled/);
   assert.match(partFamily, /commerce paths/);
   assert.match(partFamily, /partner programs ready for this category/);
   assert.match(privacy, /Commerce and affiliate disclosure/);
   assert.match(privacy, /no affiliate tracking, wholesale checkout or dropship fulfillment is active/);
   assert.match(commerce, /Jeep Build Lab partner application pack/);
   assert.match(commerce, /Jeep Build Lab partner application links/);
+  assert.match(commerce, /Network: \$\{program\.network\}/);
+  assert.match(commerce, /Affiliate application profile fields/);
+  assert.match(commerce, /Sponsored-link readiness/);
   assert.match(commerce, /Application prep checklist/);
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(css, /\.sponsor-readiness/);
 });
 
 test("vehicle edits warn before selected parts become invalid", async () => {

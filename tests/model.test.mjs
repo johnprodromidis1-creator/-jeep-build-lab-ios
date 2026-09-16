@@ -50,7 +50,7 @@ const {initialState,baseCatalog,categories,selectedParts,totalFor,buildIssues,st
 const {catalogFitScore,catalogSortOptions,compareCatalogParts,dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
 const {buildShopBrief}=shopBrief;
-const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildCommerceApplicationPack,buildPartnerApplicationLinks,commerceApplicationChecklist}=commerce;
+const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildCommerceApplicationPack,buildPartnerApplicationLinks,commerceApplicationChecklist,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist}=commerce;
 const {buildRecipes}=recipes;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
@@ -107,6 +107,10 @@ test("commerce partner directory covers all affiliate reseller dealer and distri
  const names=partnerPrograms.map(p=>p.name);
  for(const name of ["Tire Rack","RealTruck","CARiD","4 Wheel Parts","CJ Pony Parts","MORryde Jeep","American Modified","Quadratec Wholesale","ExtremeTerrain","Turn 14 Distribution","Meyer Distributing","Premier Performance","ARB distributor network"])assert.ok(names.includes(name),name);
  for(const program of partnerPrograms){assert.equal(program.status,"application-needed");assert.equal(new URL(program.url).protocol,"https:");assert.ok(program.categories.length>0);}
+ const realTruck=partnerPrograms.find(program=>program.id==="realtruck-affiliate");
+ assert.equal(realTruck.network,"Impact");
+ assert.match(realTruck.note,/Impact affiliate application path/);
+ assert.ok(realTruck.requirements.length>=3);
  assert.ok(partnerPrograms.some(p=>p.relationship==="affiliate"));
  assert.ok(partnerPrograms.some(p=>p.relationship==="reseller"));
  assert.ok(partnerPrograms.some(p=>p.relationship==="dealer"));
@@ -137,9 +141,15 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.ok(programs.some(program=>program.name==="ARB distributor network"));
  assert.ok(!programs.some(program=>program.name==="MORryde Jeep"));
  assert.ok(commerceApplicationChecklist.length>=5);
+ assert.ok(affiliateApplicationProfileFields.length>=8);
+ assert.ok(sponsoredLinkReadinessChecklist.length>=5);
  const pack=buildCommerceApplicationPack({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z"});
  assert.match(pack,/Jeep Build Lab partner application pack/);
  assert.match(pack,/Generated: 2026-09-14/);
+ assert.match(pack,/Affiliate application profile fields/);
+ assert.match(pack,/Website URL: https:\/\/jeep-build-lab\.johnprodromidis1\.chatgpt\.site\//);
+ assert.match(pack,/Sponsored-link readiness/);
+ assert.match(pack,/Label every paid outbound link as sponsored or affiliate/);
  assert.match(pack,/Selected build source links/);
  assert.match(pack,/Source: Quadratec - https:\/\/www\.quadratec\.com\/p\/nitto\/ridge-grappler-tire/);
  assert.match(pack,/Application link: https:\/\/www\.tirerack\.com\/affiliate/);
@@ -150,6 +160,8 @@ test("commerce application pack exports selected partner paths and prep checklis
  const links=buildPartnerApplicationLinks({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z"});
  assert.match(links,/Jeep Build Lab partner application links/);
  assert.match(links,/Scope: 2 selected parts \(Tires, Suspension\)/);
+ assert.match(links,/Paid links must be clearly labeled/);
+ assert.match(links,/Sponsored-link readiness/);
  assert.match(links,/1\. Tire Rack - Affiliate/);
  assert.match(links,/Link: https:\/\/www\.tirerack\.com\/affiliate/);
  assert.match(links,/Turn 14 Distribution - Distributor/);

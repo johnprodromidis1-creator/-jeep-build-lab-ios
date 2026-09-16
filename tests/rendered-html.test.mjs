@@ -631,6 +631,21 @@ test("catalog inventory makes loaded category depth scannable", async () => {
   assert.match(css, /@media\(max-width:760px\).*\.catalog-inventory\{display:flex;overflow:auto/);
 });
 
+test("catalog proves the fifteen choice target in the picker", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+
+  assert.match(source, /catalogDepthTarget=15/);
+  assert.match(source, /categoryDepthRows=categories\.map\(c=>\{const stats=categoryStats\[c\]/);
+  assert.match(source, /aria-label="Catalog 15 choice depth proof"/);
+  assert.match(source, /Meets the \$\{catalogDepthTarget\}\+ choice target/);
+  assert.match(source, /Show all \{currentDepth\.loaded\}/);
+  assert.match(source, /className=\{`\$\{row\.active\?"active":""\} \$\{row\.meets\?"meets":"short"\}`\}/);
+  assert.match(css, /\.catalog-depth-proof/);
+  assert.match(css, /\.depth-chip-list button\.meets strong/);
+  assert.match(css, /@media\(max-width:760px\).*\.catalog-depth-proof\{grid-template-columns:1fr/);
+});
+
 test("catalog view switch exposes ready conflict and all-loaded modes", async () => {
   const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");

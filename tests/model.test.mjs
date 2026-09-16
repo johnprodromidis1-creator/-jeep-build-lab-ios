@@ -49,7 +49,7 @@ const recipes=await module("lib/build-recipes.ts","build-recipes");
 const {initialState,baseCatalog,categories,selectedParts,totalFor,buildIssues,stateSchema,fitsVehicle,partCompatibility,partSpecBadges,linePriceRangeLabel,publicBuildState,encodeSharedBuildState,decodeSharedBuildStatePayload,buildErrorsForOption,optionAddsBuildError}=model;
 const {catalogFitScore,catalogSortOptions,compareCatalogParts,dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
-const {buildShopBrief}=shopBrief;
+const {buildShopBrief,installerQuoteChecklist}=shopBrief;
 const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationAnswers,buildAffiliateApplicationProfile,buildBlockedApplicationSupportDraft,buildBlockedApplicationSupportMailtoUrl,buildCommerceApplicationPack,buildPartnerApplicationLinks,buildPartnerApplicationTrackerCsv,buildPartnerApplicationTrackerText,buildPaidLinkDisclosurePack,buildPartnerOutreachDraftPack,buildPartnerOutreachEmailDraft,buildPartnerOutreachMailtoUrl,buildPartnerSubmissionReviewSheet,commerceApplicationChecklist,affiliateApplicationAnswers,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist,partnerSubmissionReviewChecklist,partnerSubmissionPrivateFields,paidLinkDisclosureSnippet,paidLinkLaunchChecklist,paidLinkLaunchProofFields,paidLinkLaunchStatus}=commerce;
 const {buildRecipes}=recipes;
 const base=()=>structuredClone(initialState);
@@ -510,7 +510,11 @@ test("garage filters search saved builds by vehicle, notes, parts, status and va
 });
 test("shop brief export groups staged parts, totals, source links and fitment notes",()=>{
  const state=base();state.picks={tires:"nitto-217020",lift:"aev-spacer"};state.stages={tires:"now",lift:"owned"};state.labor=12500;state.extras=5000;
+ const checklist=installerQuoteChecklist({notes:"Ask about alignment timing.",state,parts:baseCatalog});
  const brief=buildShopBrief({name:"Trail quote",notes:"Ask about alignment timing.",state,parts:baseCatalog,generatedAt:"2026-09-14T12:00:00.000Z"});
+ assert.equal(checklist.length,6);
+ assert.ok(checklist.some(item=>item.key==="allowances"&&item.status==="ready"));
+ assert.ok(checklist.some(item=>item.key==="owner-notes"&&item.status==="ready"));
  assert.match(brief,/Jeep Build Lab shop brief/);
  assert.match(brief,/Build: Trail quote/);
  assert.match(brief,/Generated: 2026-09-14/);
@@ -525,6 +529,10 @@ test("shop brief export groups staged parts, totals, source links and fitment no
  assert.match(brief,/Fitment conflicts \(0\)/);
  assert.match(brief,/No blocking fitment conflicts detected/);
  assert.match(brief,/Shop confirmation checks \([1-9]/);
+ assert.match(brief,/Installer quote checklist/);
+ assert.match(brief,/selected parts? ready for quote \[ready\]/);
+ assert.match(brief,/Labor, tax or shipping allowance entered \[ready\]/);
+ assert.match(brief,/Owner notes included \[ready\]/);
  assert.match(brief,/Owner notes\nAsk about alignment timing\./);
 });
 test("D1 route round-trip, price isolation, update ownership and delete ownership",async()=>{

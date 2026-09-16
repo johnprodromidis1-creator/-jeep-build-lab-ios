@@ -219,6 +219,16 @@
 .quote-readiness li.ready:before{background:#9fc795}
 .quote-readiness li.needs-review:before{background:#ff9d78}
 .quote-readiness [data-slot=button]{width:100%;font-size:12px}
+.installer-quote-checklist{border:1px solid #46575f;background:#151f24;border-radius:7px;padding:11px 12px;margin:0 0 16px;display:grid;gap:7px}
+.installer-quote-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.installer-quote-head strong{font-size:14px;font-weight:600;color:#f3f8f9;line-height:1.35}
+.installer-quote-head span{font-size:12px;color:#9fb3bc;text-align:right;line-height:1.35}
+.installer-quote-row{display:grid;grid-template-columns:auto minmax(0,1fr);gap:7px;align-items:flex-start;color:#bcced5;font-size:12px;line-height:1.45}
+.installer-quote-row>span{width:8px;height:8px;border-radius:999px;background:#687980;margin-top:5px}
+.installer-quote-row.ready>span{background:#9fc795}
+.installer-quote-row.needs-review>span{background:#ff9d78}
+.installer-quote-row strong{display:block;color:#eff6f7;font-size:12px;font-weight:600;line-height:1.35}
+.installer-quote-row small{display:block;color:#9fb3bc;font-size:12px;line-height:1.45}
 .build-checklist{border:1px solid #3e5057;background:#151f24;border-radius:7px;padding:11px 12px;margin:0 0 16px}
 .build-checklist-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin:0 0 9px}
 .build-checklist-head strong{font-size:14px;font-weight:600;color:#f3f8f9;line-height:1.35}

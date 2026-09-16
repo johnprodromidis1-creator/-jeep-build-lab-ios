@@ -538,8 +538,15 @@ test("build summary surfaces quote readiness actions", async () => {
   assert.match(source, /Review first issue/);
   assert.match(source, /Download shop brief/);
   assert.match(source, /partner application/);
+  assert.match(source, /installerQuoteChecklist/);
+  assert.match(source, /installerQuoteItems=installerQuoteChecklist\(\{notes,state,parts\}\)/);
+  assert.match(source, /aria-label="Installer quote checklist"/);
+  assert.match(source, /Installer quote checklist/);
+  assert.match(source, /installerQuoteItems\.map/);
   assert.match(css, /\.quote-readiness/);
   assert.match(css, /\.quote-readiness\.needs-review/);
+  assert.match(css, /\.installer-quote-checklist/);
+  assert.match(css, /\.installer-quote-row\.needs-review/);
 });
 
 test("build summary breaks costs into purchase stages", async () => {
@@ -597,6 +604,8 @@ test("builder surfaces source confidence and export proof fields", async () => {
   assert.match(source, /Planner coverage/);
   assert.match(partFamily, /aria-label="Part source confidence"/);
   assert.match(partFamily, /Checked \{sourceCheckedLabel\(p\.checkedAt\)\}/);
+  assert.match(shopBrief, /export function installerQuoteChecklist/);
+  assert.match(shopBrief, /Installer quote checklist/);
   assert.match(shopBrief, /Price basis: \$\{priceBasis\(part\)\}/);
   assert.match(shopBrief, /Planner coverage: \$\{partCoverage\(part\)\}/);
   assert.match(commerce, /Price basis: \$\{priceBasis\(part\)\}/);

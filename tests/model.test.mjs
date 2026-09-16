@@ -112,8 +112,8 @@ test("commerce partner directory covers all affiliate reseller dealer and distri
  assert.match(realTruck.note,/Impact affiliate application path/);
   assert.ok(realTruck.requirements.length>=3);
   assert.ok(realTruck.requirements.some(item=>item.includes("account name, country, timezone, currency")));
- assert.ok(realTruck.requirements.some(item=>item.includes("password or account setup")));
- assert.ok(realTruck.requirements.some(item=>item.includes("An unknown error occurred")&&item.includes("Password format is invalid")));
+ assert.ok(realTruck.requirements.some(item=>item.includes("account/password setup")||item.includes("password or account setup")));
+ assert.ok(realTruck.requirements.some(item=>item.includes("An unknown error occurred")&&item.includes("Continue disabled")));
  assert.ok(partnerPrograms.some(p=>p.relationship==="affiliate"));
  assert.ok(partnerPrograms.some(p=>p.relationship==="reseller"));
  assert.ok(partnerPrograms.some(p=>p.relationship==="dealer"));

@@ -186,7 +186,8 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /defaultPartnerApplicationBlockerNote/);
   assert.match(source, /Impact account setup blocked/);
   assert.match(source, /An unknown error occurred/);
-  assert.match(source, /Password format is invalid/);
+  assert.match(source, /Continue button stayed disabled/);
+  assert.match(source, /Partner Program Agreement was accepted/);
   assert.match(source, /nextPartnerApplication/);
   assert.match(source, /nextPartnerAnswerTarget/);
   assert.match(source, /partnerApplicationStatusCounts/);
@@ -372,6 +373,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(commerce, /Approved/);
   assert.match(commerce, /Blocked/);
   assert.match(commerce, /Resolve password, account, eligibility or partner-site errors/);
+  assert.match(commerce, /keeps Continue disabled after agreement acceptance/);
   assert.match(commerce, /Sponsored-link readiness/);
   assert.match(commerce, /paidLinkDisclosureSnippet/);
   assert.match(commerce, /paidLinkLaunchChecklist/);

@@ -206,7 +206,7 @@ export const partnerPrograms = [
       "Review the RealTruck offer terms inside Impact before submitting.",
       "Use Jeep Build Lab's public URL and off-road build-planning audience description.",
       "Confirm Impact account name, country, timezone, currency and Partner Program Agreement acceptance before Continue.",
-      "If Impact blocks account creation with 'An unknown error occurred' or 'Password format is invalid', fix password or account setup inside Impact and keep this target blocked until the next form is reviewable.",
+      "If Impact blocks account creation with 'An unknown error occurred. Please try again later.' or keeps Continue disabled after agreement acceptance, fix account/password setup or retry later inside Impact and keep this target blocked until the next form is reviewable.",
       "Do not add RealTruck tracking links until Impact approval and link testing are complete.",
     ],
   },

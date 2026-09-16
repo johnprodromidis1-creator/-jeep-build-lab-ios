@@ -50,7 +50,7 @@ const {initialState,baseCatalog,categories,selectedParts,totalFor,buildIssues,st
 const {catalogFitScore,catalogSortOptions,compareCatalogParts,dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
 const {buildShopBrief}=shopBrief;
-const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildCommerceApplicationPack,buildPartnerApplicationLinks,commerceApplicationChecklist,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist}=commerce;
+const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationProfile,buildCommerceApplicationPack,buildPartnerApplicationLinks,commerceApplicationChecklist,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist}=commerce;
 const {buildRecipes}=recipes;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
@@ -166,6 +166,16 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(links,/Link: https:\/\/www\.tirerack\.com\/affiliate/);
  assert.match(links,/Turn 14 Distribution - Distributor/);
  assert.doesNotMatch(links,/MORryde Jeep/);
+ const profile=buildAffiliateApplicationProfile({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z"});
+ assert.match(profile,/Jeep Build Lab affiliate application profile template/);
+ assert.match(profile,/Audience: Jeep Wrangler JL owners comparing rims, tires, suspension, bumpers, winches and armor before buying/);
+ assert.match(profile,/Catalog basis: 104 sourced variants with dated source snapshots/);
+ assert.match(profile,/Build focus: Tires, Suspension/);
+ assert.match(profile,/Fields to verify before submitting/);
+ assert.match(profile,/Private fields/);
+ assert.match(profile,/Do not store passwords, banking info, tax IDs, private phone numbers or affiliate tracking credentials in the public app source/);
+ assert.match(profile,/RealTruck via Impact/);
+ assert.doesNotMatch(profile,/MORryde Jeep/);
 });
 test("totals multiply individual wheels/tires, count kits once, and include allowances",()=>{
  const s=base();s.picks={wheels:"method-MR70178550900",tires:"nitto-217020",lift:"lift-16400-0073"};s.labor=50000;s.extras=30000;

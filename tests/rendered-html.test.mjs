@@ -160,8 +160,10 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /affiliateApplicationProfileFields/);
   assert.match(source, /sponsoredLinkReadinessChecklist/);
   assert.match(source, /Sponsored-link readiness/);
+  assert.match(source, /buildAffiliateApplicationProfile/);
+  assert.match(source, /Download profile/);
   assert.match(source, /Affiliate application profile preview/);
-  assert.match(source, /Download the application pack for the full profile and partner requirements/);
+  assert.match(source, /Download the profile template or full application pack for partner review/);
   assert.match(source, /RealTruck path: Impact application/);
   assert.match(source, /Download application pack/);
   assert.match(source, /buildCommerceApplicationPack/);

@@ -458,7 +458,7 @@
 .application-profile-preview li{margin:0}
 .application-profile-preview span{display:block;color:#9eb3a5;font-size:12px;line-height:1.55;margin-top:8px}
 .commerce-directory-note{border-left:2px solid #7f6746;padding-left:9px}
-.commerce-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0 2px}
+.commerce-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:8px 0 2px}
 .commerce-actions [data-slot=button]{width:100%;white-space:normal}
 .commerce-sources{border:1px solid #3e5159;background:#121f25;border-radius:6px;padding:9px 10px;margin:10px 0 6px}
 .commerce-sources>strong{display:block;font-size:13px;font-weight:600;color:#eef6f7;margin-bottom:4px}

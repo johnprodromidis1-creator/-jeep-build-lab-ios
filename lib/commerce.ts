@@ -344,6 +344,47 @@ export function buildPartnerApplicationLinks({ name, state, parts, generatedAt =
   ].join("\n");
 }
 
+export function buildAffiliateApplicationProfile({ name, notes, state, parts, generatedAt = new Date().toISOString() }: CommerceApplicationPackInput) {
+  const selected = selectedParts(state, parts);
+  const programs = partnerProgramsForBuild(state, parts);
+  return [
+    "Jeep Build Lab affiliate application profile template",
+    `Build: ${name.trim() || "Untitled build"}`,
+    `Generated: ${new Date(generatedAt).toISOString().slice(0, 10)}`,
+    `Vehicle: ${vehicleDescription(state)}`,
+    "",
+    "Public profile",
+    "- Website URL: https://jeep-build-lab.johnprodromidis1.chatgpt.site/",
+    "- Audience: Jeep Wrangler JL owners comparing rims, tires, suspension, bumpers, winches and armor before buying.",
+    `- Catalog basis: ${parts.length} sourced variants with dated source snapshots; no live-price, inventory or checkout claim.`,
+    `- Build focus: ${selected.length ? selectedCategorySummary(selected) : "No selected build yet; use the full partner directory."}`,
+    "- Promotion methods: build guides, part comparisons, quote sheets, source-backed exports and social posts.",
+    "- Compliance posture: paid links stay inactive until each program approves the account, issues terms and passes link testing.",
+    "",
+    "Fields to verify before submitting",
+    affiliateApplicationProfileFields.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    "Application guardrails",
+    sponsoredLinkReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    "Partner focus",
+    programs.map(program => [
+      `- ${program.name}${program.network ? ` via ${program.network}` : ""}`,
+      `  Relationship: ${relationshipNames[program.relationship]}`,
+      `  Categories: ${programCategories(program)}`,
+      `  Link: ${safeCommerceUrl(program.url)}`,
+      `  Note: ${program.note}`,
+    ].join("\n")).join("\n"),
+    "",
+    "Private fields",
+    "- Enter legal name, phone, address, tax, banking and tracking credentials only inside the partner network after review.",
+    "- Do not store passwords, banking info, tax IDs, private phone numbers or affiliate tracking credentials in the public app source.",
+    "",
+    "Owner notes",
+    notes.trim() || "No notes provided.",
+  ].join("\n");
+}
+
 export function buildCommerceApplicationPack({ name, notes, state, parts, generatedAt = new Date().toISOString() }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
   const programs = partnerProgramsForBuild(state, parts);

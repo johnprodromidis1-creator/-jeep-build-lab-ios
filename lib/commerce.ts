@@ -166,6 +166,14 @@ export const paidLinkLaunchChecklist = [
   "Source snapshot price remains separate from retailer checkout price, stock and shipping claims.",
 ] as const;
 
+export const paidLinkLaunchProofFields = [
+  "Approved partner/program name and network",
+  "Partner-issued tracking URL stored outside public source",
+  "Clean-browser test date and expected landing page",
+  "Visible affiliate or sponsored label placement",
+  "Disclosure placement and source-price separation",
+] as const;
+
 export const partnerSubmissionReviewChecklist = [
   "Confirm the application is on the expected partner or network domain before entering private details.",
   "Review every visible field, checkbox, opt-in, agreement and program term before final Continue or Submit.",
@@ -1006,6 +1014,9 @@ export function buildPaidLinkDisclosurePack({ name, notes, state, parts, generat
     "Pre-publish paid-link checks",
     paidLinkLaunchChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
+    "Launch proof to verify",
+    paidLinkLaunchProofFields.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
     "Placement rules",
     "- Put the disclosure before or near the first paid outbound link.",
     "- Label each individual paid link or button as sponsored or affiliate.",
@@ -1048,6 +1059,9 @@ export function buildCommerceApplicationPack({ name, notes, state, parts, genera
     "",
     "Pre-publish paid-link checks",
     paidLinkLaunchChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    "Launch proof to verify",
+    paidLinkLaunchProofFields.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
     paidLinkLaunchStatus(allPriorities, applicationStatuses),
     "",

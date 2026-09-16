@@ -50,7 +50,7 @@ const {initialState,baseCatalog,categories,selectedParts,totalFor,buildIssues,st
 const {catalogFitScore,catalogSortOptions,compareCatalogParts,dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
 const {buildShopBrief}=shopBrief;
-const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationAnswers,buildAffiliateApplicationProfile,buildBlockedApplicationSupportDraft,buildBlockedApplicationSupportMailtoUrl,buildCommerceApplicationPack,buildPartnerApplicationLinks,buildPartnerApplicationTrackerCsv,buildPartnerApplicationTrackerText,buildPaidLinkDisclosurePack,buildPartnerOutreachDraftPack,buildPartnerOutreachEmailDraft,buildPartnerOutreachMailtoUrl,buildPartnerSubmissionReviewSheet,commerceApplicationChecklist,affiliateApplicationAnswers,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist,partnerSubmissionReviewChecklist,partnerSubmissionPrivateFields,paidLinkDisclosureSnippet,paidLinkLaunchChecklist,paidLinkLaunchStatus}=commerce;
+const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationAnswers,buildAffiliateApplicationProfile,buildBlockedApplicationSupportDraft,buildBlockedApplicationSupportMailtoUrl,buildCommerceApplicationPack,buildPartnerApplicationLinks,buildPartnerApplicationTrackerCsv,buildPartnerApplicationTrackerText,buildPaidLinkDisclosurePack,buildPartnerOutreachDraftPack,buildPartnerOutreachEmailDraft,buildPartnerOutreachMailtoUrl,buildPartnerSubmissionReviewSheet,commerceApplicationChecklist,affiliateApplicationAnswers,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist,partnerSubmissionReviewChecklist,partnerSubmissionPrivateFields,paidLinkDisclosureSnippet,paidLinkLaunchChecklist,paidLinkLaunchProofFields,paidLinkLaunchStatus}=commerce;
 const {buildRecipes}=recipes;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
@@ -154,6 +154,7 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.ok(affiliateApplicationProfileFields.length>=8);
  assert.ok(sponsoredLinkReadinessChecklist.length>=5);
  assert.ok(paidLinkLaunchChecklist.length>=5);
+ assert.ok(paidLinkLaunchProofFields.length>=5);
  assert.ok(partnerSubmissionReviewChecklist.length>=5);
  assert.ok(partnerSubmissionPrivateFields.length>=5);
  assert.match(paidLinkDisclosureSnippet,/clearly labeled affiliate or sponsored/);
@@ -180,6 +181,8 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(pack,/Paid-link disclosure snippet/);
  assert.match(pack,/Disclosure: Jeep Build Lab may earn a commission from links clearly labeled affiliate or sponsored/);
  assert.match(pack,/Pre-publish paid-link checks/);
+ assert.match(pack,/Launch proof to verify/);
+ assert.match(pack,/Partner-issued tracking URL stored outside public source/);
  assert.match(pack,/Paid-link launch status/);
  assert.match(pack,/Approved programs ready for tracking-link setup: 1 \(Turn 14 Distribution\)\./);
  assert.match(pack,/Launch rule: only approved, partner-issued tracking URLs may be labeled affiliate or sponsored/);
@@ -280,6 +283,8 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(disclosure,/Submitted applications still waiting on approval or terms: 1 \(RealTruck via Impact\)\./);
  assert.match(disclosure,/Application tracker summary/);
  assert.match(disclosure,/Pre-publish paid-link checks/);
+ assert.match(disclosure,/Launch proof to verify/);
+ assert.match(disclosure,/Clean-browser test date and expected landing page/);
  assert.match(disclosure,/Partner has approved the account and program terms/);
  assert.match(disclosure,/Placement rules/);
  assert.match(disclosure,/Label each individual paid link or button as sponsored or affiliate/);

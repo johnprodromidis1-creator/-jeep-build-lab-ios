@@ -15,7 +15,7 @@ test("App Store preflight keeps release guardrails aligned", async () => {
 
   assert.equal(report.expected.bundleId, EXPECTED_BUNDLE_ID);
   assert.equal(report.expected.version, EXPECTED_VERSION);
-  assert.equal(EXPECTED_LIVE_SITES_VERSION, 116);
+  assert.equal(EXPECTED_LIVE_SITES_VERSION, 117);
   const labels = new Set(report.checks.map((item) => item.label));
   assert.ok(labels.has("screenshot plan covers iPhone and iPad targets"));
   assert.ok(labels.has("screenshot plan requires native signed/TestFlight captures"));
@@ -32,6 +32,7 @@ test("App Store preflight keeps release guardrails aligned", async () => {
   assert.ok(labels.has("readiness records status-filtered application order"));
   assert.ok(labels.has("readiness records blocked and paused reset controls"));
   assert.ok(labels.has("readiness records submitted and approved launch follow-up panel"));
+  assert.ok(labels.has("readiness records paid-link launch proof checklist"));
   assert.ok(labels.has("README handoff includes the live public site"));
   assert.ok(labels.has("README records the latest Sites version"));
   assert.ok(labels.has("README records the signing-profile gate"));
@@ -42,6 +43,7 @@ test("App Store preflight keeps release guardrails aligned", async () => {
   assert.ok(labels.has("README records status-filtered application order"));
   assert.ok(labels.has("README records blocked and paused reset controls"));
   assert.ok(labels.has("README records submitted and approved launch follow-up panel"));
+  assert.ok(labels.has("README records paid-link launch proof checklist"));
   assert.ok(labels.has("Codemagic prep enforces the registered Bundle ID"));
   assert.ok(labels.has("Codemagic prep derives build numbers from Codemagic"));
   assert.ok(labels.has("Codemagic prep rejects wrong IDs and remote shells"));
@@ -60,6 +62,7 @@ test("App Store preflight keeps release guardrails aligned", async () => {
   assert.ok(labels.has("Codemagic guide records status-filtered application order"));
   assert.ok(labels.has("Codemagic guide records blocked and paused reset controls"));
   assert.ok(labels.has("Codemagic guide records submitted and approved launch follow-up panel"));
+  assert.ok(labels.has("Codemagic guide records paid-link launch proof checklist"));
   assert.ok(report.checks.length >= 43);
   assert.equal(report.ok, true, failures);
 });

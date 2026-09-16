@@ -164,10 +164,14 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /sponsoredLinkReadinessChecklist/);
   assert.match(source, /paidLinkDisclosureSnippet/);
   assert.match(source, /paidLinkLaunchChecklist/);
+  assert.match(source, /paidLinkLaunchProofFields/);
   assert.match(source, /paidLinkLaunchStatus/);
   assert.match(source, /paidLinkLaunchLines/);
   assert.match(source, /Sponsored-link readiness/);
   assert.match(source, /aria-label="Paid-link launch status"/);
+  assert.match(source, /aria-label="Paid-link launch proof"/);
+  assert.match(source, /Launch proof before paid links/);
+  assert.match(source, /Keep tracking IDs and private partner credentials outside public source/);
   assert.match(source, /Paid-link disclosure/);
   assert.match(source, /Paid-link disclosure preview/);
   assert.match(source, /buildAffiliateApplicationProfile/);
@@ -407,8 +411,11 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(commerce, /Sponsored-link readiness/);
   assert.match(commerce, /paidLinkDisclosureSnippet/);
   assert.match(commerce, /paidLinkLaunchChecklist/);
+  assert.match(commerce, /paidLinkLaunchProofFields/);
   assert.match(commerce, /paidLinkLaunchStatus/);
   assert.match(commerce, /Paid-link launch status/);
+  assert.match(commerce, /Launch proof to verify/);
+  assert.match(commerce, /Partner-issued tracking URL stored outside public source/);
   assert.match(commerce, /Jeep Build Lab paid-link disclosure pack/);
   assert.match(commerce, /Pre-publish paid-link checks/);
   assert.match(commerce, /Paid-link disclosure snippet/);
@@ -416,6 +423,8 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
   assert.match(css, /\.sponsor-readiness/);
   assert.match(css, /\.paid-launch-status/);
+  assert.match(css, /\.paid-launch-proof/);
+  assert.match(css, /\.paid-launch-proof ul/);
   assert.match(css, /\.paid-disclosure-preview/);
   assert.match(css, /\.paid-disclosure-preview \[data-slot=button\]/);
   assert.match(css, /\.application-profile-preview/);

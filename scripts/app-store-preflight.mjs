@@ -7,7 +7,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 export const EXPECTED_BUNDLE_ID = "com.johnprodromidis.jeepbuildlab";
 export const EXPECTED_VERSION = "0.2.0";
 export const LIVE_SITE_URL = "https://jeep-build-lab.johnprodromidis1.chatgpt.site";
-export const EXPECTED_LIVE_SITES_VERSION = 108;
+export const EXPECTED_LIVE_SITES_VERSION = 109;
 
 const nativeSafeTests =
   "node --test tests/model.test.mjs tests/device-storage.test.mjs tests/ios-metadata.test.mjs tests/platform.test.mjs";
@@ -52,6 +52,7 @@ export async function runPreflight(projectRoot = scriptRoot) {
     capacitor,
     mobileHtml,
     privacyManifest,
+    readme,
     readiness,
     codemagicDoc,
     testflightDoc,
@@ -67,6 +68,7 @@ export async function runPreflight(projectRoot = scriptRoot) {
     source(projectRoot, "capacitor.config.ts"),
     source(projectRoot, "mobile/index.html"),
     source(projectRoot, "ios/App/App/PrivacyInfo.xcprivacy"),
+    source(projectRoot, "README.md"),
     source(projectRoot, "docs/app-store/READINESS.md"),
     source(projectRoot, "docs/app-store/CODEMAGIC.md"),
     source(projectRoot, "docs/app-store/TESTFLIGHT.md"),
@@ -123,6 +125,10 @@ export async function runPreflight(projectRoot = scriptRoot) {
 
   check(checks, await exists(projectRoot, "app/privacy/page.tsx"), "privacy route exists");
   check(checks, await exists(projectRoot, "app/support/page.tsx"), "support route exists");
+  check(checks, readme.includes(LIVE_SITE_URL), "README handoff includes the live public site");
+  check(checks, readme.includes(`Sites version ${EXPECTED_LIVE_SITES_VERSION}`), "README records the latest Sites version");
+  check(checks, has(readme, /early Codemagic signing-profile gate/i), "README records the signing-profile gate");
+  check(checks, has(readme, /blank blocked targets stay visible with default blocker guidance/i), "README records blank blocked-target guidance");
   check(checks, readiness.includes(LIVE_SITE_URL), "readiness handoff includes the live public site");
   check(checks, readiness.includes(`Sites version ${EXPECTED_LIVE_SITES_VERSION}`), "readiness records the latest Sites version");
   check(checks, has(readiness, /no signed IPA or TestFlight upload has been verified/i), "readiness keeps signed-build status honest");

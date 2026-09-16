@@ -82,6 +82,9 @@ export const commerceDisclosure =
 export const noActiveCommerceDisclosure =
   "Current links are reference and application links only; no affiliate tracking, wholesale checkout or dropship fulfillment is active.";
 
+export const independenceDisclosure =
+  "Independent aftermarket planning software. Not affiliated with Jeep, Stellantis, retailers or listed parts brands. Prices are dated snapshots or user notes; final fitment, availability and installation must be confirmed with the seller or installer.";
+
 export const relationshipNames: Record<CommerceRelationship, string> = {
   source: "Product source",
   affiliate: "Affiliate",
@@ -140,6 +143,10 @@ export const affiliateApplicationAnswers = [
   {
     field: "Pricing and inventory basis",
     answer: "Catalog prices are dated source snapshots or user-entered notes, not live quotes, checkout totals, inventory promises or dealer pricing.",
+  },
+  {
+    field: "Independence and fitment disclosure",
+    answer: independenceDisclosure,
   },
   {
     field: "Fulfillment role",
@@ -758,6 +765,7 @@ export function buildAffiliateApplicationAnswers({ name, state, parts, generated
     `- Catalog basis: ${parts.length} sourced variants with dated source snapshots; no live-price, inventory or checkout claim.`,
     `- Build focus: ${selected.length ? selectedCategorySummary(selected) : "No selected build yet; describe the full Jeep Build Lab audience."}`,
     `- Commerce status: ${noActiveCommerceDisclosure}`,
+    `- Independence disclosure: ${independenceDisclosure}`,
     "",
     ...nextApplicationTargetLines(priorities, applicationStatuses, applicationStatusNotes),
     ...(blockedFollowup ? ["", blockedFollowup] : []),
@@ -811,6 +819,7 @@ export function buildPartnerApplicationLinks({ name, state, parts, generatedAt =
     "",
     commerceDisclosure,
     noActiveCommerceDisclosure,
+    independenceDisclosure,
     "",
     "Sponsored-link readiness",
     sponsoredLinkReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
@@ -858,6 +867,7 @@ export function buildPartnerApplicationTrackerCsv({ name, state, parts, generate
     ["Vehicle", vehicleDescription(state)],
     ["Scope", selected.length ? `${selected.length} selected part${selected.length === 1 ? "" : "s"} (${selectedCategorySummary(selected)})` : "No selected parts; full partner directory."],
     ["Commerce status", noActiveCommerceDisclosure],
+    ["Independence disclosure", independenceDisclosure],
     [],
     ["Rank", "Program", "Network", "Relationship", "Tracker status", "Tracker note", "Commerce status", "Matched categories", "Selected part count", "Match reason", "Application link", "Requirements", "Prep note", "Next action"],
     ...priorities.map((priority, index) => {
@@ -896,6 +906,7 @@ export function buildPartnerApplicationTrackerText({ name, state, parts, generat
     `Vehicle: ${vehicleDescription(state)}`,
     `Scope: ${selected.length ? `${selected.length} selected part${selected.length === 1 ? "" : "s"} (${selectedCategorySummary(selected)})` : "No selected parts; full partner directory."}`,
     `Commerce status: ${noActiveCommerceDisclosure}`,
+    `Independence disclosure: ${independenceDisclosure}`,
     "",
     applicationTrackerSummary(programs, priorities, applicationStatuses, applicationStatusNotes),
     ...(blockedFollowup ? ["", blockedFollowup] : []),
@@ -933,6 +944,7 @@ export function buildAffiliateApplicationProfile({ name, notes, state, parts, ge
     "",
     "Public profile",
     "- Website URL: https://jeep-build-lab.johnprodromidis1.chatgpt.site/",
+    `- Independence disclosure: ${independenceDisclosure}`,
     "- Audience: Jeep Wrangler JL owners comparing rims, tires, suspension, bumpers, winches and armor before buying.",
     `- Catalog basis: ${parts.length} sourced variants with dated source snapshots; no live-price, inventory or checkout claim.`,
     `- Build focus: ${selected.length ? selectedCategorySummary(selected) : "No selected build yet; use the full partner directory."}`,
@@ -1001,6 +1013,7 @@ export function buildPaidLinkDisclosurePack({ name, notes, state, parts, generat
     "Current commerce status",
     `- ${commerceDisclosure}`,
     `- ${noActiveCommerceDisclosure}`,
+    `- ${independenceDisclosure}`,
     "",
     "Build focus",
     `- ${selected.length ? selectedCategorySummary(selected) : "No selected parts; use the full Jeep Build Lab audience."}`,
@@ -1044,6 +1057,7 @@ export function buildCommerceApplicationPack({ name, notes, state, parts, genera
     "Commerce status",
     `- ${commerceDisclosure}`,
     `- ${noActiveCommerceDisclosure}`,
+    `- ${independenceDisclosure}`,
     "",
     "Affiliate application profile fields",
     affiliateApplicationProfileFields.map((item, index) => `${index + 1}. ${item}`).join("\n"),

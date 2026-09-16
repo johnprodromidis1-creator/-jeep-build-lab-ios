@@ -50,7 +50,7 @@ const {initialState,baseCatalog,categories,selectedParts,totalFor,buildIssues,st
 const {catalogFitScore,catalogSortOptions,compareCatalogParts,dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
 const {buildShopBrief,installerQuoteChecklist}=shopBrief;
-const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationAnswers,buildAffiliateApplicationProfile,buildBlockedApplicationSupportDraft,buildBlockedApplicationSupportMailtoUrl,buildCommerceApplicationPack,buildPartnerApplicationLinks,buildPartnerApplicationTrackerCsv,buildPartnerApplicationTrackerText,buildPaidLinkDisclosurePack,buildPartnerOutreachDraftPack,buildPartnerOutreachEmailDraft,buildPartnerOutreachMailtoUrl,buildPartnerSubmissionReviewSheet,commerceApplicationChecklist,affiliateApplicationAnswers,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist,partnerSubmissionReviewChecklist,partnerSubmissionPrivateFields,paidLinkDisclosureSnippet,paidLinkLaunchChecklist,paidLinkLaunchProofFields,paidLinkLaunchStatus}=commerce;
+const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,independenceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationAnswers,buildAffiliateApplicationProfile,buildBlockedApplicationSupportDraft,buildBlockedApplicationSupportMailtoUrl,buildCommerceApplicationPack,buildPartnerApplicationLinks,buildPartnerApplicationTrackerCsv,buildPartnerApplicationTrackerText,buildPaidLinkDisclosurePack,buildPartnerOutreachDraftPack,buildPartnerOutreachEmailDraft,buildPartnerOutreachMailtoUrl,buildPartnerSubmissionReviewSheet,commerceApplicationChecklist,affiliateApplicationAnswers,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist,partnerSubmissionReviewChecklist,partnerSubmissionPrivateFields,paidLinkDisclosureSnippet,paidLinkLaunchChecklist,paidLinkLaunchProofFields,paidLinkLaunchStatus}=commerce;
 const {buildRecipes}=recipes;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
@@ -135,6 +135,8 @@ test("commerce offers keep exact source links first and mark monetized paths pen
  assert.match(commerceSummaryForPart(tire),/Application needed/);
  assert.match(commerceDisclosure,/Paid links/);
  assert.match(noActiveCommerceDisclosure,/no affiliate tracking/);
+ assert.match(independenceDisclosure,/Not affiliated with Jeep/);
+ assert.match(independenceDisclosure,/seller or installer/);
  assert.throws(()=>safeCommerceUrl("http://example.com"),/HTTPS/);
 });
 test("commerce application pack exports selected partner paths and prep checklist",()=>{
@@ -172,6 +174,8 @@ test("commerce application pack exports selected partner paths and prep checklis
  const pack=buildCommerceApplicationPack({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses});
  assert.match(pack,/Jeep Build Lab partner application pack/);
  assert.match(pack,/Generated: 2026-09-14/);
+ assert.match(pack,/Independent aftermarket planning software/);
+ assert.match(pack,/Not affiliated with Jeep, Stellantis, retailers or listed parts brands/);
  assert.match(pack,/Affiliate application profile fields/);
  assert.match(pack,/Website URL: https:\/\/jeep-build-lab\.johnprodromidis1\.chatgpt\.site\//);
  assert.match(pack,/Common application answers/);
@@ -241,6 +245,7 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(trackerText,/Reminder: Do not claim approved affiliate tracking/);
  const profile=buildAffiliateApplicationProfile({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses});
  assert.match(profile,/Jeep Build Lab affiliate application profile template/);
+ assert.match(profile,/Independence disclosure: Independent aftermarket planning software/);
  assert.match(profile,/Audience: Jeep Wrangler JL owners comparing rims, tires, suspension, bumpers, winches and armor before buying/);
  assert.match(profile,/Catalog basis: 104 sourced variants with dated source snapshots/);
  assert.match(profile,/Build focus: Tires, Suspension/);
@@ -276,11 +281,13 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(answers,/Do not paste without verifying/);
  assert.match(answers,/Do not claim approved affiliate tracking, live checkout, dealer pricing, inventory ownership or dropship fulfillment/);
  assert.match(answers,/Build focus: Tires, Suspension/);
+ assert.match(answers,/Independence disclosure: Independent aftermarket planning software/);
  const disclosure=buildPaidLinkDisclosurePack({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses});
  assert.match(disclosure,/Jeep Build Lab paid-link disclosure pack/);
  assert.match(disclosure,/Use this disclosure only after partner approval/);
  assert.match(disclosure,/Disclosure snippet/);
  assert.match(disclosure,/Current commerce status/);
+ assert.match(disclosure,/Not affiliated with Jeep, Stellantis, retailers or listed parts brands/);
  assert.match(disclosure,/Paid-link launch status/);
  assert.match(disclosure,/Submitted applications still waiting on approval or terms: 1 \(RealTruck via Impact\)\./);
  assert.match(disclosure,/Application tracker summary/);
@@ -525,6 +532,7 @@ test("shop brief export groups staged parts, totals, source links and fitment no
  assert.match(brief,/Upgrades left to fund: \$2,335.00/);
  assert.match(brief,/Source: Quadratec - https:\/\/www\.quadratec\.com\/p\/nitto\/ridge-grappler-tire/);
  assert.match(brief,/Commerce disclosure/);
+ assert.match(brief,/Independent aftermarket planning software/);
  assert.match(brief,/Commerce options: Quadratec \(Product source, Source link\); Tire Rack \(Affiliate, Application needed\)/);
  assert.match(brief,/Fitment conflicts \(0\)/);
  assert.match(brief,/No blocking fitment conflicts detected/);

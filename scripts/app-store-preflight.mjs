@@ -7,7 +7,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 export const EXPECTED_BUNDLE_ID = "com.johnprodromidis.jeepbuildlab";
 export const EXPECTED_VERSION = "0.2.0";
 export const LIVE_SITE_URL = "https://jeep-build-lab.johnprodromidis1.chatgpt.site";
-export const EXPECTED_LIVE_SITES_VERSION = 120;
+export const EXPECTED_LIVE_SITES_VERSION = 121;
 
 const nativeSafeTests =
   "node --test tests/model.test.mjs tests/device-storage.test.mjs tests/ios-metadata.test.mjs tests/platform.test.mjs";
@@ -60,6 +60,7 @@ export async function runPreflight(projectRoot = scriptRoot) {
     shopBriefDoc,
     builderDoc,
     globalCss,
+    privacyContent,
     testflightDoc,
     screenshotsDoc,
   ] = await Promise.all([
@@ -81,6 +82,7 @@ export async function runPreflight(projectRoot = scriptRoot) {
     source(projectRoot, "lib/shop-brief.ts"),
     source(projectRoot, "app/builder.tsx"),
     source(projectRoot, "app/globals.css"),
+    source(projectRoot, "app/components/privacy-content.tsx"),
     source(projectRoot, "docs/app-store/TESTFLIGHT.md"),
     source(projectRoot, "docs/app-store/SCREENSHOTS.md"),
   ]);
@@ -149,6 +151,7 @@ export async function runPreflight(projectRoot = scriptRoot) {
   check(checks, has(readme, /market-positioning memo/i), "README records market-positioning memo");
   check(checks, has(readme, /six source-backed owner-intent starter packs/i), "README records owner-intent starter packs");
   check(checks, has(readme, /installer quote checklist/i), "README records installer quote checklist");
+  check(checks, has(readme, /shared independence disclosure/i), "README records shared independence disclosure");
   check(checks, readiness.includes(LIVE_SITE_URL), "readiness handoff includes the live public site");
   check(checks, readiness.includes(`Sites version ${EXPECTED_LIVE_SITES_VERSION}`), "readiness records the latest Sites version");
   check(checks, has(readiness, /no signed IPA or TestFlight upload has been verified/i), "readiness keeps signed-build status honest");
@@ -166,6 +169,7 @@ export async function runPreflight(projectRoot = scriptRoot) {
   check(checks, has(readiness, /neutral build-advisor layer/i), "readiness records neutral build-advisor positioning");
   check(checks, has(readiness, /six source-backed owner-intent starter packs/i), "readiness records owner-intent starter packs");
   check(checks, has(readiness, /installer quote checklist/i), "readiness records installer quote checklist");
+  check(checks, has(readiness, /shared independence disclosure/i), "readiness records shared independence disclosure");
   check(checks, has(codemagicDoc, /matching provisioning profile/i), "Codemagic guide calls out the app-specific profile");
   check(checks, codemagicDoc.includes(`Sites version ${EXPECTED_LIVE_SITES_VERSION}`), "Codemagic guide records the latest Sites version");
   check(checks, has(codemagicDoc, /expanded 78-test regression suite/i), "Codemagic guide records the current regression count");
@@ -181,6 +185,7 @@ export async function runPreflight(projectRoot = scriptRoot) {
   check(checks, has(codemagicDoc, /market-positioning memo/i), "Codemagic guide records market-positioning memo");
   check(checks, has(codemagicDoc, /six source-backed owner-intent starter packs/i), "Codemagic guide records owner-intent starter packs");
   check(checks, has(codemagicDoc, /installer quote checklist/i), "Codemagic guide records installer quote checklist");
+  check(checks, has(codemagicDoc, /shared independence disclosure/i), "Codemagic guide records shared independence disclosure");
   check(checks, has(codemagicDoc, /No automatic push triggers or paid plan changes are configured/i), "Codemagic guide keeps cost/trigger guardrail");
   check(checks, has(marketPositioning, /neutral build-advisor layer/i), "market-positioning memo names the neutral advisor wedge");
   check(checks, has(marketPositioning, /Jeep official Wrangler/i) && has(marketPositioning, /RealTruck/i) && has(marketPositioning, /Quadratec/i) && has(marketPositioning, /ExtremeTerrain/i), "market-positioning memo covers current competitor set");
@@ -189,6 +194,9 @@ export async function runPreflight(projectRoot = scriptRoot) {
   check(checks, has(buildRecipesDoc, /Low-cost visual refresh/) && has(buildRecipesDoc, /Beach weekend 4xe/) && has(buildRecipesDoc, /Overland weekend recovery/), "starter recipes include new owner-intent packs");
   check(checks, has(shopBriefDoc, /export function installerQuoteChecklist/) && has(shopBriefDoc, /Installer quote checklist/), "shop brief exports installer quote checklist");
   check(checks, has(builderDoc, /aria-label="Installer quote checklist"/) && has(builderDoc, /installerQuoteItems=installerQuoteChecklist/), "builder surfaces installer quote checklist");
+  check(checks, has(builderDoc, /independenceDisclosure/) && has(builderDoc, /Independence disclosure/), "builder surfaces shared independence disclosure");
+  check(checks, has(shopBriefDoc, /independenceDisclosure/), "shop brief exports shared independence disclosure");
+  check(checks, has(privacyContent, /independenceDisclosure/), "privacy and support copy reuse shared independence disclosure");
   check(checks, has(globalCss, /\.installer-quote-checklist/) && has(globalCss, /\.installer-quote-row\.needs-review/), "styles cover installer quote checklist states");
   check(checks, has(testflightDoc, /This app's Apple record and provisioning profile remain unverified/i), "TestFlight guide keeps account-owner signing gate");
   check(checks, has(screenshotsDoc, /one to 10 screenshots per device size/i), "screenshot plan keeps App Store count limits");

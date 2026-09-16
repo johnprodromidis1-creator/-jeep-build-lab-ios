@@ -1,5 +1,5 @@
 import { buildIssues, categoryNames, latestSourceCheckedAt, money, partCoverage, priceBasis, quantityFor, selectedParts, sourceCheckedLabel, vehicleDescription, type BuildState, type Part } from "./model";
-import { commerceDisclosure, commerceSummaryForPart, noActiveCommerceDisclosure } from "./commerce";
+import { commerceDisclosure, commerceSummaryForPart, independenceDisclosure, noActiveCommerceDisclosure } from "./commerce";
 import { costPlan, stageFor, stageNames, type Stage } from "./planning";
 
 export type ShopBriefInput = {
@@ -117,6 +117,7 @@ export function buildShopBrief({ name, notes, state, parts, generatedAt }: ShopB
     "Commerce disclosure",
     `- ${commerceDisclosure}`,
     `- ${noActiveCommerceDisclosure}`,
+    `- ${independenceDisclosure}`,
     "",
     "Selected parts",
   ];

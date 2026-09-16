@@ -163,6 +163,10 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   const commerce = await readFile(new URL("../lib/commerce.ts", import.meta.url), "utf8");
 
   assert.match(source, /Partner commerce/);
+  assert.match(source, /independenceDisclosure/);
+  assert.match(source, /\["Independence disclosure",independenceDisclosure\]/);
+  assert.match(source, /\{independenceDisclosure\} Affiliate links are inactive until approved/);
+  assert.match(source, /Planning estimate/);
   assert.match(source, /Partner-ready offers/);
   assert.match(source, /affiliateApplicationProfileFields/);
   assert.match(source, /sponsoredLinkReadinessChecklist/);
@@ -370,7 +374,10 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(partFamily, /commerce paths/);
   assert.match(partFamily, /partner programs ready for this category/);
   assert.match(privacy, /Commerce and affiliate disclosure/);
+  assert.match(privacy, /independenceDisclosure/);
   assert.match(privacy, /no affiliate tracking, wholesale checkout or dropship fulfillment is active/);
+  assert.match(commerce, /export const independenceDisclosure/);
+  assert.match(commerce, /Not affiliated with Jeep, Stellantis, retailers or listed parts brands/);
   assert.match(commerce, /Jeep Build Lab partner application pack/);
   assert.match(commerce, /Jeep Build Lab partner application links/);
   assert.match(commerce, /buildPartnerApplicationTrackerCsv/);

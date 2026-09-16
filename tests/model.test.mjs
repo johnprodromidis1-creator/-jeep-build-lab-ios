@@ -50,7 +50,7 @@ const {initialState,baseCatalog,categories,selectedParts,totalFor,buildIssues,st
 const {catalogFitScore,catalogSortOptions,compareCatalogParts,dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
 const {buildShopBrief}=shopBrief;
-const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationAnswers,buildAffiliateApplicationProfile,buildCommerceApplicationPack,buildPartnerApplicationLinks,buildPartnerApplicationTrackerCsv,buildPaidLinkDisclosurePack,buildPartnerOutreachDraftPack,buildPartnerOutreachEmailDraft,commerceApplicationChecklist,affiliateApplicationAnswers,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist,paidLinkDisclosureSnippet,paidLinkLaunchChecklist}=commerce;
+const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationAnswers,buildAffiliateApplicationProfile,buildCommerceApplicationPack,buildPartnerApplicationLinks,buildPartnerApplicationTrackerCsv,buildPaidLinkDisclosurePack,buildPartnerOutreachDraftPack,buildPartnerOutreachEmailDraft,buildPartnerSubmissionReviewSheet,commerceApplicationChecklist,affiliateApplicationAnswers,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist,partnerSubmissionReviewChecklist,partnerSubmissionPrivateFields,paidLinkDisclosureSnippet,paidLinkLaunchChecklist}=commerce;
 const {buildRecipes}=recipes;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
@@ -111,6 +111,7 @@ test("commerce partner directory covers all affiliate reseller dealer and distri
  assert.equal(realTruck.network,"Impact");
  assert.match(realTruck.note,/Impact affiliate application path/);
  assert.ok(realTruck.requirements.length>=3);
+ assert.ok(realTruck.requirements.some(item=>item.includes("account name, country, timezone, currency")));
  assert.ok(partnerPrograms.some(p=>p.relationship==="affiliate"));
  assert.ok(partnerPrograms.some(p=>p.relationship==="reseller"));
  assert.ok(partnerPrograms.some(p=>p.relationship==="dealer"));
@@ -150,6 +151,8 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.ok(affiliateApplicationProfileFields.length>=8);
  assert.ok(sponsoredLinkReadinessChecklist.length>=5);
  assert.ok(paidLinkLaunchChecklist.length>=5);
+ assert.ok(partnerSubmissionReviewChecklist.length>=5);
+ assert.ok(partnerSubmissionPrivateFields.length>=5);
  assert.match(paidLinkDisclosureSnippet,/clearly labeled affiliate or sponsored/);
  assert.equal(partnerApplicationTrackerStatusNames.submitted,"Submitted");
  const applicationStatuses={"realtruck-affiliate":"submitted","tire-rack-affiliate":"ready","turn-14-distribution":"approved"};
@@ -167,6 +170,8 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(pack,/Paid-link disclosure snippet/);
  assert.match(pack,/Disclosure: Jeep Build Lab may earn a commission from links clearly labeled affiliate or sponsored/);
  assert.match(pack,/Pre-publish paid-link checks/);
+ assert.match(pack,/Submission review checklist/);
+ assert.match(pack,/Review every visible field, checkbox, opt-in, agreement and program term/);
  assert.match(pack,/Application tracker summary\n- To apply: \d+\n- Profile ready: 1\n- Submitted: 1\n- Approved: 1\n- Paused: 0\n- Next application: /);
  assert.match(pack,/Suggested application order/);
  assert.match(pack,/1\. RealTruck via Impact - Matches 2 selected parts across Tires, Suspension\. Tracker: Submitted\./);
@@ -189,6 +194,7 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(links,/Paid links must be clearly labeled/);
  assert.match(links,/Sponsored-link readiness/);
  assert.match(links,/Application tracker summary/);
+ assert.match(links,/Submission review checklist/);
  assert.match(links,/Next application: /);
  assert.match(links,/Suggested application order/);
  assert.match(links,/RealTruck via Impact - Matches 2 selected parts across Tires, Suspension\. Tracker: Submitted\./);
@@ -222,6 +228,7 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(profile,/Application tracker: Submitted/);
  assert.match(profile,/Application tracker: Profile ready/);
  assert.match(profile,/Application tracker summary/);
+ assert.match(profile,/Submission review checklist/);
  assert.match(profile,/Next application: /);
  assert.match(profile,/Next outreach email draft/);
  assert.match(profile,/Subject: Jeep Build Lab partner application - CARiD/);
@@ -268,6 +275,18 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(draftPack,/Do not send without verifying/);
  assert.match(draftPack,/Do not claim approved affiliate tracking, reseller terms, dealer pricing, wholesale checkout or dropship fulfillment/);
  assert.doesNotMatch(draftPack,/Draft 1: RealTruck/);
+ const review=buildPartnerSubmissionReviewSheet({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses});
+ assert.match(review,/Jeep Build Lab partner submission review sheet/);
+ assert.match(review,/Target application/);
+ assert.match(review,/Program: CARiD/);
+ assert.match(review,/Owner-private or legal fields to verify on the live form/);
+ assert.match(review,/Account name, legal business name, applicant name and DBA/);
+ assert.match(review,/Program agreement acceptance, privacy terms and email marketing opt-in choices/);
+ assert.match(review,/Submission review checklist/);
+ assert.match(review,/Confirm the application is on the expected partner or network domain/);
+ assert.match(review,/Before marking Submitted/);
+ assert.match(review,/Suggested owner approval line/);
+ assert.match(review,/I approve submitting the visible CARiD application fields/);
 });
 test("totals multiply individual wheels/tires, count kits once, and include allowances",()=>{
  const s=base();s.picks={wheels:"method-MR70178550900",tires:"nitto-217020",lift:"lift-16400-0073"};s.labor=50000;s.extras=30000;

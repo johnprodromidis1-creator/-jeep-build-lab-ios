@@ -164,6 +164,23 @@ export const paidLinkLaunchChecklist = [
   "Source snapshot price remains separate from retailer checkout price, stock and shipping claims.",
 ] as const;
 
+export const partnerSubmissionReviewChecklist = [
+  "Confirm the application is on the expected partner or network domain before entering private details.",
+  "Review every visible field, checkbox, opt-in, agreement and program term before final Continue or Submit.",
+  "Keep passwords, tax IDs, banking fields and tracking credentials outside the app source and public exports.",
+  "Mark a program Submitted only after the partner network confirms the application was received.",
+  "Do not publish paid links until approval, tracking-link testing and visible disclosure are complete.",
+] as const;
+
+export const partnerSubmissionPrivateFields = [
+  "Account name, legal business name, applicant name and DBA",
+  "Country, timezone, currency, payout country and tax classification",
+  "Mobile number, mailing address, support email and business website",
+  "Traffic, follower, revenue, audience and sales estimates",
+  "Program agreement acceptance, privacy terms and email marketing opt-in choices",
+  "Tax IDs, resale certificates, banking details, passwords and tracking credentials",
+] as const;
+
 export const partnerPrograms = [
   {
     id: "tire-rack-affiliate",
@@ -186,6 +203,7 @@ export const partnerPrograms = [
     requirements: [
       "Review the RealTruck offer terms inside Impact before submitting.",
       "Use Jeep Build Lab's public URL and off-road build-planning audience description.",
+      "Confirm Impact account name, country, timezone, currency and Partner Program Agreement acceptance before Continue.",
       "Do not add RealTruck tracking links until Impact approval and link testing are complete.",
     ],
   },
@@ -519,6 +537,58 @@ export function buildPartnerOutreachDraftPack({ name, state, parts, generatedAt 
   ].join("\n");
 }
 
+export function buildPartnerSubmissionReviewSheet({ name, notes, state, parts, generatedAt = new Date().toISOString(), applicationStatuses }: CommerceApplicationPackInput) {
+  const selected = selectedParts(state, parts);
+  const programs = partnerProgramsForBuild(state, parts);
+  const priorities = partnerApplicationPrioritiesForBuild(state, parts);
+  const target = nextApplicationPriority(priorities, applicationStatuses) ?? priorities[0] ?? null;
+  return [
+    "Jeep Build Lab partner submission review sheet",
+    `Build: ${name.trim() || "Untitled build"}`,
+    `Generated: ${new Date(generatedAt).toISOString().slice(0, 10)}`,
+    `Vehicle: ${vehicleDescription(state)}`,
+    `Scope: ${selected.length ? `${selected.length} selected part${selected.length === 1 ? "" : "s"} (${selectedCategorySummary(selected)})` : "No selected parts; full partner directory."}`,
+    "",
+    "Target application",
+    target ? [
+      `- Program: ${partnerProgramLabel(target.program)}`,
+      `- Tracker status: ${applicationTrackerStatusLabel(applicationStatuses?.[target.program.id])}`,
+      `- Relationship: ${relationshipNames[target.program.relationship]}`,
+      `- Application link: ${safeCommerceUrl(target.program.url)}`,
+      `- Match reason: ${target.reason}`,
+      ...(target.program.requirements?.length ? [`- Program requirements: ${target.program.requirements.join(" ")}`] : []),
+    ].join("\n") : "- No relevant partner program found for this build.",
+    "",
+    applicationTrackerSummary(programs, priorities, applicationStatuses),
+    "",
+    "Public profile fields ready to reuse after review",
+    "- Website URL: https://jeep-build-lab.johnprodromidis1.chatgpt.site/",
+    "- Website or app description: Jeep Build Lab is an independent Wrangler JL build planner with sourced part comparisons, fitment checks, saved-build exports and shop-ready briefs.",
+    "- Audience: Jeep Wrangler JL owners comparing rims, tires, suspension, bumpers, winches and armor before buying.",
+    `- Catalog basis: ${parts.length} sourced variants with dated source snapshots; no live-price, inventory or checkout claim.`,
+    `- Build focus: ${selected.length ? selectedCategorySummary(selected) : "Full Jeep Build Lab audience."}`,
+    "",
+    "Owner-private or legal fields to verify on the live form",
+    partnerSubmissionPrivateFields.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    "Submission review checklist",
+    partnerSubmissionReviewChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    "Before marking Submitted",
+    "- Capture the partner network confirmation or application receipt.",
+    "- Leave affiliate, sponsored, dealer, wholesale and dropship claims inactive until approval is received.",
+    "- Store approved tracking IDs, payout credentials and tax records outside the public app source.",
+    "",
+    "Suggested owner approval line",
+    target
+      ? `I approve submitting the visible ${partnerProgramLabel(target.program)} application fields, agreement choices, opt-ins and private account details after reviewing the final form.`
+      : "I approve submitting the visible partner application fields, agreement choices, opt-ins and private account details after reviewing the final form.",
+    "",
+    "Owner notes",
+    notes.trim() || "No notes provided.",
+  ].join("\n");
+}
+
 export function buildAffiliateApplicationAnswers({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
   const priorities = partnerApplicationPrioritiesForBuild(state, parts);
@@ -584,6 +654,9 @@ export function buildPartnerApplicationLinks({ name, state, parts, generatedAt =
     sponsoredLinkReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
     applicationTrackerSummary(programs, allPriorities, applicationStatuses),
+    "",
+    "Submission review checklist",
+    partnerSubmissionReviewChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
     "Suggested application order",
     priorities.map((priority, index) => suggestedApplicationLine(priority, index, applicationStatuses)).join("\n"),
@@ -672,6 +745,9 @@ export function buildAffiliateApplicationProfile({ name, notes, state, parts, ge
     sponsoredLinkReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
     applicationTrackerSummary(programs, allPriorities, applicationStatuses),
+    "",
+    "Submission review checklist",
+    partnerSubmissionReviewChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
     "Suggested application order",
     priorities.map((priority, index) => suggestedApplicationLine(priority, index, applicationStatuses)).join("\n"),
@@ -767,6 +843,9 @@ export function buildCommerceApplicationPack({ name, notes, state, parts, genera
     paidLinkLaunchChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
     applicationTrackerSummary(programs, allPriorities, applicationStatuses),
+    "",
+    "Submission review checklist",
+    partnerSubmissionReviewChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
     "Suggested application order",
     priorities.map((priority, index) => suggestedApplicationLine(priority, index, applicationStatuses)).join("\n"),

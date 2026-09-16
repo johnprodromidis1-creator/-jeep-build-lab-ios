@@ -203,6 +203,8 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /requirements:nextPartnerApplication\.priority\.program\.requirements\?\?\[\]/);
   assert.match(source, /targetPrepText/);
   assert.match(source, /buildPartnerOutreachEmailDraft/);
+  assert.match(source, /buildPartnerSubmissionReviewSheet/);
+  assert.match(source, /partnerSubmissionReviewChecklist/);
   assert.match(source, /copyTargetPrep/);
   assert.match(source, /copyTargetOutreachEmail/);
   assert.match(source, /Open application/);
@@ -212,6 +214,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /Reset target/);
   assert.match(source, /Copy target prep/);
   assert.match(source, /Copy email draft/);
+  assert.match(source, /Download review sheet/);
   assert.match(source, /Target prep copied/);
   assert.match(source, /Email draft copied/);
   assert.match(source, /Download the answer kit, then draft outreach from the text file/);
@@ -221,6 +224,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /onAdvanceTarget=\{advanceNextPartnerApplication\}/);
   assert.match(source, /onCopyTarget=\{copyTargetPrep\}/);
   assert.match(source, /onCopyEmail=\{copyTargetOutreachEmail\}/);
+  assert.match(source, /onExportReview=\{exportPartnerSubmissionReview\}/);
   assert.match(source, /target=\{nextPartnerAnswerTarget\}/);
   assert.match(source, /Common application answers/);
   assert.match(source, /affiliateApplicationAnswers\.slice\(0,3\)/);
@@ -251,6 +255,9 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /jeep-build-partner-outreach-drafts\.txt/);
   assert.match(source, /The application tracker could not be exported/);
   assert.match(source, /The outreach drafts could not be exported/);
+  assert.match(source, /exportPartnerSubmissionReview/);
+  assert.match(source, /jeep-build-partner-submission-review\.txt/);
+  assert.match(source, /The submission review sheet could not be exported/);
   assert.match(source, /partnerProgramsForBuild/);
   assert.match(source, /copyPartnerLinks/);
   assert.match(source, /Partner links copied/);
@@ -259,6 +266,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /Download tracker CSV/);
   assert.match(source, /Download application tracker/);
   assert.match(source, /Download outreach drafts/);
+  assert.match(source, /Download submission review/);
   assert.match(source, /Download commerce pack/);
   assert.match(source, /Download partner links/);
   assert.match(source, /applications for selected parts/);
@@ -279,8 +287,10 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(commerce, /Jeep Build Lab partner application links/);
   assert.match(commerce, /buildPartnerApplicationTrackerCsv/);
   assert.match(commerce, /buildPartnerOutreachDraftPack/);
+  assert.match(commerce, /buildPartnerSubmissionReviewSheet/);
   assert.match(commerce, /Jeep Build Lab partner application tracker/);
   assert.match(commerce, /Jeep Build Lab partner outreach draft pack/);
+  assert.match(commerce, /Jeep Build Lab partner submission review sheet/);
   assert.match(commerce, /Draft count/);
   assert.match(commerce, /Tracker status/);
   assert.match(commerce, /Next action/);
@@ -299,6 +309,9 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(commerce, /Application tracker/);
   assert.match(commerce, /Application tracker summary/);
   assert.match(commerce, /Next application/);
+  assert.match(commerce, /Submission review checklist/);
+  assert.match(commerce, /Owner-private or legal fields to verify/);
+  assert.match(commerce, /Suggested owner approval line/);
   assert.match(commerce, /Profile ready/);
   assert.match(commerce, /Submitted/);
   assert.match(commerce, /Approved/);
@@ -314,6 +327,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(css, /\.paid-disclosure-preview/);
   assert.match(css, /\.paid-disclosure-preview \[data-slot=button\]/);
   assert.match(css, /\.application-profile-preview/);
+  assert.match(css, /\.submission-review-preview/);
   assert.match(css, /\.application-answer-kit/);
   assert.match(css, /\.application-answer-target/);
   assert.match(css, /\.application-answer-requirements/);

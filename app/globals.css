@@ -461,6 +461,9 @@
 .application-profile-preview ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px 12px;margin:7px 0 0;padding-left:18px}
 .application-profile-preview li{margin:0}
 .application-profile-preview span{display:block;color:#9eb3a5;font-size:12px;line-height:1.55;margin-top:8px}
+.submission-review-preview{border-top:1px solid #3d503f;margin-top:10px;padding-top:10px}
+.submission-review-preview ul{margin:7px 0 0;padding-left:18px;color:#c7d6ca;font-size:12px;line-height:1.55}
+.submission-review-preview span{display:block;color:#9eb3a5;font-size:12px;line-height:1.55;margin-top:8px}
 .application-answer-kit{border:1px solid #425a61;background:#111d22;border-radius:6px;padding:9px 10px;margin:10px 0;color:#dbe6e9}
 .application-answer-head{display:flex;justify-content:space-between;gap:10px;align-items:start;margin-bottom:7px}
 .application-answer-kit strong{font-size:13px;color:#eef6f7}

@@ -105,6 +105,9 @@
 .catalog-depth-proof strong,.catalog-depth-proof span{display:block}
 .catalog-depth-proof>div:first-child>strong{font-size:14px;line-height:1.35;color:#f2f7f7}
 .catalog-depth-proof>div:first-child>span{font-size:12px;line-height:1.45;color:#a6bac3;margin-top:2px}
+.depth-breakdown{display:flex;flex-wrap:wrap;gap:5px;margin:7px 0 0}
+.depth-breakdown span{display:inline-flex;align-items:center;gap:4px;border:1px solid #35484f;background:#101a1f;border-radius:999px;color:#aabec6;font-size:11px;line-height:1.25;padding:3px 7px;white-space:nowrap}
+.depth-breakdown strong{font-size:12px;color:#edf5f7}
 .depth-chip-list{display:flex;gap:6px;overflow:auto;scrollbar-width:none}
 .depth-chip-list button{display:flex;flex-direction:column;gap:2px;min-width:82px;border:1px solid #384a51;background:#101a1f;border-radius:5px;color:#bbccd3;padding:6px 8px;text-align:left}
 .depth-chip-list button.active,.depth-chip-list button:hover{border-color:var(--primary);background:#202a27;color:#f3f8f8}

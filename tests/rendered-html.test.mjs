@@ -182,6 +182,9 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /Application answer kit/);
   assert.match(source, /Common application answers/);
   assert.match(source, /affiliateApplicationAnswers\.slice\(0,3\)/);
+  assert.match(source, /buildAffiliateApplicationAnswers/);
+  assert.match(source, /jeep-build-affiliate-answer-kit\.txt/);
+  assert.match(source, /Download answer kit/);
   assert.match(source, /Verify private business, tax and banking details inside the partner network/);
   assert.match(source, /Download the profile template or full application pack for partner review/);
   assert.match(source, /RealTruck path: Impact application/);
@@ -209,6 +212,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(commerce, /Jeep Build Lab partner application links/);
   assert.match(commerce, /Network: \$\{program\.network\}/);
   assert.match(commerce, /affiliateApplicationAnswers/);
+  assert.match(commerce, /Jeep Build Lab affiliate application answer kit/);
   assert.match(commerce, /Affiliate application profile fields/);
   assert.match(commerce, /Common application answers/);
   assert.match(commerce, /Fulfillment role/);

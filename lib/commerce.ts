@@ -422,6 +422,29 @@ function affiliateApplicationAnswerLines() {
   return affiliateApplicationAnswers.map(({ field, answer }, index) => `${index + 1}. ${field}: ${answer}`).join("\n");
 }
 
+export function buildAffiliateApplicationAnswers({ name, state, parts, generatedAt = new Date().toISOString() }: CommerceApplicationPackInput) {
+  const selected = selectedParts(state, parts);
+  return [
+    "Jeep Build Lab affiliate application answer kit",
+    `Build: ${name.trim() || "Untitled build"}`,
+    `Generated: ${new Date(generatedAt).toISOString().slice(0, 10)}`,
+    `Vehicle: ${vehicleDescription(state)}`,
+    "",
+    "Public profile basis",
+    "- Website URL: https://jeep-build-lab.johnprodromidis1.chatgpt.site/",
+    `- Catalog basis: ${parts.length} sourced variants with dated source snapshots; no live-price, inventory or checkout claim.`,
+    `- Build focus: ${selected.length ? selectedCategorySummary(selected) : "No selected build yet; describe the full Jeep Build Lab audience."}`,
+    `- Commerce status: ${noActiveCommerceDisclosure}`,
+    "",
+    "Common application answers",
+    affiliateApplicationAnswerLines(),
+    "",
+    "Do not paste without verifying",
+    "- Replace traffic, sales, legal business, tax, banking, address and phone fields with current private details inside the partner network.",
+    "- Do not claim approved affiliate tracking, live checkout, dealer pricing, inventory ownership or dropship fulfillment until a partner has approved those terms.",
+  ].join("\n");
+}
+
 function partnerProgramApplicationLine(program: PartnerProgram, applicationStatuses: CommerceApplicationPackInput["applicationStatuses"]) {
   return [
     `- ${program.name} (${relationshipNames[program.relationship]})`,

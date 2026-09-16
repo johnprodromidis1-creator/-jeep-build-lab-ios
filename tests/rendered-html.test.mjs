@@ -144,7 +144,7 @@ test("garage cards can export saved-build parts CSV files", async () => {
   assert.match(source, /function exportSavedCSV\(build:SavedBuild\)/);
   assert.match(source, /buildPartsCsv\(\{name:build\.name,notes:build\.notes,state:build\.state,parts\}\)/);
   assert.match(source, /function exportSavedSubmissionReview\(build:SavedBuild\)/);
-  assert.match(source, /buildPartnerSubmissionReviewSheet\(\{name:build\.name,notes:build\.notes,state:build\.state,parts,applicationStatuses:partnerApplicationStatus\}\)/);
+  assert.match(source, /buildPartnerSubmissionReviewSheet\(\{name:build\.name,notes:build\.notes,state:build\.state,parts,\.\.\.partnerApplicationExportState\}\)/);
   assert.match(source, /Commerce options/);
   assert.match(source, /commerceSummaryForPart\(p\)/);
   assert.match(source, /Export parts CSV for/);
@@ -174,6 +174,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /partnerApplicationPrioritiesForBuild/);
   assert.match(source, /allPartnerApplicationPriorities/);
   assert.match(source, /partnerApplicationStorageKey/);
+  assert.match(source, /partnerApplicationNotesStorageKey/);
   assert.match(source, /partnerApplicationStatusNames/);
   assert.match(source, /partnerApplicationTrackerStatusNames/);
   assert.match(source, /updatePartnerApplicationStatus/);
@@ -182,10 +183,13 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /pauseNextPartnerApplication/);
   assert.match(source, /blockNextPartnerApplication/);
   assert.match(source, /resetNextPartnerApplication/);
+  assert.match(source, /defaultPartnerApplicationBlockerNote/);
+  assert.match(source, /Impact account setup blocked/);
   assert.match(source, /nextPartnerApplication/);
   assert.match(source, /nextPartnerAnswerTarget/);
   assert.match(source, /partnerApplicationStatusCounts/);
-  assert.match(source, /applicationStatuses:partnerApplicationStatus/);
+  assert.match(source, /partnerApplicationExportState/);
+  assert.match(source, /applicationStatusNotes:partnerApplicationNotes/);
   assert.match(source, /Suggested application order/);
   assert.match(source, /Apply first/);
   assert.match(source, /Application tracker/);
@@ -194,7 +198,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /Partner application status summary/);
   assert.match(source, /className="partner-status-summary"/);
   assert.match(source, /partnerApplicationStatusCounts\.map/);
-  assert.match(source, /All tracked programs are submitted or approved on this device/);
+  assert.match(source, /No unblocked partner application is next/);
   assert.match(source, /partner-status-list/);
   assert.match(source, /\{priority\.reason\}/);
   assert.match(source, /Track \$\{trackedPartnerApplications\.length\} program/);
@@ -204,6 +208,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /Next application target/);
   assert.match(source, /Target requirements/);
   assert.match(source, /application-answer-requirements/);
+  assert.match(source, /application-answer-note/);
   assert.match(source, /requirements:nextPartnerApplication\.priority\.program\.requirements\?\?\[\]/);
   assert.match(source, /targetPrepText/);
   assert.match(source, /buildPartnerOutreachEmailDraft/);
@@ -320,6 +325,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(commerce, /Fulfillment role/);
   assert.match(commerce, /partnerApplicationTrackerStatusNames/);
   assert.match(commerce, /Application tracker/);
+  assert.match(commerce, /Tracker note/);
   assert.match(commerce, /Application tracker summary/);
   assert.match(commerce, /Next application/);
   assert.match(commerce, /Submission review checklist/);
@@ -345,6 +351,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(css, /\.submission-review-preview/);
   assert.match(css, /\.application-answer-kit/);
   assert.match(css, /\.application-answer-target/);
+  assert.match(css, /\.application-answer-note/);
   assert.match(css, /\.application-answer-requirements/);
   assert.match(css, /\.application-answer-actions/);
   assert.match(css, /\.partner-priority/);

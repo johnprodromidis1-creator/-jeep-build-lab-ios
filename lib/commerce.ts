@@ -64,6 +64,7 @@ export type CommerceApplicationPackInput = {
   parts: Part[];
   generatedAt?: string;
   applicationStatuses?: Record<string, PartnerApplicationTrackerStatus | string | undefined>;
+  applicationStatusNotes?: Record<string, string | undefined>;
 };
 
 const allCategories = [...categories];
@@ -432,6 +433,10 @@ function applicationTrackerStatusLabel(status: unknown) {
   return partnerApplicationTrackerStatusNames[applicationTrackerStatusKey(status)];
 }
 
+function applicationTrackerNote(programId: string, notes: CommerceApplicationPackInput["applicationStatusNotes"]) {
+  return typeof notes?.[programId] === "string" ? notes[programId]!.trim() : "";
+}
+
 function partnerProgramLabel(program: PartnerProgram) {
   return `${program.name}${program.network ? ` via ${program.network}` : ""}`;
 }
@@ -440,16 +445,20 @@ function nextApplicationPriority(priorities: readonly PartnerApplicationPriority
   return priorities.find(priority => actionableApplicationStatuses.includes(applicationTrackerStatusKey(applicationStatuses?.[priority.program.id]))) ?? null;
 }
 
-function applicationTrackerSummary(programs: readonly PartnerProgram[], priorities: readonly PartnerApplicationPriority[], applicationStatuses: CommerceApplicationPackInput["applicationStatuses"]) {
+function applicationTrackerSummary(programs: readonly PartnerProgram[], priorities: readonly PartnerApplicationPriority[], applicationStatuses: CommerceApplicationPackInput["applicationStatuses"], applicationStatusNotes?: CommerceApplicationPackInput["applicationStatusNotes"]) {
   const counts = Object.fromEntries(applicationTrackerStatuses.map(status => [status, 0])) as Record<PartnerApplicationTrackerStatus, number>;
   for (const program of programs) counts[applicationTrackerStatusKey(applicationStatuses?.[program.id])] += 1;
   const next = nextApplicationPriority(priorities, applicationStatuses);
+  const notes = priorities
+    .map(priority => ({ priority, note: applicationTrackerNote(priority.program.id, applicationStatusNotes) }))
+    .filter(({ note }) => note.length > 0);
   return [
     "Application tracker summary",
     ...applicationTrackerStatuses.map(status => `- ${partnerApplicationTrackerStatusNames[status]}: ${counts[status]}`),
     next
       ? `- Next application: ${partnerProgramLabel(next.program)} (${applicationTrackerStatusLabel(applicationStatuses?.[next.program.id])})`
       : "- Next application: No unblocked application target is ready; reset a blocked or paused program when it can move again.",
+    ...(notes.length ? ["Tracker notes", ...notes.map(({ priority, note }) => `- ${partnerProgramLabel(priority.program)}: ${note}`)] : []),
   ].join("\n");
 }
 
@@ -457,15 +466,17 @@ function affiliateApplicationAnswerLines() {
   return affiliateApplicationAnswers.map(({ field, answer }, index) => `${index + 1}. ${field}: ${answer}`).join("\n");
 }
 
-function nextApplicationTargetLines(priorities: readonly PartnerApplicationPriority[], applicationStatuses: CommerceApplicationPackInput["applicationStatuses"]) {
+function nextApplicationTargetLines(priorities: readonly PartnerApplicationPriority[], applicationStatuses: CommerceApplicationPackInput["applicationStatuses"], applicationStatusNotes?: CommerceApplicationPackInput["applicationStatusNotes"]) {
   const next = nextApplicationPriority(priorities, applicationStatuses);
   if (!next) {
-    return ["Next application target", "- All tracked programs for this build are submitted or approved."];
+    return ["Next application target", "- No unblocked partner application is next. Reset a blocked or paused program when it can move again."];
   }
+  const note = applicationTrackerNote(next.program.id, applicationStatusNotes);
   return [
     "Next application target",
     `- Program: ${partnerProgramLabel(next.program)}`,
     `- Tracker status: ${applicationTrackerStatusLabel(applicationStatuses?.[next.program.id])}`,
+    ...(note ? [`- Tracker note: ${note}`] : []),
     `- Relationship: ${relationshipNames[next.program.relationship]}`,
     ...(next.program.network ? [`- Network: ${next.program.network}`] : []),
     `- Application link: ${safeCommerceUrl(next.program.url)}`,
@@ -519,7 +530,7 @@ function partnerOutreachEmailDraftForPriority(priority: PartnerApplicationPriori
   ].join("\n");
 }
 
-export function buildPartnerOutreachDraftPack({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses }: CommerceApplicationPackInput) {
+export function buildPartnerOutreachDraftPack({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses, applicationStatusNotes }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
   const priorities = partnerApplicationPrioritiesForBuild(state, parts);
   const drafts = priorities.filter(priority => actionableApplicationStatuses.includes(applicationTrackerStatusKey(applicationStatuses?.[priority.program.id])));
@@ -535,6 +546,7 @@ export function buildPartnerOutreachDraftPack({ name, state, parts, generatedAt 
       ? drafts.map((priority, index) => [
         `Draft ${index + 1}: ${partnerProgramLabel(priority.program)}`,
         `Tracker status: ${applicationTrackerStatusLabel(applicationStatuses?.[priority.program.id])}`,
+        ...(applicationTrackerNote(priority.program.id, applicationStatusNotes) ? [`Tracker note: ${applicationTrackerNote(priority.program.id, applicationStatusNotes)}`] : []),
         `Relationship: ${relationshipNames[priority.program.relationship]}`,
         `Matched categories: ${priority.matchedCategories.join(", ")}`,
         "",
@@ -548,7 +560,7 @@ export function buildPartnerOutreachDraftPack({ name, state, parts, generatedAt 
   ].join("\n");
 }
 
-export function buildPartnerSubmissionReviewSheet({ name, notes, state, parts, generatedAt = new Date().toISOString(), applicationStatuses }: CommerceApplicationPackInput) {
+export function buildPartnerSubmissionReviewSheet({ name, notes, state, parts, generatedAt = new Date().toISOString(), applicationStatuses, applicationStatusNotes }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
   const programs = partnerProgramsForBuild(state, parts);
   const priorities = partnerApplicationPrioritiesForBuild(state, parts);
@@ -564,13 +576,14 @@ export function buildPartnerSubmissionReviewSheet({ name, notes, state, parts, g
     target ? [
       `- Program: ${partnerProgramLabel(target.program)}`,
       `- Tracker status: ${applicationTrackerStatusLabel(applicationStatuses?.[target.program.id])}`,
+      ...(applicationTrackerNote(target.program.id, applicationStatusNotes) ? [`- Tracker note: ${applicationTrackerNote(target.program.id, applicationStatusNotes)}`] : []),
       `- Relationship: ${relationshipNames[target.program.relationship]}`,
       `- Application link: ${safeCommerceUrl(target.program.url)}`,
       `- Match reason: ${target.reason}`,
       ...(target.program.requirements?.length ? [`- Program requirements: ${target.program.requirements.join(" ")}`] : []),
     ].join("\n") : "- No relevant partner program found for this build.",
     "",
-    applicationTrackerSummary(programs, priorities, applicationStatuses),
+    applicationTrackerSummary(programs, priorities, applicationStatuses, applicationStatusNotes),
     "",
     "Public profile fields ready to reuse after review",
     "- Website URL: https://jeep-build-lab.johnprodromidis1.chatgpt.site/",
@@ -600,7 +613,7 @@ export function buildPartnerSubmissionReviewSheet({ name, notes, state, parts, g
   ].join("\n");
 }
 
-export function buildAffiliateApplicationAnswers({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses }: CommerceApplicationPackInput) {
+export function buildAffiliateApplicationAnswers({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses, applicationStatusNotes }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
   const priorities = partnerApplicationPrioritiesForBuild(state, parts);
   return [
@@ -615,10 +628,10 @@ export function buildAffiliateApplicationAnswers({ name, state, parts, generated
     `- Build focus: ${selected.length ? selectedCategorySummary(selected) : "No selected build yet; describe the full Jeep Build Lab audience."}`,
     `- Commerce status: ${noActiveCommerceDisclosure}`,
     "",
-    ...nextApplicationTargetLines(priorities, applicationStatuses),
+    ...nextApplicationTargetLines(priorities, applicationStatuses, applicationStatusNotes),
     "",
     "Next outreach email draft",
-    buildPartnerOutreachEmailDraft({ name, notes: "", state, parts, generatedAt, applicationStatuses }),
+    buildPartnerOutreachEmailDraft({ name, notes: "", state, parts, generatedAt, applicationStatuses, applicationStatusNotes }),
     "",
     "Common application answers",
     affiliateApplicationAnswerLines(),
@@ -629,11 +642,13 @@ export function buildAffiliateApplicationAnswers({ name, state, parts, generated
   ].join("\n");
 }
 
-function partnerProgramApplicationLine(program: PartnerProgram, applicationStatuses: CommerceApplicationPackInput["applicationStatuses"]) {
+function partnerProgramApplicationLine(program: PartnerProgram, applicationStatuses: CommerceApplicationPackInput["applicationStatuses"], applicationStatusNotes?: CommerceApplicationPackInput["applicationStatusNotes"]) {
+  const note = applicationTrackerNote(program.id, applicationStatusNotes);
   return [
     `- ${program.name} (${relationshipNames[program.relationship]})`,
     `  Status: ${commerceStatusNames[program.status]}`,
     `  Application tracker: ${applicationTrackerStatusLabel(applicationStatuses?.[program.id])}`,
+    ...(note ? [`  Tracker note: ${note}`] : []),
     ...(program.network ? [`  Network: ${program.network}`] : []),
     `  Categories: ${programCategories(program)}`,
     `  Application link: ${safeCommerceUrl(program.url)}`,
@@ -642,11 +657,12 @@ function partnerProgramApplicationLine(program: PartnerProgram, applicationStatu
   ].join("\n");
 }
 
-function suggestedApplicationLine(priority: PartnerApplicationPriority, index: number, applicationStatuses: CommerceApplicationPackInput["applicationStatuses"]) {
-  return `${index + 1}. ${partnerProgramLabel(priority.program)} - ${priority.reason} Tracker: ${applicationTrackerStatusLabel(applicationStatuses?.[priority.program.id])}.`;
+function suggestedApplicationLine(priority: PartnerApplicationPriority, index: number, applicationStatuses: CommerceApplicationPackInput["applicationStatuses"], applicationStatusNotes?: CommerceApplicationPackInput["applicationStatusNotes"]) {
+  const note = applicationTrackerNote(priority.program.id, applicationStatusNotes);
+  return `${index + 1}. ${partnerProgramLabel(priority.program)} - ${priority.reason} Tracker: ${applicationTrackerStatusLabel(applicationStatuses?.[priority.program.id])}.${note ? ` Note: ${note}` : ""}`;
 }
 
-export function buildPartnerApplicationLinks({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses }: CommerceApplicationPackInput) {
+export function buildPartnerApplicationLinks({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses, applicationStatusNotes }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
   const programs = partnerProgramsForBuild(state, parts);
   const allPriorities = partnerApplicationPrioritiesForBuild(state, parts);
@@ -664,13 +680,13 @@ export function buildPartnerApplicationLinks({ name, state, parts, generatedAt =
     "Sponsored-link readiness",
     sponsoredLinkReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
-    applicationTrackerSummary(programs, allPriorities, applicationStatuses),
+    applicationTrackerSummary(programs, allPriorities, applicationStatuses, applicationStatusNotes),
     "",
     "Submission review checklist",
     partnerSubmissionReviewChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
     "Suggested application order",
-    priorities.map((priority, index) => suggestedApplicationLine(priority, index, applicationStatuses)).join("\n"),
+    priorities.map((priority, index) => suggestedApplicationLine(priority, index, applicationStatuses, applicationStatusNotes)).join("\n"),
     "",
     programs.map((program, index) => [
       `${index + 1}. ${program.name} - ${relationshipNames[program.relationship]}`,
@@ -678,6 +694,7 @@ export function buildPartnerApplicationLinks({ name, state, parts, generatedAt =
       `   Categories: ${programCategories(program)}`,
       `   Status: ${commerceStatusNames[program.status]}`,
       `   Application tracker: ${applicationTrackerStatusLabel(applicationStatuses?.[program.id])}`,
+      ...(applicationTrackerNote(program.id, applicationStatusNotes) ? [`   Tracker note: ${applicationTrackerNote(program.id, applicationStatusNotes)}`] : []),
       `   Link: ${safeCommerceUrl(program.url)}`,
       `   Note: ${program.note}`,
       ...(program.requirements?.length ? [`   Requirements: ${program.requirements.join(" ")}`] : []),
@@ -694,7 +711,7 @@ function trackerNextAction(status: PartnerApplicationTrackerStatus) {
   return "Prepare the profile, verify private details and apply through the listed link.";
 }
 
-export function buildPartnerApplicationTrackerCsv({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses }: CommerceApplicationPackInput) {
+export function buildPartnerApplicationTrackerCsv({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses, applicationStatusNotes }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
   const priorities = partnerApplicationPrioritiesForBuild(state, parts);
   const rows = [
@@ -705,7 +722,7 @@ export function buildPartnerApplicationTrackerCsv({ name, state, parts, generate
     ["Scope", selected.length ? `${selected.length} selected part${selected.length === 1 ? "" : "s"} (${selectedCategorySummary(selected)})` : "No selected parts; full partner directory."],
     ["Commerce status", noActiveCommerceDisclosure],
     [],
-    ["Rank", "Program", "Network", "Relationship", "Tracker status", "Commerce status", "Matched categories", "Selected part count", "Match reason", "Application link", "Requirements", "Prep note", "Next action"],
+    ["Rank", "Program", "Network", "Relationship", "Tracker status", "Tracker note", "Commerce status", "Matched categories", "Selected part count", "Match reason", "Application link", "Requirements", "Prep note", "Next action"],
     ...priorities.map((priority, index) => {
       const status = applicationTrackerStatusKey(applicationStatuses?.[priority.program.id]);
       return [
@@ -714,6 +731,7 @@ export function buildPartnerApplicationTrackerCsv({ name, state, parts, generate
         priority.program.network ?? "",
         relationshipNames[priority.program.relationship],
         partnerApplicationTrackerStatusNames[status],
+        applicationTrackerNote(priority.program.id, applicationStatusNotes),
         commerceStatusNames[priority.program.status],
         priority.matchedCategories.join("; "),
         priority.selectedPartCount,
@@ -728,7 +746,7 @@ export function buildPartnerApplicationTrackerCsv({ name, state, parts, generate
   return rows.map(row => row.map(commerceCsvCell).join(",")).join("\r\n");
 }
 
-export function buildAffiliateApplicationProfile({ name, notes, state, parts, generatedAt = new Date().toISOString(), applicationStatuses }: CommerceApplicationPackInput) {
+export function buildAffiliateApplicationProfile({ name, notes, state, parts, generatedAt = new Date().toISOString(), applicationStatuses, applicationStatusNotes }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
   const programs = partnerProgramsForBuild(state, parts);
   const allPriorities = partnerApplicationPrioritiesForBuild(state, parts);
@@ -756,21 +774,22 @@ export function buildAffiliateApplicationProfile({ name, notes, state, parts, ge
     "Application guardrails",
     sponsoredLinkReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
-    applicationTrackerSummary(programs, allPriorities, applicationStatuses),
+    applicationTrackerSummary(programs, allPriorities, applicationStatuses, applicationStatusNotes),
     "",
     "Submission review checklist",
     partnerSubmissionReviewChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
     "Suggested application order",
-    priorities.map((priority, index) => suggestedApplicationLine(priority, index, applicationStatuses)).join("\n"),
+    priorities.map((priority, index) => suggestedApplicationLine(priority, index, applicationStatuses, applicationStatusNotes)).join("\n"),
     "",
     "Next outreach email draft",
-    buildPartnerOutreachEmailDraft({ name, notes, state, parts, generatedAt, applicationStatuses }),
+    buildPartnerOutreachEmailDraft({ name, notes, state, parts, generatedAt, applicationStatuses, applicationStatusNotes }),
     "",
     "Partner focus",
     programs.map(program => [
       `- ${program.name}${program.network ? ` via ${program.network}` : ""}`,
       `  Application tracker: ${applicationTrackerStatusLabel(applicationStatuses?.[program.id])}`,
+      ...(applicationTrackerNote(program.id, applicationStatusNotes) ? [`  Tracker note: ${applicationTrackerNote(program.id, applicationStatusNotes)}`] : []),
       `  Relationship: ${relationshipNames[program.relationship]}`,
       `  Categories: ${programCategories(program)}`,
       `  Link: ${safeCommerceUrl(program.url)}`,
@@ -786,7 +805,7 @@ export function buildAffiliateApplicationProfile({ name, notes, state, parts, ge
   ].join("\n");
 }
 
-export function buildPaidLinkDisclosurePack({ name, notes, state, parts, generatedAt = new Date().toISOString(), applicationStatuses }: CommerceApplicationPackInput) {
+export function buildPaidLinkDisclosurePack({ name, notes, state, parts, generatedAt = new Date().toISOString(), applicationStatuses, applicationStatusNotes }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
   const programs = partnerProgramsForBuild(state, parts);
   const allPriorities = partnerApplicationPrioritiesForBuild(state, parts);
@@ -808,7 +827,7 @@ export function buildPaidLinkDisclosurePack({ name, notes, state, parts, generat
     "Build focus",
     `- ${selected.length ? selectedCategorySummary(selected) : "No selected parts; use the full Jeep Build Lab audience."}`,
     "",
-    applicationTrackerSummary(programs, allPriorities, applicationStatuses),
+    applicationTrackerSummary(programs, allPriorities, applicationStatuses, applicationStatusNotes),
     "",
     "Pre-publish paid-link checks",
     paidLinkLaunchChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
@@ -824,7 +843,7 @@ export function buildPaidLinkDisclosurePack({ name, notes, state, parts, generat
   ].join("\n");
 }
 
-export function buildCommerceApplicationPack({ name, notes, state, parts, generatedAt = new Date().toISOString(), applicationStatuses }: CommerceApplicationPackInput) {
+export function buildCommerceApplicationPack({ name, notes, state, parts, generatedAt = new Date().toISOString(), applicationStatuses, applicationStatusNotes }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
   const programs = partnerProgramsForBuild(state, parts);
   const allPriorities = partnerApplicationPrioritiesForBuild(state, parts);
@@ -854,22 +873,22 @@ export function buildCommerceApplicationPack({ name, notes, state, parts, genera
     "Pre-publish paid-link checks",
     paidLinkLaunchChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
-    applicationTrackerSummary(programs, allPriorities, applicationStatuses),
+    applicationTrackerSummary(programs, allPriorities, applicationStatuses, applicationStatusNotes),
     "",
     "Submission review checklist",
     partnerSubmissionReviewChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
     "Suggested application order",
-    priorities.map((priority, index) => suggestedApplicationLine(priority, index, applicationStatuses)).join("\n"),
+    priorities.map((priority, index) => suggestedApplicationLine(priority, index, applicationStatuses, applicationStatusNotes)).join("\n"),
     "",
     "Next outreach email draft",
-    buildPartnerOutreachEmailDraft({ name, notes, state, parts, generatedAt, applicationStatuses }),
+    buildPartnerOutreachEmailDraft({ name, notes, state, parts, generatedAt, applicationStatuses, applicationStatusNotes }),
     "",
     "Selected build source links",
     selected.length ? selected.map(part => selectedPartCommerceLine(part, state)).join("\n") : "- No parts are selected yet. The program directory below is not narrowed to a build.",
     "",
     "Relevant application links",
-    programs.map(program => partnerProgramApplicationLine(program, applicationStatuses)).join("\n"),
+    programs.map(program => partnerProgramApplicationLine(program, applicationStatuses, applicationStatusNotes)).join("\n"),
     "",
     "Application prep checklist",
     commerceApplicationChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),

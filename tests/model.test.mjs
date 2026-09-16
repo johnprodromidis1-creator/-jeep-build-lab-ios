@@ -210,9 +210,9 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(tracker,/"Jeep Build Lab partner application tracker"/);
  assert.match(tracker,/"Build","Commission plan"/);
  assert.match(tracker,/"Scope","2 selected parts \(Tires, Suspension\)"/);
- assert.match(tracker,/"Rank","Program","Network","Relationship","Tracker status","Commerce status","Matched categories","Selected part count","Match reason","Application link","Requirements","Prep note","Next action"/);
- assert.match(tracker,/"1","RealTruck","Impact","Affiliate","Submitted","Application needed","Tires; Suspension","2","Matches 2 selected parts across Tires, Suspension\."/);
- assert.match(tracker,/"Tire Rack","","Affiliate","Profile ready","Application needed","Tires","1"/);
+ assert.match(tracker,/"Rank","Program","Network","Relationship","Tracker status","Tracker note","Commerce status","Matched categories","Selected part count","Match reason","Application link","Requirements","Prep note","Next action"/);
+ assert.match(tracker,/"1","RealTruck","Impact","Affiliate","Submitted","","Application needed","Tires; Suspension","2","Matches 2 selected parts across Tires, Suspension\."/);
+ assert.match(tracker,/"Tire Rack","","Affiliate","Profile ready","","Application needed","Tires","1"/);
  assert.match(tracker,/"Submit the application after private business, tax, traffic and contact fields are verified\."/);
  assert.match(tracker,/"Use only approved tested tracking links and keep paid labels visible\."/);
  assert.doesNotMatch(tracker,/MORryde Jeep/);
@@ -296,15 +296,17 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(review,/Suggested owner approval line/);
  assert.match(review,/I approve submitting the visible CARiD application fields/);
  const blockedStatuses={...applicationStatuses,"carid-affiliate":"blocked"};
- const blockedPack=buildCommerceApplicationPack({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses:blockedStatuses});
+ const blockedNotes={"carid-affiliate":"Partner network password screen rejected the account setup."};
+ const blockedPack=buildCommerceApplicationPack({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses:blockedStatuses,applicationStatusNotes:blockedNotes});
  assert.match(blockedPack,/Application tracker summary\n- To apply: \d+\n- Profile ready: 1\n- Submitted: 1\n- Approved: 1\n- Paused: 0\n- Blocked: 1\n- Next application: /);
+ assert.match(blockedPack,/Tracker notes\n- CARiD: Partner network password screen rejected the account setup\./);
  assert.match(blockedPack,/Next outreach email draft/);
  assert.match(blockedPack,/Subject: Jeep Build Lab partner application - 4 Wheel Parts/);
- const blockedAnswers=buildAffiliateApplicationAnswers({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses:blockedStatuses});
+ const blockedAnswers=buildAffiliateApplicationAnswers({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses:blockedStatuses,applicationStatusNotes:blockedNotes});
  assert.match(blockedAnswers,/Program: 4 Wheel Parts/);
  assert.match(blockedAnswers,/Tracker status: To apply/);
- const blockedTracker=buildPartnerApplicationTrackerCsv({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses:blockedStatuses});
- assert.match(blockedTracker,/"CARiD","","Affiliate","Blocked","Application needed"/);
+ const blockedTracker=buildPartnerApplicationTrackerCsv({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses:blockedStatuses,applicationStatusNotes:blockedNotes});
+ assert.match(blockedTracker,/"CARiD","","Affiliate","Blocked","Partner network password screen rejected the account setup\.","Application needed"/);
  assert.match(blockedTracker,/"Resolve password, account, eligibility or partner-site errors before retrying this application\."/);
 });
 test("totals multiply individual wheels/tires, count kits once, and include allowances",()=>{

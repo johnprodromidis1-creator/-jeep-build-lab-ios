@@ -50,7 +50,7 @@ const {initialState,baseCatalog,categories,selectedParts,totalFor,buildIssues,st
 const {catalogFitScore,catalogSortOptions,compareCatalogParts,dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
 const {buildShopBrief}=shopBrief;
-const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationAnswers,buildAffiliateApplicationProfile,buildBlockedApplicationSupportDraft,buildCommerceApplicationPack,buildPartnerApplicationLinks,buildPartnerApplicationTrackerCsv,buildPaidLinkDisclosurePack,buildPartnerOutreachDraftPack,buildPartnerOutreachEmailDraft,buildPartnerOutreachMailtoUrl,buildPartnerSubmissionReviewSheet,commerceApplicationChecklist,affiliateApplicationAnswers,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist,partnerSubmissionReviewChecklist,partnerSubmissionPrivateFields,paidLinkDisclosureSnippet,paidLinkLaunchChecklist}=commerce;
+const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationAnswers,buildAffiliateApplicationProfile,buildBlockedApplicationSupportDraft,buildBlockedApplicationSupportMailtoUrl,buildCommerceApplicationPack,buildPartnerApplicationLinks,buildPartnerApplicationTrackerCsv,buildPaidLinkDisclosurePack,buildPartnerOutreachDraftPack,buildPartnerOutreachEmailDraft,buildPartnerOutreachMailtoUrl,buildPartnerSubmissionReviewSheet,commerceApplicationChecklist,affiliateApplicationAnswers,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist,partnerSubmissionReviewChecklist,partnerSubmissionPrivateFields,paidLinkDisclosureSnippet,paidLinkLaunchChecklist}=commerce;
 const {buildRecipes}=recipes;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
@@ -324,6 +324,14 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(supportDraft,/Public site: https:\/\/jeep-build-lab\.johnprodromidis1\.chatgpt\.site\//);
  assert.match(supportDraft,/Do not include in an ordinary support email/);
  assert.match(supportDraft,/Passwords, tax IDs, banking details/);
+ const supportMailto=new URL(buildBlockedApplicationSupportMailtoUrl({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses:blockedStatuses,applicationStatusNotes:blockedNotes}));
+ assert.equal(supportMailto.protocol,"mailto:");
+ assert.equal(supportMailto.searchParams.get("subject"),"Partner application support - CARiD");
+ assert.match(supportMailto.searchParams.get("body"),/Hi CARiD support team/);
+ assert.match(supportMailto.searchParams.get("body"),/Tracker note: Partner network password screen rejected the account setup\./);
+ assert.match(supportMailto.searchParams.get("body"),/Build context: Commission plan - 2021 Wrangler JL Unlimited 4-door Sport, 3\.6L V6 gas/);
+ assert.doesNotMatch(supportMailto.searchParams.get("body"),/^Subject:/);
+ assert.doesNotMatch(supportMailto.searchParams.get("body"),/Passwords, tax IDs, banking details/);
  const blockedReview=buildPartnerSubmissionReviewSheet({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses:blockedStatuses,applicationStatusNotes:blockedNotes});
  assert.match(blockedReview,/Blocked application follow-up\n- CARiD: Partner network password screen rejected the account setup\./);
  const blockedTracker=buildPartnerApplicationTrackerCsv({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses:blockedStatuses,applicationStatusNotes:blockedNotes});

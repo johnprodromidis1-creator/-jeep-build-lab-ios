@@ -216,9 +216,11 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /exportBlockedApplicationNotes/);
   assert.match(source, /copyBlockedApplicationSupportDraft/);
   assert.match(source, /exportBlockedApplicationSupportDraft/);
+  assert.match(source, /openBlockedApplicationSupportEmail/);
   assert.match(source, /Copy blocked notes/);
   assert.match(source, /Share blocked notes/);
   assert.match(source, /Download blocked notes/);
+  assert.match(source, /Open support email/);
   assert.match(source, /Copy support draft/);
   assert.match(source, /Share support draft/);
   assert.match(source, /Download support draft/);
@@ -232,6 +234,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /targetPrepText/);
   assert.match(source, /buildPartnerOutreachEmailDraft/);
   assert.match(source, /buildPartnerOutreachMailtoUrl/);
+  assert.match(source, /buildBlockedApplicationSupportMailtoUrl/);
   assert.match(source, /buildPartnerSubmissionReviewSheet/);
   assert.match(source, /partnerSubmissionReviewChecklist/);
   assert.match(source, /copyTargetPrep/);
@@ -241,6 +244,8 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /Open email draft/);
   assert.match(source, /Email draft opened/);
   assert.match(source, /The email draft could not be opened/);
+  assert.match(source, /Support email draft opened/);
+  assert.match(source, /The support email draft could not be opened/);
   assert.match(source, /Mark profile ready/);
   assert.match(source, /Mark submitted/);
   assert.match(source, /Pause target/);
@@ -337,6 +342,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(commerce, /Next application target/);
   assert.match(commerce, /buildPartnerOutreachEmailDraft/);
   assert.match(commerce, /buildPartnerOutreachMailtoUrl/);
+  assert.match(commerce, /buildBlockedApplicationSupportMailtoUrl/);
   assert.match(commerce, /Next outreach email draft/);
   assert.match(commerce, /Subject: Jeep Build Lab partner application/);
   assert.match(commerce, /Current commerce posture: links are reference and application links only/);

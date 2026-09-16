@@ -536,6 +536,11 @@ test("builder surfaces source confidence and export proof fields", async () => {
   assert.match(source, /catalogSourceText/);
   assert.match(source, /aria-label="Build source evidence"/);
   assert.match(source, /Source evidence checked through/);
+  assert.match(source, /const advisorProofItems=/);
+  assert.match(source, /aria-label="Neutral advisor proof"/);
+  assert.match(source, /Proof for quotes/);
+  assert.match(source, /No active paid links/);
+  assert.match(source, /Exports include source URL, checked date, coverage and price basis/);
   assert.match(source, /aria-label="Source confidence"/);
   assert.match(source, /Planner fitment is coverage, not certification/);
   assert.match(source, /Planner coverage/);
@@ -548,6 +553,9 @@ test("builder surfaces source confidence and export proof fields", async () => {
   assert.match(css, /\.source-status/);
   assert.match(css, /\.source-badges/);
   assert.match(css, /\.source-confidence/);
+  assert.match(css, /\.advisor-proof/);
+  assert.match(css, /\.advisor-proof-row\.ready/);
+  assert.match(css, /\.advisor-proof-row\.needs-review/);
 });
 
 test("part detail dialog can directly update the build selection", async () => {

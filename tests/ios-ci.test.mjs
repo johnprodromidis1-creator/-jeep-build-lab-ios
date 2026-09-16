@@ -50,6 +50,7 @@ test("Codemagic iOS compile check runs offline sync, app regressions and unsigne
 
 test("Codemagic TestFlight workflow validates app code before signing and upload", async () => {
   const config = await source("codemagic.yaml");
+  const signingCheck = await source("scripts/check-codemagic-signing.sh");
 
   assert.match(config, /jeep-ios-testflight:/);
   assert.match(config, /bundle_identifier: com\.johnprodromidis\.jeepbuildlab/);
@@ -57,6 +58,12 @@ test("Codemagic TestFlight workflow validates app code before signing and upload
   assert.match(config, /app_store_connect: spice_czar_apple/);
   assert.match(config, /submit_to_testflight: false/);
   assert.match(config, /submit_to_app_store: false/);
+  assert.match(config, /script: bash scripts\/check-codemagic-signing\.sh/);
+  assert.match(signingCheck, /com\.johnprodromidis\.jeepbuildlab/);
+  assert.match(signingCheck, /App Store provisioning profile/);
+  assert.match(signingCheck, /Codemagic currently has profiles for other apps only/);
+  assert.match(signingCheck, /Entitlements:get-task-allow/);
+  assert.match(signingCheck, /ProvisionedDevices/);
 
   assertInOrder(config, [
     "script: npm ci",
@@ -66,6 +73,7 @@ test("Codemagic TestFlight workflow validates app code before signing and upload
     "npx eslint .",
     nativeSafeScript,
     "script: python3 scripts/prepare-codemagic-ios.py",
+    "script: bash scripts/check-codemagic-signing.sh",
     "script: xcode-project use-profiles",
     "xcode-project build-ipa",
   ]);

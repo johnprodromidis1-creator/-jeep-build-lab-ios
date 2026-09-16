@@ -7,7 +7,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 export const EXPECTED_BUNDLE_ID = "com.johnprodromidis.jeepbuildlab";
 export const EXPECTED_VERSION = "0.2.0";
 export const LIVE_SITE_URL = "https://jeep-build-lab.johnprodromidis1.chatgpt.site";
-export const EXPECTED_LIVE_SITES_VERSION = 107;
+export const EXPECTED_LIVE_SITES_VERSION = 108;
 
 const nativeSafeTests =
   "node --test tests/model.test.mjs tests/device-storage.test.mjs tests/ios-metadata.test.mjs tests/platform.test.mjs";
@@ -46,6 +46,7 @@ export async function runPreflight(projectRoot = scriptRoot) {
     codemagic,
     iosVerify,
     codemagicPrepare,
+    codemagicSigningCheck,
     project,
     info,
     capacitor,
@@ -60,6 +61,7 @@ export async function runPreflight(projectRoot = scriptRoot) {
     source(projectRoot, "codemagic.yaml"),
     source(projectRoot, "scripts/ios-verify.sh"),
     source(projectRoot, "scripts/prepare-codemagic-ios.py"),
+    source(projectRoot, "scripts/check-codemagic-signing.sh"),
     source(projectRoot, "ios/App/App.xcodeproj/project.pbxproj"),
     source(projectRoot, "ios/App/App/Info.plist"),
     source(projectRoot, "capacitor.config.ts"),
@@ -94,6 +96,9 @@ export async function runPreflight(projectRoot = scriptRoot) {
   check(checks, has(codemagicPrepare, /config\.get\("appId"\) != expected_bundle/) && has(codemagicPrepare, /config\.get\("server", \{\}\)\.get\("url"\)/), "Codemagic prep rejects wrong IDs and remote shells");
   check(checks, has(codemagicPrepare, /connect-src 'none'/) && has(codemagicPrepare, /compiled mobile entry point is missing/), "Codemagic prep verifies the offline mobile bundle");
   check(checks, has(codemagicPrepare, /len\(bundles\) != 2/) && has(codemagicPrepare, /if count != 2:/), "Codemagic prep updates both Xcode build configurations");
+  check(checks, has(codemagic, /script: bash scripts\/check-codemagic-signing\.sh/), "TestFlight workflow checks signing profile before archive");
+  check(checks, has(codemagicSigningCheck, /App Store provisioning profile/) && has(codemagicSigningCheck, /Codemagic currently has profiles for other apps only/), "Codemagic signing check names the missing profile gate");
+  check(checks, has(codemagicSigningCheck, /Entitlements:get-task-allow/) && has(codemagicSigningCheck, /ProvisionedDevices/), "Codemagic signing check rejects non-App Store profiles");
 
   check(checks, countMatches(project, new RegExp(`PRODUCT_BUNDLE_IDENTIFIER = ${EXPECTED_BUNDLE_ID.replace(/\./g, "\\.")};`, "g")) === 2, "Debug and Release Bundle IDs match");
   check(checks, has(project, /MARKETING_VERSION = 0\.2\.0;/), "Xcode marketing version is 0.2.0");
@@ -121,6 +126,7 @@ export async function runPreflight(projectRoot = scriptRoot) {
   check(checks, readiness.includes(LIVE_SITE_URL), "readiness handoff includes the live public site");
   check(checks, readiness.includes(`Sites version ${EXPECTED_LIVE_SITES_VERSION}`), "readiness records the latest Sites version");
   check(checks, has(readiness, /no signed IPA or TestFlight upload has been verified/i), "readiness keeps signed-build status honest");
+  check(checks, has(readiness, /early signing-profile gate/i), "readiness records the signing-profile gate");
   check(checks, has(readiness, /passes 77 tests/i), "readiness records the current regression count");
   check(checks, has(readiness, /in-picker 15\+ choice depth proof strip/i), "readiness records the catalog depth proof strip");
   check(checks, has(readiness, /blank blocked targets stay visible with default blocker guidance/i), "readiness records blank blocked-target guidance");

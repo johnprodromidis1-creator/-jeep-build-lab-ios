@@ -47,6 +47,8 @@ workflows:
           npm run test:native
       - name: Verify app identity and assign a unique build number
         script: python3 scripts/prepare-codemagic-ios.py
+      - name: Confirm this app's App Store provisioning profile is available
+        script: bash scripts/check-codemagic-signing.sh
       - name: Apply this app's provisioning profile
         script: xcode-project use-profiles
       - name: Archive and export signed IPA

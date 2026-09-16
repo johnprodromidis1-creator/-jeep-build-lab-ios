@@ -15,7 +15,7 @@ test("App Store preflight keeps release guardrails aligned", async () => {
 
   assert.equal(report.expected.bundleId, EXPECTED_BUNDLE_ID);
   assert.equal(report.expected.version, EXPECTED_VERSION);
-  assert.equal(EXPECTED_LIVE_SITES_VERSION, 107);
+  assert.equal(EXPECTED_LIVE_SITES_VERSION, 108);
   const labels = new Set(report.checks.map((item) => item.label));
   assert.ok(labels.has("screenshot plan covers iPhone and iPad targets"));
   assert.ok(labels.has("screenshot plan requires native signed/TestFlight captures"));
@@ -24,12 +24,16 @@ test("App Store preflight keeps release guardrails aligned", async () => {
   assert.ok(labels.has("readiness records the current regression count"));
   assert.ok(labels.has("readiness records the catalog depth proof strip"));
   assert.ok(labels.has("readiness records the latest Sites version"));
+  assert.ok(labels.has("readiness records the signing-profile gate"));
   assert.ok(labels.has("readiness records blank blocked-target guidance"));
   assert.ok(labels.has("Codemagic prep enforces the registered Bundle ID"));
   assert.ok(labels.has("Codemagic prep derives build numbers from Codemagic"));
   assert.ok(labels.has("Codemagic prep rejects wrong IDs and remote shells"));
   assert.ok(labels.has("Codemagic prep verifies the offline mobile bundle"));
   assert.ok(labels.has("Codemagic prep updates both Xcode build configurations"));
+  assert.ok(labels.has("TestFlight workflow checks signing profile before archive"));
+  assert.ok(labels.has("Codemagic signing check names the missing profile gate"));
+  assert.ok(labels.has("Codemagic signing check rejects non-App Store profiles"));
   assert.ok(labels.has("Codemagic guide records the current regression count"));
   assert.ok(labels.has("Codemagic guide records the catalog depth proof strip"));
   assert.ok(labels.has("Codemagic guide records the latest Sites version"));

@@ -161,6 +161,9 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /sponsoredLinkReadinessChecklist/);
   assert.match(source, /Sponsored-link readiness/);
   assert.match(source, /buildAffiliateApplicationProfile/);
+  assert.match(source, /partnerApplicationPrioritiesForBuild/);
+  assert.match(source, /Suggested application order/);
+  assert.match(source, /Apply first/);
   assert.match(source, /Download profile/);
   assert.match(source, /Affiliate application profile preview/);
   assert.match(source, /Download the profile template or full application pack for partner review/);
@@ -194,6 +197,8 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
   assert.match(css, /\.sponsor-readiness/);
   assert.match(css, /\.application-profile-preview/);
+  assert.match(css, /\.partner-priority/);
+  assert.match(css, /\.priority-program/);
 });
 
 test("vehicle edits warn before selected parts become invalid", async () => {

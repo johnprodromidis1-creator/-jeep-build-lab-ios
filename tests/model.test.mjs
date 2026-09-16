@@ -50,7 +50,7 @@ const {initialState,baseCatalog,categories,selectedParts,totalFor,buildIssues,st
 const {catalogFitScore,catalogSortOptions,compareCatalogParts,dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
 const {buildShopBrief}=shopBrief;
-const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationProfile,buildCommerceApplicationPack,buildPartnerApplicationLinks,commerceApplicationChecklist,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist}=commerce;
+const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationProfile,buildCommerceApplicationPack,buildPartnerApplicationLinks,commerceApplicationChecklist,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist}=commerce;
 const {buildRecipes}=recipes;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
@@ -140,6 +140,11 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.ok(programs.some(program=>program.name==="Tire Rack"));
  assert.ok(programs.some(program=>program.name==="ARB distributor network"));
  assert.ok(!programs.some(program=>program.name==="MORryde Jeep"));
+ const priorities=partnerApplicationPrioritiesForBuild(state,baseCatalog);
+ assert.equal(priorities[0].program.name,"RealTruck");
+ assert.equal(priorities[0].selectedPartCount,2);
+ assert.match(priorities[0].reason,/Matches 2 selected parts across Tires, Suspension/);
+ assert.ok(priorities[0].score>priorities.at(-1).score);
  assert.ok(commerceApplicationChecklist.length>=5);
  assert.ok(affiliateApplicationProfileFields.length>=8);
  assert.ok(sponsoredLinkReadinessChecklist.length>=5);
@@ -150,6 +155,8 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(pack,/Website URL: https:\/\/jeep-build-lab\.johnprodromidis1\.chatgpt\.site\//);
  assert.match(pack,/Sponsored-link readiness/);
  assert.match(pack,/Label every paid outbound link as sponsored or affiliate/);
+ assert.match(pack,/Suggested application order/);
+ assert.match(pack,/1\. RealTruck via Impact - Matches 2 selected parts across Tires, Suspension/);
  assert.match(pack,/Selected build source links/);
  assert.match(pack,/Source: Quadratec - https:\/\/www\.quadratec\.com\/p\/nitto\/ridge-grappler-tire/);
  assert.match(pack,/Application link: https:\/\/www\.tirerack\.com\/affiliate/);
@@ -162,6 +169,7 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(links,/Scope: 2 selected parts \(Tires, Suspension\)/);
  assert.match(links,/Paid links must be clearly labeled/);
  assert.match(links,/Sponsored-link readiness/);
+ assert.match(links,/Suggested application order/);
  assert.match(links,/1\. Tire Rack - Affiliate/);
  assert.match(links,/Link: https:\/\/www\.tirerack\.com\/affiliate/);
  assert.match(links,/Turn 14 Distribution - Distributor/);
@@ -172,6 +180,7 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(profile,/Catalog basis: 104 sourced variants with dated source snapshots/);
  assert.match(profile,/Build focus: Tires, Suspension/);
  assert.match(profile,/Fields to verify before submitting/);
+ assert.match(profile,/Suggested application order/);
  assert.match(profile,/Private fields/);
  assert.match(profile,/Do not store passwords, banking info, tax IDs, private phone numbers or affiliate tracking credentials in the public app source/);
  assert.match(profile,/RealTruck via Impact/);

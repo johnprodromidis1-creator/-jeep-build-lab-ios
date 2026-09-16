@@ -38,6 +38,14 @@ export type CommerceOffer = {
   paid: boolean;
 };
 
+export type PartnerApplicationPriority = {
+  program: PartnerProgram;
+  matchedCategories: readonly string[];
+  selectedPartCount: number;
+  score: number;
+  reason: string;
+};
+
 export type CommerceApplicationPackInput = {
   name: string;
   notes: string;
@@ -48,6 +56,12 @@ export type CommerceApplicationPackInput = {
 
 const allCategories = [...categories];
 const offRoadCategories: Category[] = ["lift", "bumpers", "winches", "armor"];
+const relationshipPriority: Record<Exclude<CommerceRelationship, "source">, number> = {
+  affiliate: 4,
+  reseller: 3,
+  dealer: 3,
+  distributor: 2,
+};
 
 export const commerceDisclosure =
   "Some retailer or partner links may be paid links in the future. Paid links must be clearly labeled before affiliate tracking, resale checkout or dealer pricing goes live.";
@@ -291,6 +305,30 @@ export function partnerProgramsForBuild(state: BuildState, parts: Part[]): Partn
   return selected.length ? partnerProgramsForParts(selected) : [...partnerPrograms];
 }
 
+export function partnerApplicationPrioritiesForBuild(state: BuildState, parts: Part[]): PartnerApplicationPriority[] {
+  const selected = selectedParts(state, parts);
+  const programs = partnerProgramsForBuild(state, parts);
+  return programs.map((program, order) => {
+    const matchedParts = selected.filter(part => (program.categories as readonly Category[]).includes(part.category));
+    const matchedCategories = [...new Set((selected.length ? matchedParts.map(part => part.category) : program.categories).map(category => categoryNames[category]))];
+    const selectedPartCount = matchedParts.length;
+    const score = selected.length
+      ? selectedPartCount * 20 + matchedCategories.length * 5 + relationshipPriority[program.relationship] + (program.network ? 3 : 0)
+      : matchedCategories.length * 3 + relationshipPriority[program.relationship] + (program.network ? 3 : 0);
+    const reason = selected.length
+      ? `Matches ${selectedPartCount} selected part${selectedPartCount === 1 ? "" : "s"} across ${matchedCategories.join(", ")}.`
+      : `Covers ${matchedCategories.length} catalog categor${matchedCategories.length === 1 ? "y" : "ies"} before you narrow a build.`;
+    return { program, matchedCategories, selectedPartCount, score, reason, order };
+  }).sort((a, b) => b.score - a.score || a.order - b.order)
+    .map(priority => ({
+      program: priority.program,
+      matchedCategories: priority.matchedCategories,
+      selectedPartCount: priority.selectedPartCount,
+      score: priority.score,
+      reason: priority.reason,
+    }));
+}
+
 function selectedPartCommerceLine(part: Part, state: BuildState) {
   const programs = partnerProgramsForPart(part).map(program => program.name).join(", ") || "No matching partner program listed yet.";
   return [
@@ -319,6 +357,7 @@ function partnerProgramApplicationLine(program: PartnerProgram) {
 export function buildPartnerApplicationLinks({ name, state, parts, generatedAt = new Date().toISOString() }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
   const programs = partnerProgramsForBuild(state, parts);
+  const priorities = partnerApplicationPrioritiesForBuild(state, parts).slice(0, 5);
   return [
     "Jeep Build Lab partner application links",
     `Build: ${name.trim() || "Untitled build"}`,
@@ -331,6 +370,9 @@ export function buildPartnerApplicationLinks({ name, state, parts, generatedAt =
     "",
     "Sponsored-link readiness",
     sponsoredLinkReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    "Suggested application order",
+    priorities.map((priority, index) => `${index + 1}. ${priority.program.name}${priority.program.network ? ` via ${priority.program.network}` : ""} - ${priority.reason}`).join("\n"),
     "",
     programs.map((program, index) => [
       `${index + 1}. ${program.name} - ${relationshipNames[program.relationship]}`,
@@ -347,6 +389,7 @@ export function buildPartnerApplicationLinks({ name, state, parts, generatedAt =
 export function buildAffiliateApplicationProfile({ name, notes, state, parts, generatedAt = new Date().toISOString() }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
   const programs = partnerProgramsForBuild(state, parts);
+  const priorities = partnerApplicationPrioritiesForBuild(state, parts).slice(0, 5);
   return [
     "Jeep Build Lab affiliate application profile template",
     `Build: ${name.trim() || "Untitled build"}`,
@@ -366,6 +409,9 @@ export function buildAffiliateApplicationProfile({ name, notes, state, parts, ge
     "",
     "Application guardrails",
     sponsoredLinkReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    "Suggested application order",
+    priorities.map((priority, index) => `${index + 1}. ${priority.program.name}${priority.program.network ? ` via ${priority.program.network}` : ""} - ${priority.reason}`).join("\n"),
     "",
     "Partner focus",
     programs.map(program => [
@@ -388,6 +434,7 @@ export function buildAffiliateApplicationProfile({ name, notes, state, parts, ge
 export function buildCommerceApplicationPack({ name, notes, state, parts, generatedAt = new Date().toISOString() }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
   const programs = partnerProgramsForBuild(state, parts);
+  const priorities = partnerApplicationPrioritiesForBuild(state, parts).slice(0, 5);
   return [
     "Jeep Build Lab partner application pack",
     `Build: ${name.trim() || "Untitled build"}`,
@@ -403,6 +450,9 @@ export function buildCommerceApplicationPack({ name, notes, state, parts, genera
     "",
     "Sponsored-link readiness",
     sponsoredLinkReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    "Suggested application order",
+    priorities.map((priority, index) => `${index + 1}. ${priority.program.name}${priority.program.network ? ` via ${priority.program.network}` : ""} - ${priority.reason}`).join("\n"),
     "",
     "Selected build source links",
     selected.length ? selected.map(part => selectedPartCommerceLine(part, state)).join("\n") : "- No parts are selected yet. The program directory below is not narrowed to a build.",

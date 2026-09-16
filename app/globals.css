@@ -467,7 +467,8 @@
 .application-answer-kit dt{font-size:12px;font-weight:700;color:#efc690;margin-bottom:2px}
 .application-answer-kit dd{font-size:12px;line-height:1.5;color:#b6c8cf;margin:0}
 .application-answer-kit p{font-size:12px;color:#9fb4bd;line-height:1.55;margin:8px 0 0}
-.application-answer-kit [data-slot=button]{width:100%;margin-top:8px}
+.application-answer-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:8px}
+.application-answer-actions [data-slot=button]{width:100%;white-space:normal}
 .partner-priority{border:1px solid #40555d;background:#132229;border-radius:6px;padding:9px 10px;margin:10px 0}
 .partner-priority>strong{display:block;font-size:13px;font-weight:700;color:#eef6f7;margin-bottom:3px}
 .priority-program{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:8px;align-items:start;color:#dce7eb;text-decoration:none;padding:8px 0;border-top:1px solid #34464e}

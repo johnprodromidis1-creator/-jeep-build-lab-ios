@@ -183,6 +183,10 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /Common application answers/);
   assert.match(source, /affiliateApplicationAnswers\.slice\(0,3\)/);
   assert.match(source, /buildAffiliateApplicationAnswers/);
+  assert.match(source, /navigator\.clipboard\.writeText\(buildAffiliateApplicationAnswers/);
+  assert.match(source, /Copy answer kit/);
+  assert.match(source, /Answer kit copied/);
+  assert.match(source, /Download the answer kit, then copy from the text file/);
   assert.match(source, /jeep-build-affiliate-answer-kit\.txt/);
   assert.match(source, /Download answer kit/);
   assert.match(source, /Verify private business, tax and banking details inside the partner network/);
@@ -229,6 +233,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(css, /\.sponsor-readiness/);
   assert.match(css, /\.application-profile-preview/);
   assert.match(css, /\.application-answer-kit/);
+  assert.match(css, /\.application-answer-actions/);
   assert.match(css, /\.partner-priority/);
   assert.match(css, /\.priority-program/);
   assert.match(css, /\.partner-status-tracker/);

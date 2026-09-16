@@ -244,9 +244,13 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /buildCommerceApplicationPack/);
   assert.match(source, /buildPartnerApplicationLinks/);
   assert.match(source, /buildPartnerApplicationTrackerCsv/);
+  assert.match(source, /buildPartnerOutreachDraftPack/);
   assert.match(source, /exportPartnerApplicationTracker/);
+  assert.match(source, /exportPartnerOutreachDrafts/);
   assert.match(source, /jeep-build-partner-application-tracker\.csv/);
+  assert.match(source, /jeep-build-partner-outreach-drafts\.txt/);
   assert.match(source, /The application tracker could not be exported/);
+  assert.match(source, /The outreach drafts could not be exported/);
   assert.match(source, /partnerProgramsForBuild/);
   assert.match(source, /copyPartnerLinks/);
   assert.match(source, /Partner links copied/);
@@ -254,6 +258,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /Copy partner links/);
   assert.match(source, /Download tracker CSV/);
   assert.match(source, /Download application tracker/);
+  assert.match(source, /Download outreach drafts/);
   assert.match(source, /Download commerce pack/);
   assert.match(source, /Download partner links/);
   assert.match(source, /applications for selected parts/);
@@ -273,7 +278,10 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(commerce, /Jeep Build Lab partner application pack/);
   assert.match(commerce, /Jeep Build Lab partner application links/);
   assert.match(commerce, /buildPartnerApplicationTrackerCsv/);
+  assert.match(commerce, /buildPartnerOutreachDraftPack/);
   assert.match(commerce, /Jeep Build Lab partner application tracker/);
+  assert.match(commerce, /Jeep Build Lab partner outreach draft pack/);
+  assert.match(commerce, /Draft count/);
   assert.match(commerce, /Tracker status/);
   assert.match(commerce, /Next action/);
   assert.match(commerce, /Network: \$\{program\.network\}/);

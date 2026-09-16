@@ -50,7 +50,7 @@ const {initialState,baseCatalog,categories,selectedParts,totalFor,buildIssues,st
 const {catalogFitScore,catalogSortOptions,compareCatalogParts,dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
 const {buildShopBrief}=shopBrief;
-const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationAnswers,buildAffiliateApplicationProfile,buildCommerceApplicationPack,buildPartnerApplicationLinks,buildPartnerApplicationTrackerCsv,buildPaidLinkDisclosurePack,buildPartnerOutreachEmailDraft,commerceApplicationChecklist,affiliateApplicationAnswers,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist,paidLinkDisclosureSnippet,paidLinkLaunchChecklist}=commerce;
+const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationAnswers,buildAffiliateApplicationProfile,buildCommerceApplicationPack,buildPartnerApplicationLinks,buildPartnerApplicationTrackerCsv,buildPaidLinkDisclosurePack,buildPartnerOutreachDraftPack,buildPartnerOutreachEmailDraft,commerceApplicationChecklist,affiliateApplicationAnswers,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist,paidLinkDisclosureSnippet,paidLinkLaunchChecklist}=commerce;
 const {buildRecipes}=recipes;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
@@ -259,6 +259,15 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(draft,/Subject: Jeep Build Lab partner application - CARiD/);
  assert.match(draft,/Current build context: Commission plan - 2021 Wrangler JL Unlimited 4-door Sport, 3\.6L V6 gas/);
  assert.match(draft,/Application path: https:\/\/www\.carid\.com\/affiliate\.html/);
+ const draftPack=buildPartnerOutreachDraftPack({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses});
+ assert.match(draftPack,/Jeep Build Lab partner outreach draft pack/);
+ assert.match(draftPack,/Draft count: \d+ unsubmitted programs out of \d+ relevant programs\./);
+ assert.match(draftPack,/Draft 1: CARiD/);
+ assert.match(draftPack,/Tracker status: To apply/);
+ assert.match(draftPack,/Subject: Jeep Build Lab partner application - CARiD/);
+ assert.match(draftPack,/Do not send without verifying/);
+ assert.match(draftPack,/Do not claim approved affiliate tracking, reseller terms, dealer pricing, wholesale checkout or dropship fulfillment/);
+ assert.doesNotMatch(draftPack,/Draft 1: RealTruck/);
 });
 test("totals multiply individual wheels/tires, count kits once, and include allowances",()=>{
  const s=base();s.picks={wheels:"method-MR70178550900",tires:"nitto-217020",lift:"lift-16400-0073"};s.labor=50000;s.extras=30000;

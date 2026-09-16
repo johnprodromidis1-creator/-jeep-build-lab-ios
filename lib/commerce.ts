@@ -463,7 +463,11 @@ export function buildPartnerOutreachEmailDraft({ name, state, parts, application
       "All tracked partner programs for this build are submitted or approved. Keep approved tracking links labeled and tested before publishing.",
     ].join("\n");
   }
-  const program = next.program;
+  return partnerOutreachEmailDraftForPriority(next, name, state);
+}
+
+function partnerOutreachEmailDraftForPriority(priority: PartnerApplicationPriority, name: string, state: BuildState) {
+  const program = priority.program;
   return [
     `Subject: Jeep Build Lab partner application - ${program.name}`,
     "",
@@ -473,7 +477,7 @@ export function buildPartnerOutreachEmailDraft({ name, state, parts, application
     "",
     "Public site: https://jeep-build-lab.johnprodromidis1.chatgpt.site/",
     `Current build context: ${name.trim() || "Untitled build"} - ${vehicleDescription(state)}`,
-    `Why this program fits: ${next.reason}`,
+    `Why this program fits: ${priority.reason}`,
     `Application path: ${safeCommerceUrl(program.url)}`,
     ...(program.network ? [`Partner network: ${program.network}`] : []),
     "",
@@ -483,6 +487,35 @@ export function buildPartnerOutreachEmailDraft({ name, state, parts, application
     "",
     "Thanks,",
     "John",
+  ].join("\n");
+}
+
+export function buildPartnerOutreachDraftPack({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses }: CommerceApplicationPackInput) {
+  const selected = selectedParts(state, parts);
+  const priorities = partnerApplicationPrioritiesForBuild(state, parts);
+  const drafts = priorities.filter(priority => actionableApplicationStatuses.includes(applicationTrackerStatusKey(applicationStatuses?.[priority.program.id])));
+  return [
+    "Jeep Build Lab partner outreach draft pack",
+    `Build: ${name.trim() || "Untitled build"}`,
+    `Generated: ${new Date(generatedAt).toISOString().slice(0, 10)}`,
+    `Vehicle: ${vehicleDescription(state)}`,
+    `Scope: ${selected.length ? `${selected.length} selected part${selected.length === 1 ? "" : "s"} (${selectedCategorySummary(selected)})` : "No selected parts; full partner directory."}`,
+    `Draft count: ${drafts.length} unsubmitted program${drafts.length === 1 ? "" : "s"} out of ${priorities.length} relevant program${priorities.length === 1 ? "" : "s"}.`,
+    "",
+    drafts.length
+      ? drafts.map((priority, index) => [
+        `Draft ${index + 1}: ${partnerProgramLabel(priority.program)}`,
+        `Tracker status: ${applicationTrackerStatusLabel(applicationStatuses?.[priority.program.id])}`,
+        `Relationship: ${relationshipNames[priority.program.relationship]}`,
+        `Matched categories: ${priority.matchedCategories.join(", ")}`,
+        "",
+        partnerOutreachEmailDraftForPriority(priority, name, state),
+      ].join("\n")).join("\n\n")
+      : "All relevant partner programs are submitted or approved. Keep approved tracking links labeled and tested before publishing.",
+    "",
+    "Do not send without verifying",
+    "- Replace private applicant, traffic, tax, banking, address and phone fields inside the partner network or email client.",
+    "- Do not claim approved affiliate tracking, reseller terms, dealer pricing, wholesale checkout or dropship fulfillment until the partner approves those terms.",
   ].join("\n");
 }
 

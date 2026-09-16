@@ -484,6 +484,15 @@ export function buildPartnerOutreachEmailDraft({ name, state, parts, application
   return partnerOutreachEmailDraftForPriority(next, name, state);
 }
 
+export function buildPartnerOutreachMailtoUrl(input: CommerceApplicationPackInput) {
+  const draft = buildPartnerOutreachEmailDraft(input);
+  const lines = draft.split("\n");
+  const hasSubject = lines[0]?.startsWith("Subject:");
+  const subject = hasSubject ? lines[0].replace(/^Subject:\s*/, "").trim() : "Jeep Build Lab partner outreach";
+  const body = hasSubject ? lines.slice(lines[1] === "" ? 2 : 1).join("\n").trim() : draft;
+  return `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
 function partnerOutreachEmailDraftForPriority(priority: PartnerApplicationPriority, name: string, state: BuildState) {
   const program = priority.program;
   return [

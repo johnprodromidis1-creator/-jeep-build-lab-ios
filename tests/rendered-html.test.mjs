@@ -206,11 +206,16 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /requirements:nextPartnerApplication\.priority\.program\.requirements\?\?\[\]/);
   assert.match(source, /targetPrepText/);
   assert.match(source, /buildPartnerOutreachEmailDraft/);
+  assert.match(source, /buildPartnerOutreachMailtoUrl/);
   assert.match(source, /buildPartnerSubmissionReviewSheet/);
   assert.match(source, /partnerSubmissionReviewChecklist/);
   assert.match(source, /copyTargetPrep/);
   assert.match(source, /copyTargetOutreachEmail/);
+  assert.match(source, /openTargetOutreachEmail/);
   assert.match(source, /Open application/);
+  assert.match(source, /Open email draft/);
+  assert.match(source, /Email draft opened/);
+  assert.match(source, /The email draft could not be opened/);
   assert.match(source, /Mark profile ready/);
   assert.match(source, /Mark submitted/);
   assert.match(source, /Pause target/);
@@ -227,6 +232,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /onAdvanceTarget=\{advanceNextPartnerApplication\}/);
   assert.match(source, /onCopyTarget=\{copyTargetPrep\}/);
   assert.match(source, /onCopyEmail=\{copyTargetOutreachEmail\}/);
+  assert.match(source, /onOpenEmail=\{openTargetOutreachEmail\}/);
   assert.match(source, /onExportReview=\{exportPartnerSubmissionReview\}/);
   assert.match(source, /target=\{nextPartnerAnswerTarget\}/);
   assert.match(source, /Common application answers/);
@@ -303,6 +309,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(commerce, /Affiliate application profile fields/);
   assert.match(commerce, /Next application target/);
   assert.match(commerce, /buildPartnerOutreachEmailDraft/);
+  assert.match(commerce, /buildPartnerOutreachMailtoUrl/);
   assert.match(commerce, /Next outreach email draft/);
   assert.match(commerce, /Subject: Jeep Build Lab partner application/);
   assert.match(commerce, /Current commerce posture: links are reference and application links only/);

@@ -166,7 +166,9 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /partnerApplicationStorageKey/);
   assert.match(source, /partnerApplicationStatusNames/);
   assert.match(source, /partnerApplicationTrackerStatusNames/);
+  assert.match(source, /updatePartnerApplicationStatus/);
   assert.match(source, /cyclePartnerApplicationStatus/);
+  assert.match(source, /advanceNextPartnerApplication/);
   assert.match(source, /nextPartnerApplication/);
   assert.match(source, /nextPartnerAnswerTarget/);
   assert.match(source, /applicationStatuses:partnerApplicationStatus/);
@@ -183,6 +185,9 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /Application answer kit/);
   assert.match(source, /Next application target/);
   assert.match(source, /Open application/);
+  assert.match(source, /Mark profile ready/);
+  assert.match(source, /Mark submitted/);
+  assert.match(source, /onAdvanceTarget=\{advanceNextPartnerApplication\}/);
   assert.match(source, /target=\{nextPartnerAnswerTarget\}/);
   assert.match(source, /Common application answers/);
   assert.match(source, /affiliateApplicationAnswers\.slice\(0,3\)/);

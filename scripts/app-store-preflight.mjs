@@ -119,7 +119,11 @@ export async function runPreflight(projectRoot = scriptRoot) {
   check(checks, await exists(projectRoot, "app/support/page.tsx"), "support route exists");
   check(checks, readiness.includes(LIVE_SITE_URL), "readiness handoff includes the live public site");
   check(checks, has(readiness, /no signed IPA or TestFlight upload has been verified/i), "readiness keeps signed-build status honest");
+  check(checks, has(readiness, /passes 77 tests/i), "readiness records the current regression count");
+  check(checks, has(readiness, /in-picker 15\+ choice depth proof strip/i), "readiness records the catalog depth proof strip");
   check(checks, has(codemagicDoc, /matching provisioning profile/i), "Codemagic guide calls out the app-specific profile");
+  check(checks, has(codemagicDoc, /expanded 77-test regression suite/i), "Codemagic guide records the current regression count");
+  check(checks, has(codemagicDoc, /in-picker 15\+ choice proof strip/i), "Codemagic guide records the catalog depth proof strip");
   check(checks, has(codemagicDoc, /No automatic push triggers or paid plan changes are configured/i), "Codemagic guide keeps cost/trigger guardrail");
   check(checks, has(testflightDoc, /This app's Apple record and provisioning profile remain unverified/i), "TestFlight guide keeps account-owner signing gate");
   check(checks, has(screenshotsDoc, /one to 10 screenshots per device size/i), "screenshot plan keeps App Store count limits");

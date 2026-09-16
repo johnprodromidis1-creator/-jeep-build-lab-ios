@@ -833,6 +833,39 @@ export function buildPartnerApplicationTrackerCsv({ name, state, parts, generate
   return rows.map(row => row.map(commerceCsvCell).join(",")).join("\r\n");
 }
 
+export function buildPartnerApplicationTrackerText({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses, applicationStatusNotes }: CommerceApplicationPackInput) {
+  const selected = selectedParts(state, parts);
+  const programs = partnerProgramsForBuild(state, parts);
+  const priorities = partnerApplicationPrioritiesForBuild(state, parts);
+  const blockedFollowup = blockedApplicationFollowupSection(priorities, applicationStatuses, applicationStatusNotes);
+  return [
+    "Jeep Build Lab partner application tracker summary",
+    `Build: ${name.trim() || "Untitled build"}`,
+    `Generated: ${new Date(generatedAt).toISOString().slice(0, 10)}`,
+    `Vehicle: ${vehicleDescription(state)}`,
+    `Scope: ${selected.length ? `${selected.length} selected part${selected.length === 1 ? "" : "s"} (${selectedCategorySummary(selected)})` : "No selected parts; full partner directory."}`,
+    `Commerce status: ${noActiveCommerceDisclosure}`,
+    "",
+    applicationTrackerSummary(programs, priorities, applicationStatuses, applicationStatusNotes),
+    ...(blockedFollowup ? ["", blockedFollowup] : []),
+    "",
+    "Program status lines",
+    ...priorities.map((priority, index) => {
+      const status = applicationTrackerStatusKey(applicationStatuses?.[priority.program.id]);
+      const note = applicationTrackerNote(priority.program.id, applicationStatusNotes);
+      return [
+        `${index + 1}. ${partnerProgramLabel(priority.program)} - ${partnerApplicationTrackerStatusNames[status]}`,
+        `   Match: ${priority.reason}`,
+        ...(note ? [`   Note: ${note}`] : []),
+        `   Next: ${trackerNextAction(status)}`,
+        `   Link: ${safeCommerceUrl(priority.program.url)}`,
+      ].join("\n");
+    }),
+    "",
+    "Reminder: Do not claim approved affiliate tracking, dealer pricing, checkout, inventory ownership or dropship fulfillment until partner terms are approved and tested.",
+  ].join("\n");
+}
+
 export function buildAffiliateApplicationProfile({ name, notes, state, parts, generatedAt = new Date().toISOString(), applicationStatuses, applicationStatusNotes }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
   const programs = partnerProgramsForBuild(state, parts);

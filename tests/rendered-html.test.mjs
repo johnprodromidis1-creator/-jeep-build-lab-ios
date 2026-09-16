@@ -296,6 +296,10 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /buildPartnerApplicationTrackerCsv/);
   assert.match(source, /buildPartnerOutreachDraftPack/);
   assert.match(source, /exportPartnerApplicationTracker/);
+  assert.match(source, /copyPartnerApplicationTracker/);
+  assert.match(source, /buildPartnerApplicationTrackerText/);
+  assert.match(source, /Copy tracker summary/);
+  assert.match(source, /Tracker summary copied/);
   assert.match(source, /exportPartnerOutreachDrafts/);
   assert.match(source, /jeep-build-partner-application-tracker\.csv/);
   assert.match(source, /jeep-build-partner-outreach-drafts\.txt/);
@@ -335,6 +339,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(commerce, /buildPartnerOutreachDraftPack/);
   assert.match(commerce, /buildPartnerSubmissionReviewSheet/);
   assert.match(commerce, /Jeep Build Lab partner application tracker/);
+  assert.match(commerce, /buildPartnerApplicationTrackerText/);
   assert.match(commerce, /Jeep Build Lab partner outreach draft pack/);
   assert.match(commerce, /Jeep Build Lab partner submission review sheet/);
   assert.match(commerce, /Draft count/);

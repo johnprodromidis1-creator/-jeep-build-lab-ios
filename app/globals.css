@@ -474,6 +474,11 @@
 .application-answer-target small{color:#cfc39f;font-size:12px;white-space:nowrap}
 .application-answer-kit .application-answer-target p,.application-answer-target.complete{font-size:12px;color:#cfc39f;line-height:1.45;margin:0}
 .application-answer-note{border-left:2px solid #b56b55;color:#f0cbc0!important;padding-left:8px}
+.blocked-application-notes{border:1px solid #725046;background:#261815;border-radius:6px;color:#f3d5cc;display:grid;gap:7px;margin:10px 0;padding:9px 10px}
+.blocked-application-notes>strong{font-size:13px;color:#f7ded7}
+.blocked-application-notes p{margin:0;display:grid;gap:2px;font-size:12px;line-height:1.35}
+.blocked-application-notes span{color:#fff0ec;font-weight:700}
+.blocked-application-notes small{color:#e7bdb2;font-size:12px;line-height:1.4}
 .application-answer-requirements{margin:1px 0 0;padding-left:15px;display:grid;gap:3px;color:#b8c9c3;font-size:12px;line-height:1.45}
 .application-answer-target.complete{border-color:#6aa36e;color:#d9f3dc}
 .application-answer-kit dl{display:grid;gap:7px;margin:0}

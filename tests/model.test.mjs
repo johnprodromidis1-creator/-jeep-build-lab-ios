@@ -50,7 +50,7 @@ const {initialState,baseCatalog,categories,selectedParts,totalFor,buildIssues,st
 const {catalogFitScore,catalogSortOptions,compareCatalogParts,dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
 const {buildShopBrief}=shopBrief;
-const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationAnswers,buildAffiliateApplicationProfile,buildBlockedApplicationSupportDraft,buildBlockedApplicationSupportMailtoUrl,buildCommerceApplicationPack,buildPartnerApplicationLinks,buildPartnerApplicationTrackerCsv,buildPartnerApplicationTrackerText,buildPaidLinkDisclosurePack,buildPartnerOutreachDraftPack,buildPartnerOutreachEmailDraft,buildPartnerOutreachMailtoUrl,buildPartnerSubmissionReviewSheet,commerceApplicationChecklist,affiliateApplicationAnswers,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist,partnerSubmissionReviewChecklist,partnerSubmissionPrivateFields,paidLinkDisclosureSnippet,paidLinkLaunchChecklist}=commerce;
+const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationAnswers,buildAffiliateApplicationProfile,buildBlockedApplicationSupportDraft,buildBlockedApplicationSupportMailtoUrl,buildCommerceApplicationPack,buildPartnerApplicationLinks,buildPartnerApplicationTrackerCsv,buildPartnerApplicationTrackerText,buildPaidLinkDisclosurePack,buildPartnerOutreachDraftPack,buildPartnerOutreachEmailDraft,buildPartnerOutreachMailtoUrl,buildPartnerSubmissionReviewSheet,commerceApplicationChecklist,affiliateApplicationAnswers,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist,partnerSubmissionReviewChecklist,partnerSubmissionPrivateFields,paidLinkDisclosureSnippet,paidLinkLaunchChecklist,paidLinkLaunchStatus}=commerce;
 const {buildRecipes}=recipes;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
@@ -160,6 +160,12 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.equal(partnerApplicationTrackerStatusNames.submitted,"Submitted");
  assert.equal(partnerApplicationTrackerStatusNames.blocked,"Blocked");
  const applicationStatuses={"realtruck-affiliate":"submitted","tire-rack-affiliate":"ready","turn-14-distribution":"approved"};
+ const launchStatus=paidLinkLaunchStatus(priorities,applicationStatuses);
+ assert.match(launchStatus,/Paid-link launch status/);
+ assert.match(launchStatus,/Approved programs ready for tracking-link setup: 1 \(Turn 14 Distribution\)\./);
+ assert.match(launchStatus,/Submitted applications still waiting on approval or terms: 1 \(RealTruck via Impact\)\./);
+ assert.match(launchStatus,/Unapproved relevant programs still locked: \d+\./);
+ assert.match(launchStatus,/only approved, partner-issued tracking URLs may be labeled affiliate or sponsored/);
  const pack=buildCommerceApplicationPack({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses});
  assert.match(pack,/Jeep Build Lab partner application pack/);
  assert.match(pack,/Generated: 2026-09-14/);
@@ -174,6 +180,9 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(pack,/Paid-link disclosure snippet/);
  assert.match(pack,/Disclosure: Jeep Build Lab may earn a commission from links clearly labeled affiliate or sponsored/);
  assert.match(pack,/Pre-publish paid-link checks/);
+ assert.match(pack,/Paid-link launch status/);
+ assert.match(pack,/Approved programs ready for tracking-link setup: 1 \(Turn 14 Distribution\)\./);
+ assert.match(pack,/Launch rule: only approved, partner-issued tracking URLs may be labeled affiliate or sponsored/);
  assert.match(pack,/Submission review checklist/);
  assert.match(pack,/Review every visible field, checkbox, opt-in, agreement and program term/);
  assert.match(pack,/Application tracker summary\n- To apply: \d+\n- Profile ready: 1\n- Submitted: 1\n- Approved: 1\n- Paused: 0\n- Blocked: 0\n- Next application: /);
@@ -267,6 +276,8 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(disclosure,/Use this disclosure only after partner approval/);
  assert.match(disclosure,/Disclosure snippet/);
  assert.match(disclosure,/Current commerce status/);
+ assert.match(disclosure,/Paid-link launch status/);
+ assert.match(disclosure,/Submitted applications still waiting on approval or terms: 1 \(RealTruck via Impact\)\./);
  assert.match(disclosure,/Application tracker summary/);
  assert.match(disclosure,/Pre-publish paid-link checks/);
  assert.match(disclosure,/Partner has approved the account and program terms/);
@@ -323,6 +334,7 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(blockedProfile,/Blocked application follow-up\n- CARiD: Partner network password screen rejected the account setup\./);
  const blockedDisclosure=buildPaidLinkDisclosurePack({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses:blockedStatuses,applicationStatusNotes:blockedNotes});
  assert.match(blockedDisclosure,/Blocked application follow-up\n- CARiD: Partner network password screen rejected the account setup\./);
+ assert.match(blockedDisclosure,/Blocked applications to resolve before launch: 1 \(CARiD\)\./);
  const blockedDraftPack=buildPartnerOutreachDraftPack({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses:blockedStatuses,applicationStatusNotes:blockedNotes});
  assert.match(blockedDraftPack,/Blocked application follow-up\n- CARiD: Partner network password screen rejected the account setup\./);
  assert.match(blockedDraftPack,/Jeep Build Lab blocked partner support ticket drafts/);

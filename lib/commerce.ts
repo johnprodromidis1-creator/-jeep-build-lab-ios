@@ -446,6 +446,27 @@ function nextApplicationPriority(priorities: readonly PartnerApplicationPriority
   return priorities.find(priority => actionableApplicationStatuses.includes(applicationTrackerStatusKey(applicationStatuses?.[priority.program.id]))) ?? null;
 }
 
+export function paidLinkLaunchStatus(priorities: readonly PartnerApplicationPriority[], applicationStatuses: CommerceApplicationPackInput["applicationStatuses"]) {
+  const approved = priorities.filter(priority => applicationTrackerStatusKey(applicationStatuses?.[priority.program.id]) === "approved");
+  const submitted = priorities.filter(priority => applicationTrackerStatusKey(applicationStatuses?.[priority.program.id]) === "submitted");
+  const blocked = priorities.filter(priority => applicationTrackerStatusKey(applicationStatuses?.[priority.program.id]) === "blocked");
+  const locked = priorities.length - approved.length;
+  return [
+    "Paid-link launch status",
+    approved.length
+      ? `- Approved programs ready for tracking-link setup: ${approved.length} (${approved.map(priority => partnerProgramLabel(priority.program)).join("; ")}).`
+      : "- Approved programs ready for tracking-link setup: 0. Paid links remain locked.",
+    submitted.length
+      ? `- Submitted applications still waiting on approval or terms: ${submitted.length} (${submitted.map(priority => partnerProgramLabel(priority.program)).join("; ")}).`
+      : "- Submitted applications still waiting on approval or terms: 0.",
+    blocked.length
+      ? `- Blocked applications to resolve before launch: ${blocked.length} (${blocked.map(priority => partnerProgramLabel(priority.program)).join("; ")}).`
+      : "- Blocked applications to resolve before launch: 0.",
+    `- Unapproved relevant programs still locked: ${locked}.`,
+    "- Launch rule: only approved, partner-issued tracking URLs may be labeled affiliate or sponsored; all other links stay source or application references.",
+  ].join("\n");
+}
+
 function applicationTrackerSummary(programs: readonly PartnerProgram[], priorities: readonly PartnerApplicationPriority[], applicationStatuses: CommerceApplicationPackInput["applicationStatuses"], applicationStatusNotes?: CommerceApplicationPackInput["applicationStatusNotes"]) {
   const counts = Object.fromEntries(applicationTrackerStatuses.map(status => [status, 0])) as Record<PartnerApplicationTrackerStatus, number>;
   for (const program of programs) counts[applicationTrackerStatusKey(applicationStatuses?.[program.id])] += 1;
@@ -951,6 +972,8 @@ export function buildPaidLinkDisclosurePack({ name, notes, state, parts, generat
     "Build focus",
     `- ${selected.length ? selectedCategorySummary(selected) : "No selected parts; use the full Jeep Build Lab audience."}`,
     "",
+    paidLinkLaunchStatus(allPriorities, applicationStatuses),
+    "",
     applicationTrackerSummary(programs, allPriorities, applicationStatuses, applicationStatusNotes),
     ...(blockedFollowup ? ["", blockedFollowup] : []),
     "",
@@ -998,6 +1021,8 @@ export function buildCommerceApplicationPack({ name, notes, state, parts, genera
     "",
     "Pre-publish paid-link checks",
     paidLinkLaunchChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    paidLinkLaunchStatus(allPriorities, applicationStatuses),
     "",
     applicationTrackerSummary(programs, allPriorities, applicationStatuses, applicationStatusNotes),
     ...(blockedFollowup ? ["", blockedFollowup] : []),

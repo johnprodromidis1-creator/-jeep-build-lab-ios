@@ -379,6 +379,8 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(commerce, /Sponsored-link readiness/);
   assert.match(commerce, /paidLinkDisclosureSnippet/);
   assert.match(commerce, /paidLinkLaunchChecklist/);
+  assert.match(commerce, /paidLinkLaunchStatus/);
+  assert.match(commerce, /Paid-link launch status/);
   assert.match(commerce, /Jeep Build Lab paid-link disclosure pack/);
   assert.match(commerce, /Pre-publish paid-link checks/);
   assert.match(commerce, /Paid-link disclosure snippet/);

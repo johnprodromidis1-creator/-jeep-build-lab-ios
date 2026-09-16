@@ -38,6 +38,11 @@ The app should win by helping an owner decide what to build, what fits, what to 
 4. Keep the partner tracker focused on submitted/blocked/approved proof, not checkout, until partner accounts are accepted.
 5. Keep public language independent: not affiliated with Jeep or retailers, prices are snapshots, final fitment and install must be confirmed by seller/installer.
 
+## Implementation Status
+
+- Six source-backed owner-intent starter packs now turn the template-pack moat into app UI: low-cost visual refresh, daily trail stance, beach-weekend 4xe, overland weekend recovery, recovery-ready trail and sourced 2024 Sahara 4xe sample.
+- Every starter pack still runs through the same fitment-error guardrails, source snapshot catalog and confirmation flow before replacing a draft.
+
 ## Sources Rechecked
 
 - Jeep Wrangler page, observed September 16, 2026: <https://www.jeep.com/wrangler.html>

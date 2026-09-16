@@ -403,7 +403,7 @@
 .starter-strip-head>p{max-width:560px}
 .starter-strip strong{display:block;font-size:18px;font-weight:600;line-height:1.3;margin:2px 0;color:#eff5f6;overflow-wrap:anywhere}
 .starter-strip p{font-size:13px;line-height:1.55;color:#adbec5;margin:0}
-.recipe-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.recipe-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:10px}
 .recipe-row{display:grid;grid-template-rows:auto auto 1fr auto;gap:7px;min-width:0;border:1px solid #3b4d54;border-radius:7px;background:#152126;padding:12px}
 .recipe-row strong{font-size:15px;margin:0;color:#f0f6f7}
 .recipe-row p{font-size:12px}

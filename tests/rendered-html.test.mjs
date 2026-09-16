@@ -49,6 +49,10 @@ test("serves the builder with production metadata and the initial catalog", asyn
   assert.match(html, /Quote readiness/);
   assert.match(html, /Purchase stages/);
   assert.match(html, /STARTER BUILDS/);
+  assert.match(html, /source-backed owner-intent packs/i);
+  assert.match(html, /low-cost visual refresh/i);
+  assert.match(html, /beach-weekend 4xe plan/i);
+  assert.match(html, /overland weekend plan/i);
   assert.match(html, /daily trail rim-and-tire plan/i);
   assert.match(html, /recovery-ready trail plan/i);
   assert.match(html, /Load a 2024 Sahara 4xe sample/);
@@ -812,9 +816,14 @@ test("builder exposes complete starter build recipes", async () => {
   assert.match(source, /function requestRecipe\(recipe:BuildRecipe\)/);
   assert.match(source, /confirm\?\.kind==="recipe"/);
   assert.match(source, /aria-label="Starter build recipes"/);
+  assert.match(source, /source-backed owner-intent packs/);
+  assert.match(recipes, /Low-cost visual refresh/);
   assert.match(recipes, /Daily trail starter/);
+  assert.match(recipes, /Beach weekend 4xe/);
+  assert.match(recipes, /Overland weekend recovery/);
   assert.match(recipes, /Recovery-ready trail build/);
   assert.match(recipes, /2024 Sahara 4xe starter/);
+  assert.match(css, /repeat\(auto-fit,minmax\(205px,1fr\)\)/);
   assert.match(css, /\.recipe-list/);
   assert.match(css, /\.recipe-row/);
   assert.match(css, /@media\(max-width:900px\).*\.recipe-list\{grid-template-columns:1fr\}/);

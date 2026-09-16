@@ -69,7 +69,9 @@ test("catalog exposes at least fifteen visible choices per major part category",
  }
 });
 test("starter build recipes use known compatible catalog selections",()=>{
- assert.ok(buildRecipes.length>=3);
+ assert.ok(buildRecipes.length>=6);
+ assert.deepEqual(new Set(buildRecipes.map(recipe=>recipe.id)).size,buildRecipes.length);
+ for(const name of ["Low-cost visual refresh","Daily trail starter","Beach weekend 4xe","Overland weekend recovery","Recovery-ready trail build","2024 Sahara 4xe starter"])assert.ok(buildRecipes.some(recipe=>recipe.name===name),name);
  const catalogIds=new Set(baseCatalog.map(p=>p.id));
  for(const recipe of buildRecipes){
   const parsed=stateSchema.safeParse(recipe.state);

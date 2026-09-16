@@ -15,7 +15,7 @@ test("App Store preflight keeps release guardrails aligned", async () => {
 
   assert.equal(report.expected.bundleId, EXPECTED_BUNDLE_ID);
   assert.equal(report.expected.version, EXPECTED_VERSION);
-  assert.equal(EXPECTED_LIVE_SITES_VERSION, 118);
+  assert.equal(EXPECTED_LIVE_SITES_VERSION, 119);
   const labels = new Set(report.checks.map((item) => item.label));
   assert.ok(labels.has("screenshot plan covers iPhone and iPad targets"));
   assert.ok(labels.has("screenshot plan requires native signed/TestFlight captures"));
@@ -34,6 +34,7 @@ test("App Store preflight keeps release guardrails aligned", async () => {
   assert.ok(labels.has("readiness records submitted and approved launch follow-up panel"));
   assert.ok(labels.has("readiness records paid-link launch proof checklist"));
   assert.ok(labels.has("readiness records neutral build-advisor positioning"));
+  assert.ok(labels.has("readiness records owner-intent starter packs"));
   assert.ok(labels.has("README handoff includes the live public site"));
   assert.ok(labels.has("README records the latest Sites version"));
   assert.ok(labels.has("README records the signing-profile gate"));
@@ -46,6 +47,7 @@ test("App Store preflight keeps release guardrails aligned", async () => {
   assert.ok(labels.has("README records submitted and approved launch follow-up panel"));
   assert.ok(labels.has("README records paid-link launch proof checklist"));
   assert.ok(labels.has("README records market-positioning memo"));
+  assert.ok(labels.has("README records owner-intent starter packs"));
   assert.ok(labels.has("Codemagic prep enforces the registered Bundle ID"));
   assert.ok(labels.has("Codemagic prep derives build numbers from Codemagic"));
   assert.ok(labels.has("Codemagic prep rejects wrong IDs and remote shells"));
@@ -66,9 +68,12 @@ test("App Store preflight keeps release guardrails aligned", async () => {
   assert.ok(labels.has("Codemagic guide records submitted and approved launch follow-up panel"));
   assert.ok(labels.has("Codemagic guide records paid-link launch proof checklist"));
   assert.ok(labels.has("Codemagic guide records market-positioning memo"));
+  assert.ok(labels.has("Codemagic guide records owner-intent starter packs"));
   assert.ok(labels.has("market-positioning memo names the neutral advisor wedge"));
   assert.ok(labels.has("market-positioning memo covers current competitor set"));
   assert.ok(labels.has("market-positioning memo keeps commerce claims constrained"));
+  assert.ok(labels.has("market-positioning memo records template-pack implementation"));
+  assert.ok(labels.has("starter recipes include new owner-intent packs"));
   assert.ok(report.checks.length >= 43);
   assert.equal(report.ok, true, failures);
 });

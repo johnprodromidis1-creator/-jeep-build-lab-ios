@@ -238,6 +238,10 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /buildCommerceApplicationPack/);
   assert.match(source, /buildPartnerApplicationLinks/);
   assert.match(source, /partnerProgramsForBuild/);
+  assert.match(source, /copyPartnerLinks/);
+  assert.match(source, /Partner links copied/);
+  assert.match(source, /Download partner links, then copy from the text file/);
+  assert.match(source, /Copy partner links/);
   assert.match(source, /Download commerce pack/);
   assert.match(source, /Download partner links/);
   assert.match(source, /applications for selected parts/);

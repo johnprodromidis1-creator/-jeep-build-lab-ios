@@ -422,8 +422,26 @@ function affiliateApplicationAnswerLines() {
   return affiliateApplicationAnswers.map(({ field, answer }, index) => `${index + 1}. ${field}: ${answer}`).join("\n");
 }
 
-export function buildAffiliateApplicationAnswers({ name, state, parts, generatedAt = new Date().toISOString() }: CommerceApplicationPackInput) {
+function nextApplicationTargetLines(priorities: readonly PartnerApplicationPriority[], applicationStatuses: CommerceApplicationPackInput["applicationStatuses"]) {
+  const next = nextApplicationPriority(priorities, applicationStatuses);
+  if (!next) {
+    return ["Next application target", "- All tracked programs for this build are submitted or approved."];
+  }
+  return [
+    "Next application target",
+    `- Program: ${partnerProgramLabel(next.program)}`,
+    `- Tracker status: ${applicationTrackerStatusLabel(applicationStatuses?.[next.program.id])}`,
+    `- Relationship: ${relationshipNames[next.program.relationship]}`,
+    ...(next.program.network ? [`- Network: ${next.program.network}`] : []),
+    `- Application link: ${safeCommerceUrl(next.program.url)}`,
+    `- Match reason: ${next.reason}`,
+    ...(next.program.requirements?.length ? [`- Requirements: ${next.program.requirements.join(" ")}`] : []),
+  ];
+}
+
+export function buildAffiliateApplicationAnswers({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
+  const priorities = partnerApplicationPrioritiesForBuild(state, parts);
   return [
     "Jeep Build Lab affiliate application answer kit",
     `Build: ${name.trim() || "Untitled build"}`,
@@ -435,6 +453,8 @@ export function buildAffiliateApplicationAnswers({ name, state, parts, generated
     `- Catalog basis: ${parts.length} sourced variants with dated source snapshots; no live-price, inventory or checkout claim.`,
     `- Build focus: ${selected.length ? selectedCategorySummary(selected) : "No selected build yet; describe the full Jeep Build Lab audience."}`,
     `- Commerce status: ${noActiveCommerceDisclosure}`,
+    "",
+    ...nextApplicationTargetLines(priorities, applicationStatuses),
     "",
     "Common application answers",
     affiliateApplicationAnswerLines(),

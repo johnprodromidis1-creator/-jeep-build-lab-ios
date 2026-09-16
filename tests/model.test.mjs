@@ -210,6 +210,12 @@ test("commerce application pack exports selected partner paths and prep checklis
  const answers=buildAffiliateApplicationAnswers({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses});
  assert.match(answers,/Jeep Build Lab affiliate application answer kit/);
  assert.match(answers,/Public profile basis/);
+ assert.match(answers,/Next application target/);
+ assert.match(answers,/Program: CARiD/);
+ assert.match(answers,/Tracker status: To apply/);
+ assert.match(answers,/Relationship: Affiliate/);
+ assert.match(answers,/Application link: https:\/\/www\.carid\.com\/affiliate\.html/);
+ assert.match(answers,/Match reason: Matches 2 selected parts across Tires, Suspension\./);
  assert.match(answers,/Common application answers/);
  assert.match(answers,/Do not paste without verifying/);
  assert.match(answers,/Do not claim approved affiliate tracking, live checkout, dealer pricing, inventory ownership or dropship fulfillment/);

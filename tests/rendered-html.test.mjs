@@ -218,6 +218,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(commerce, /affiliateApplicationAnswers/);
   assert.match(commerce, /Jeep Build Lab affiliate application answer kit/);
   assert.match(commerce, /Affiliate application profile fields/);
+  assert.match(commerce, /Next application target/);
   assert.match(commerce, /Common application answers/);
   assert.match(commerce, /Fulfillment role/);
   assert.match(commerce, /partnerApplicationTrackerStatusNames/);

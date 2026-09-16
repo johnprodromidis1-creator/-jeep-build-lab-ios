@@ -207,6 +207,9 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /Application answer kit/);
   assert.match(source, /Blocked application notes/);
   assert.match(source, /blocked-application-notes/);
+  assert.match(source, /blockedPartnerApplicationNotes/);
+  assert.match(source, /copyBlockedApplicationNotes/);
+  assert.match(source, /Copy blocked notes/);
   assert.match(source, /Next application target/);
   assert.match(source, /Target requirements/);
   assert.match(source, /application-answer-requirements/);
@@ -356,6 +359,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(css, /\.application-answer-target/);
   assert.match(css, /\.application-answer-note/);
   assert.match(css, /\.blocked-application-notes/);
+  assert.match(css, /\.blocked-application-notes \[data-slot=button\]/);
   assert.match(css, /\.application-answer-requirements/);
   assert.match(css, /\.application-answer-actions/);
   assert.match(css, /\.partner-priority/);

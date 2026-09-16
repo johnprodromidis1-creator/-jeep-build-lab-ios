@@ -15,7 +15,7 @@ test("App Store preflight keeps release guardrails aligned", async () => {
 
   assert.equal(report.expected.bundleId, EXPECTED_BUNDLE_ID);
   assert.equal(report.expected.version, EXPECTED_VERSION);
-  assert.equal(EXPECTED_LIVE_SITES_VERSION, 115);
+  assert.equal(EXPECTED_LIVE_SITES_VERSION, 116);
   const labels = new Set(report.checks.map((item) => item.label));
   assert.ok(labels.has("screenshot plan covers iPhone and iPad targets"));
   assert.ok(labels.has("screenshot plan requires native signed/TestFlight captures"));

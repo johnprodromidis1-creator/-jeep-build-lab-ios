@@ -179,6 +179,10 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /Track \$\{trackedPartnerApplications\.length\} program/);
   assert.match(source, /Download profile/);
   assert.match(source, /Affiliate application profile preview/);
+  assert.match(source, /Application answer kit/);
+  assert.match(source, /Common application answers/);
+  assert.match(source, /affiliateApplicationAnswers\.slice\(0,3\)/);
+  assert.match(source, /Verify private business, tax and banking details inside the partner network/);
   assert.match(source, /Download the profile template or full application pack for partner review/);
   assert.match(source, /RealTruck path: Impact application/);
   assert.match(source, /Download application pack/);
@@ -220,6 +224,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
   assert.match(css, /\.sponsor-readiness/);
   assert.match(css, /\.application-profile-preview/);
+  assert.match(css, /\.application-answer-kit/);
   assert.match(css, /\.partner-priority/);
   assert.match(css, /\.priority-program/);
   assert.match(css, /\.partner-status-tracker/);

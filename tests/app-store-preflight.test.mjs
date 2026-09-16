@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
-import { EXPECTED_BUNDLE_ID, EXPECTED_VERSION, runPreflight } from "../scripts/app-store-preflight.mjs";
+import { EXPECTED_BUNDLE_ID, EXPECTED_LIVE_SITES_VERSION, EXPECTED_VERSION, runPreflight } from "../scripts/app-store-preflight.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 
@@ -15,6 +15,7 @@ test("App Store preflight keeps release guardrails aligned", async () => {
 
   assert.equal(report.expected.bundleId, EXPECTED_BUNDLE_ID);
   assert.equal(report.expected.version, EXPECTED_VERSION);
+  assert.equal(EXPECTED_LIVE_SITES_VERSION, 107);
   const labels = new Set(report.checks.map((item) => item.label));
   assert.ok(labels.has("screenshot plan covers iPhone and iPad targets"));
   assert.ok(labels.has("screenshot plan requires native signed/TestFlight captures"));
@@ -22,6 +23,8 @@ test("App Store preflight keeps release guardrails aligned", async () => {
   assert.ok(labels.has("screenshot plan protects private capture data"));
   assert.ok(labels.has("readiness records the current regression count"));
   assert.ok(labels.has("readiness records the catalog depth proof strip"));
+  assert.ok(labels.has("readiness records the latest Sites version"));
+  assert.ok(labels.has("readiness records blank blocked-target guidance"));
   assert.ok(labels.has("Codemagic prep enforces the registered Bundle ID"));
   assert.ok(labels.has("Codemagic prep derives build numbers from Codemagic"));
   assert.ok(labels.has("Codemagic prep rejects wrong IDs and remote shells"));
@@ -29,6 +32,8 @@ test("App Store preflight keeps release guardrails aligned", async () => {
   assert.ok(labels.has("Codemagic prep updates both Xcode build configurations"));
   assert.ok(labels.has("Codemagic guide records the current regression count"));
   assert.ok(labels.has("Codemagic guide records the catalog depth proof strip"));
+  assert.ok(labels.has("Codemagic guide records the latest Sites version"));
+  assert.ok(labels.has("Codemagic guide records blank blocked-target guidance"));
   assert.ok(report.checks.length >= 43);
   assert.equal(report.ok, true, failures);
 });

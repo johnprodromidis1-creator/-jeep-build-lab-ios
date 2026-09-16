@@ -7,6 +7,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 export const EXPECTED_BUNDLE_ID = "com.johnprodromidis.jeepbuildlab";
 export const EXPECTED_VERSION = "0.2.0";
 export const LIVE_SITE_URL = "https://jeep-build-lab.johnprodromidis1.chatgpt.site";
+export const EXPECTED_LIVE_SITES_VERSION = 107;
 
 const nativeSafeTests =
   "node --test tests/model.test.mjs tests/device-storage.test.mjs tests/ios-metadata.test.mjs tests/platform.test.mjs";
@@ -118,12 +119,16 @@ export async function runPreflight(projectRoot = scriptRoot) {
   check(checks, await exists(projectRoot, "app/privacy/page.tsx"), "privacy route exists");
   check(checks, await exists(projectRoot, "app/support/page.tsx"), "support route exists");
   check(checks, readiness.includes(LIVE_SITE_URL), "readiness handoff includes the live public site");
+  check(checks, readiness.includes(`Sites version ${EXPECTED_LIVE_SITES_VERSION}`), "readiness records the latest Sites version");
   check(checks, has(readiness, /no signed IPA or TestFlight upload has been verified/i), "readiness keeps signed-build status honest");
   check(checks, has(readiness, /passes 77 tests/i), "readiness records the current regression count");
   check(checks, has(readiness, /in-picker 15\+ choice depth proof strip/i), "readiness records the catalog depth proof strip");
+  check(checks, has(readiness, /blank blocked targets stay visible with default blocker guidance/i), "readiness records blank blocked-target guidance");
   check(checks, has(codemagicDoc, /matching provisioning profile/i), "Codemagic guide calls out the app-specific profile");
+  check(checks, codemagicDoc.includes(`Sites version ${EXPECTED_LIVE_SITES_VERSION}`), "Codemagic guide records the latest Sites version");
   check(checks, has(codemagicDoc, /expanded 77-test regression suite/i), "Codemagic guide records the current regression count");
   check(checks, has(codemagicDoc, /in-picker 15\+ choice proof strip/i), "Codemagic guide records the catalog depth proof strip");
+  check(checks, has(codemagicDoc, /blank blocked targets stay visible with default blocker guidance/i), "Codemagic guide records blank blocked-target guidance");
   check(checks, has(codemagicDoc, /No automatic push triggers or paid plan changes are configured/i), "Codemagic guide keeps cost/trigger guardrail");
   check(checks, has(testflightDoc, /This app's Apple record and provisioning profile remain unverified/i), "TestFlight guide keeps account-owner signing gate");
   check(checks, has(screenshotsDoc, /one to 10 screenshots per device size/i), "screenshot plan keeps App Store count limits");

@@ -46,12 +46,23 @@ export type PartnerApplicationPriority = {
   reason: string;
 };
 
+export const partnerApplicationTrackerStatusNames = {
+  todo: "To apply",
+  ready: "Profile ready",
+  submitted: "Submitted",
+  approved: "Approved",
+  paused: "Paused",
+} as const;
+
+export type PartnerApplicationTrackerStatus = keyof typeof partnerApplicationTrackerStatusNames;
+
 export type CommerceApplicationPackInput = {
   name: string;
   notes: string;
   state: BuildState;
   parts: Part[];
   generatedAt?: string;
+  applicationStatuses?: Record<string, PartnerApplicationTrackerStatus | string | undefined>;
 };
 
 const allCategories = [...categories];
@@ -342,10 +353,17 @@ function selectedPartCommerceLine(part: Part, state: BuildState) {
   ].join("\n");
 }
 
-function partnerProgramApplicationLine(program: PartnerProgram) {
+function applicationTrackerStatusLabel(status: unknown) {
+  return typeof status === "string" && status in partnerApplicationTrackerStatusNames
+    ? partnerApplicationTrackerStatusNames[status as PartnerApplicationTrackerStatus]
+    : partnerApplicationTrackerStatusNames.todo;
+}
+
+function partnerProgramApplicationLine(program: PartnerProgram, applicationStatuses: CommerceApplicationPackInput["applicationStatuses"]) {
   return [
     `- ${program.name} (${relationshipNames[program.relationship]})`,
     `  Status: ${commerceStatusNames[program.status]}`,
+    `  Application tracker: ${applicationTrackerStatusLabel(applicationStatuses?.[program.id])}`,
     ...(program.network ? [`  Network: ${program.network}`] : []),
     `  Categories: ${programCategories(program)}`,
     `  Application link: ${safeCommerceUrl(program.url)}`,
@@ -354,7 +372,11 @@ function partnerProgramApplicationLine(program: PartnerProgram) {
   ].join("\n");
 }
 
-export function buildPartnerApplicationLinks({ name, state, parts, generatedAt = new Date().toISOString() }: CommerceApplicationPackInput) {
+function suggestedApplicationLine(priority: PartnerApplicationPriority, index: number, applicationStatuses: CommerceApplicationPackInput["applicationStatuses"]) {
+  return `${index + 1}. ${priority.program.name}${priority.program.network ? ` via ${priority.program.network}` : ""} - ${priority.reason} Tracker: ${applicationTrackerStatusLabel(applicationStatuses?.[priority.program.id])}.`;
+}
+
+export function buildPartnerApplicationLinks({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
   const programs = partnerProgramsForBuild(state, parts);
   const priorities = partnerApplicationPrioritiesForBuild(state, parts).slice(0, 5);
@@ -372,13 +394,14 @@ export function buildPartnerApplicationLinks({ name, state, parts, generatedAt =
     sponsoredLinkReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
     "Suggested application order",
-    priorities.map((priority, index) => `${index + 1}. ${priority.program.name}${priority.program.network ? ` via ${priority.program.network}` : ""} - ${priority.reason}`).join("\n"),
+    priorities.map((priority, index) => suggestedApplicationLine(priority, index, applicationStatuses)).join("\n"),
     "",
     programs.map((program, index) => [
       `${index + 1}. ${program.name} - ${relationshipNames[program.relationship]}`,
       ...(program.network ? [`   Network: ${program.network}`] : []),
       `   Categories: ${programCategories(program)}`,
       `   Status: ${commerceStatusNames[program.status]}`,
+      `   Application tracker: ${applicationTrackerStatusLabel(applicationStatuses?.[program.id])}`,
       `   Link: ${safeCommerceUrl(program.url)}`,
       `   Note: ${program.note}`,
       ...(program.requirements?.length ? [`   Requirements: ${program.requirements.join(" ")}`] : []),
@@ -386,7 +409,7 @@ export function buildPartnerApplicationLinks({ name, state, parts, generatedAt =
   ].join("\n");
 }
 
-export function buildAffiliateApplicationProfile({ name, notes, state, parts, generatedAt = new Date().toISOString() }: CommerceApplicationPackInput) {
+export function buildAffiliateApplicationProfile({ name, notes, state, parts, generatedAt = new Date().toISOString(), applicationStatuses }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
   const programs = partnerProgramsForBuild(state, parts);
   const priorities = partnerApplicationPrioritiesForBuild(state, parts).slice(0, 5);
@@ -411,11 +434,12 @@ export function buildAffiliateApplicationProfile({ name, notes, state, parts, ge
     sponsoredLinkReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
     "Suggested application order",
-    priorities.map((priority, index) => `${index + 1}. ${priority.program.name}${priority.program.network ? ` via ${priority.program.network}` : ""} - ${priority.reason}`).join("\n"),
+    priorities.map((priority, index) => suggestedApplicationLine(priority, index, applicationStatuses)).join("\n"),
     "",
     "Partner focus",
     programs.map(program => [
       `- ${program.name}${program.network ? ` via ${program.network}` : ""}`,
+      `  Application tracker: ${applicationTrackerStatusLabel(applicationStatuses?.[program.id])}`,
       `  Relationship: ${relationshipNames[program.relationship]}`,
       `  Categories: ${programCategories(program)}`,
       `  Link: ${safeCommerceUrl(program.url)}`,
@@ -431,7 +455,7 @@ export function buildAffiliateApplicationProfile({ name, notes, state, parts, ge
   ].join("\n");
 }
 
-export function buildCommerceApplicationPack({ name, notes, state, parts, generatedAt = new Date().toISOString() }: CommerceApplicationPackInput) {
+export function buildCommerceApplicationPack({ name, notes, state, parts, generatedAt = new Date().toISOString(), applicationStatuses }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
   const programs = partnerProgramsForBuild(state, parts);
   const priorities = partnerApplicationPrioritiesForBuild(state, parts).slice(0, 5);
@@ -452,13 +476,13 @@ export function buildCommerceApplicationPack({ name, notes, state, parts, genera
     sponsoredLinkReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
     "Suggested application order",
-    priorities.map((priority, index) => `${index + 1}. ${priority.program.name}${priority.program.network ? ` via ${priority.program.network}` : ""} - ${priority.reason}`).join("\n"),
+    priorities.map((priority, index) => suggestedApplicationLine(priority, index, applicationStatuses)).join("\n"),
     "",
     "Selected build source links",
     selected.length ? selected.map(part => selectedPartCommerceLine(part, state)).join("\n") : "- No parts are selected yet. The program directory below is not narrowed to a build.",
     "",
     "Relevant application links",
-    programs.map(partnerProgramApplicationLine).join("\n"),
+    programs.map(program => partnerProgramApplicationLine(program, applicationStatuses)).join("\n"),
     "",
     "Application prep checklist",
     commerceApplicationChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),

@@ -14,7 +14,7 @@ import {baseCatalog,categories,categoryNames,initialState,stateSchema,selectedPa
 import {allCatalogFilter,catalogSortOptions,compareCatalogParts,dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters,priceBandOptions,type CatalogSort} from "@/lib/catalog-filters";
 import {allGarageFilter,filterGarageBuilds,garageConflictCount,garageConflictOptions,garageSortOptions,hasGarageFilter,type GarageSort} from "@/lib/garage-filters";
 import {buildShopBrief} from "@/lib/shop-brief";
-import {affiliateApplicationProfileFields,commerceDisclosure,noActiveCommerceDisclosure,partnerPrograms,commerceOffersForPart,commerceSummaryForPart,relationshipNames,commerceStatusNames,safeCommerceUrl,buildAffiliateApplicationProfile,buildCommerceApplicationPack,buildPartnerApplicationLinks,partnerApplicationPrioritiesForBuild,partnerProgramsForBuild,sponsoredLinkReadinessChecklist} from "@/lib/commerce";
+import {affiliateApplicationProfileFields,commerceDisclosure,noActiveCommerceDisclosure,partnerPrograms,commerceOffersForPart,commerceSummaryForPart,relationshipNames,commerceStatusNames,safeCommerceUrl,buildAffiliateApplicationProfile,buildCommerceApplicationPack,buildPartnerApplicationLinks,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,partnerProgramsForBuild,sponsoredLinkReadinessChecklist,type PartnerApplicationTrackerStatus} from "@/lib/commerce";
 import {buildRecipes,type BuildRecipe} from "@/lib/build-recipes";
 
 import {costPlan,groupParts,stageFor,stageNames,type Stage} from '@/lib/planning';
@@ -32,10 +32,10 @@ const icons={wheels:CircleDot,tires:CircleDot,lift:MoveVertical,bumpers:PanelTop
 const starter4xeRecipe=buildRecipes.find(recipe=>recipe.id==="sahara-4xe")??buildRecipes[0];
 const favoriteStorageKey="jeep-build-lab:favorites:v1";
 const partnerApplicationStorageKey="jeep-build-lab:partner-applications:v1";
-const partnerApplicationStatusOptions=["todo","ready","submitted","approved","paused"] as const;
-type PartnerApplicationStatus=typeof partnerApplicationStatusOptions[number];
-const partnerApplicationStatusNames:Record<PartnerApplicationStatus,string>={todo:"To apply",ready:"Profile ready",submitted:"Submitted",approved:"Approved",paused:"Paused"};
-function isPartnerApplicationStatus(value:unknown):value is PartnerApplicationStatus{return typeof value==="string"&&partnerApplicationStatusOptions.includes(value as PartnerApplicationStatus);}
+const partnerApplicationStatusOptions=Object.keys(partnerApplicationTrackerStatusNames) as PartnerApplicationTrackerStatus[];
+type PartnerApplicationStatus=PartnerApplicationTrackerStatus;
+const partnerApplicationStatusNames=partnerApplicationTrackerStatusNames;
+function isPartnerApplicationStatus(value:unknown):value is PartnerApplicationStatus{return typeof value==="string"&&Object.hasOwn(partnerApplicationStatusNames,value);}
 function nextPartnerApplicationStatus(status:PartnerApplicationStatus){const index=partnerApplicationStatusOptions.indexOf(status);return partnerApplicationStatusOptions[(index+1)%partnerApplicationStatusOptions.length];}
 function copiedBuildName(name:string){const base=name.trim()||"Untitled build",suffix=" copy";return base.length+suffix.length<=80?base+suffix:base.slice(0,80-suffix.length).trimEnd()+suffix;}
 function csvCell(value:unknown){return '"'+String(value).replace(/^[=+@-]/,"'$&").replaceAll('"','""')+'"';}
@@ -365,19 +365,19 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
   try{await exportFile('jeep-build-shop-brief.txt',buildShopBrief({name,notes,state,parts}),'text/plain;charset=utf-8');}catch(e){toast.error(e instanceof Error?e.message:'The shop brief could not be exported.');}
  }
  async function exportCommercePack(){
-  try{await exportFile('jeep-build-commerce-pack.txt',buildCommerceApplicationPack({name,notes,state,parts}),'text/plain;charset=utf-8');}catch(e){toast.error(e instanceof Error?e.message:'The commerce pack could not be exported.');}
+  try{await exportFile('jeep-build-commerce-pack.txt',buildCommerceApplicationPack({name,notes,state,parts,applicationStatuses:partnerApplicationStatus}),'text/plain;charset=utf-8');}catch(e){toast.error(e instanceof Error?e.message:'The commerce pack could not be exported.');}
  }
  async function exportPartnerLinks(){
-  try{await exportFile('jeep-build-partner-links.txt',buildPartnerApplicationLinks({name,notes,state,parts}),'text/plain;charset=utf-8');}catch(e){toast.error(e instanceof Error?e.message:'The partner links could not be exported.');}
+  try{await exportFile('jeep-build-partner-links.txt',buildPartnerApplicationLinks({name,notes,state,parts,applicationStatuses:partnerApplicationStatus}),'text/plain;charset=utf-8');}catch(e){toast.error(e instanceof Error?e.message:'The partner links could not be exported.');}
  }
  async function exportAffiliateProfile(){
-  try{await exportFile('jeep-build-affiliate-profile.txt',buildAffiliateApplicationProfile({name,notes,state,parts}),'text/plain;charset=utf-8');}catch(e){toast.error(e instanceof Error?e.message:'The affiliate profile could not be exported.');}
+  try{await exportFile('jeep-build-affiliate-profile.txt',buildAffiliateApplicationProfile({name,notes,state,parts,applicationStatuses:partnerApplicationStatus}),'text/plain;charset=utf-8');}catch(e){toast.error(e instanceof Error?e.message:'The affiliate profile could not be exported.');}
  }
  async function exportSavedShopBrief(build:SavedBuild){
   try{await exportFile('jeep-build-shop-brief.txt',buildShopBrief({name:build.name,notes:build.notes,state:build.state,parts}),'text/plain;charset=utf-8');}catch(e){toast.error(e instanceof Error?e.message:'The shop brief could not be exported.');}
  }
  async function exportSavedCommercePack(build:SavedBuild){
-  try{await exportFile('jeep-build-commerce-pack.txt',buildCommerceApplicationPack({name:build.name,notes:build.notes,state:build.state,parts}),'text/plain;charset=utf-8');}catch(e){toast.error(e instanceof Error?e.message:'The commerce pack could not be exported.');}
+  try{await exportFile('jeep-build-commerce-pack.txt',buildCommerceApplicationPack({name:build.name,notes:build.notes,state:build.state,parts,applicationStatuses:partnerApplicationStatus}),'text/plain;charset=utf-8');}catch(e){toast.error(e instanceof Error?e.message:'The commerce pack could not be exported.');}
  }
  async function exportSavedCSV(build:SavedBuild){
   try{await exportFile('jeep-build-parts.csv','\uFEFF'+buildPartsCsv({name:build.name,notes:build.notes,state:build.state,parts}),'text/csv;charset=utf-8');}catch(e){toast.error(e instanceof Error?e.message:'The parts list could not be exported.');}

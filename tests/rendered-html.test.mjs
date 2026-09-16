@@ -226,8 +226,16 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /blockedPartnerApplicationNotes/);
   assert.match(source, /blockedPartnerApplicationNotesText/);
   assert.match(source, /blockedPartnerSupportDraftText/);
+  assert.match(source, /Paused application notes/);
+  assert.match(source, /paused-application-notes/);
+  assert.match(source, /pausedPartnerApplications/);
+  assert.match(source, /pausedPartnerApplications\.length>0/);
+  assert.match(source, /pausedPartnerApplicationNotes/);
+  assert.match(source, /pausedPartnerApplicationNotesText/);
   assert.match(source, /copyBlockedApplicationNotes/);
   assert.match(source, /exportBlockedApplicationNotes/);
+  assert.match(source, /copyPausedApplicationNotes/);
+  assert.match(source, /exportPausedApplicationNotes/);
   assert.match(source, /copyBlockedApplicationSupportDraft/);
   assert.match(source, /exportBlockedApplicationSupportDraft/);
   assert.match(source, /openBlockedApplicationSupportEmail/);
@@ -240,6 +248,10 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /Download support draft/);
   assert.match(source, /jeep-build-blocked-application-notes\.txt/);
   assert.match(source, /jeep-build-blocked-application-support-draft\.txt/);
+  assert.match(source, /jeep-build-paused-application-notes\.txt/);
+  assert.match(source, /Copy paused notes/);
+  assert.match(source, /Share paused notes/);
+  assert.match(source, /Download paused notes/);
   assert.match(source, /Next application target/);
   assert.match(source, /Target requirements/);
   assert.match(source, /application-answer-requirements/);
@@ -405,6 +417,9 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(css, /\.blocked-application-notes/);
   assert.match(css, /\.blocked-application-notes div/);
   assert.match(css, /\.blocked-application-notes \[data-slot=button\]/);
+  assert.match(css, /\.paused-application-notes/);
+  assert.match(css, /\.paused-application-notes div/);
+  assert.match(css, /\.paused-application-notes \[data-slot=button\]/);
   assert.match(css, /\.application-answer-requirements/);
   assert.match(css, /\.application-answer-actions/);
   assert.match(css, /\.partner-priority/);

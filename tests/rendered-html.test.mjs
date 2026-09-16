@@ -186,6 +186,8 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /pauseNextPartnerApplication/);
   assert.match(source, /blockNextPartnerApplication/);
   assert.match(source, /resetNextPartnerApplication/);
+  assert.match(source, /resetPartnerApplication/);
+  assert.match(source, /updatePartnerApplicationStatus\(programId,"todo",""\)/);
   assert.match(source, /defaultPartnerApplicationBlockerText/);
   assert.match(source, /defaultPartnerApplicationBlockerNote/);
   assert.match(source, /Impact account setup blocked/);
@@ -282,6 +284,8 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /Pause target/);
   assert.match(source, /Block target/);
   assert.match(source, /Reset target/);
+  assert.match(source, /Reset to apply/);
+  assert.match(source, /onClick=\{\(\)=>resetPartnerApplication\(priority\.program\.id\)\}/);
   assert.match(source, /Copy target prep/);
   assert.match(source, /Copy email draft/);
   assert.match(source, /Download review sheet/);
@@ -421,9 +425,11 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(css, /\.application-answer-note/);
   assert.match(css, /\.blocked-application-notes/);
   assert.match(css, /\.blocked-application-notes div/);
+  assert.match(css, /\.blocked-application-notes p \[data-slot=button\]/);
   assert.match(css, /\.blocked-application-notes \[data-slot=button\]/);
   assert.match(css, /\.paused-application-notes/);
   assert.match(css, /\.paused-application-notes div/);
+  assert.match(css, /\.paused-application-notes p \[data-slot=button\]/);
   assert.match(css, /\.paused-application-notes \[data-slot=button\]/);
   assert.match(css, /\.application-answer-requirements/);
   assert.match(css, /\.application-answer-actions/);

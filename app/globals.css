@@ -509,6 +509,7 @@
 .blocked-application-notes span{color:#fff0ec;font-weight:700}
 .blocked-application-notes small{color:#e7bdb2;font-size:12px;line-height:1.4}
 .blocked-application-notes div{display:flex;flex-wrap:wrap;gap:7px}
+.blocked-application-notes p [data-slot=button]{justify-self:start;margin-top:2px}
 .blocked-application-notes [data-slot=button]{justify-self:start}
 .paused-application-notes{border:1px solid #596169;background:#171d22;border-radius:6px;color:#d9dde1;display:grid;gap:7px;margin:10px 0;padding:9px 10px}
 .paused-application-notes>strong{font-size:13px;color:#edf0f2}
@@ -516,6 +517,7 @@
 .paused-application-notes span{color:#f5f7f8;font-weight:700}
 .paused-application-notes small{color:#bdc7ce;font-size:12px;line-height:1.4}
 .paused-application-notes div{display:flex;flex-wrap:wrap;gap:7px}
+.paused-application-notes p [data-slot=button]{justify-self:start;margin-top:2px}
 .paused-application-notes [data-slot=button]{justify-self:start}
 .application-answer-requirements{margin:1px 0 0;padding-left:15px;display:grid;gap:3px;color:#b8c9c3;font-size:12px;line-height:1.45}
 .application-answer-target.complete{border-color:#6aa36e;color:#d9f3dc}

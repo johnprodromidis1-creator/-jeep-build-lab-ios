@@ -15,7 +15,7 @@ test("App Store preflight keeps release guardrails aligned", async () => {
 
   assert.equal(report.expected.bundleId, EXPECTED_BUNDLE_ID);
   assert.equal(report.expected.version, EXPECTED_VERSION);
-  assert.equal(EXPECTED_LIVE_SITES_VERSION, 121);
+  assert.equal(EXPECTED_LIVE_SITES_VERSION, 122);
   const labels = new Set(report.checks.map((item) => item.label));
   assert.ok(labels.has("screenshot plan covers iPhone and iPad targets"));
   assert.ok(labels.has("screenshot plan requires native signed/TestFlight captures"));
@@ -33,6 +33,7 @@ test("App Store preflight keeps release guardrails aligned", async () => {
   assert.ok(labels.has("readiness records blocked and paused reset controls"));
   assert.ok(labels.has("readiness records submitted and approved launch follow-up panel"));
   assert.ok(labels.has("readiness records paid-link launch proof checklist"));
+  assert.ok(labels.has("readiness records partner launch evidence rows"));
   assert.ok(labels.has("readiness records neutral build-advisor positioning"));
   assert.ok(labels.has("readiness records owner-intent starter packs"));
   assert.ok(labels.has("readiness records installer quote checklist"));
@@ -48,6 +49,7 @@ test("App Store preflight keeps release guardrails aligned", async () => {
   assert.ok(labels.has("README records blocked and paused reset controls"));
   assert.ok(labels.has("README records submitted and approved launch follow-up panel"));
   assert.ok(labels.has("README records paid-link launch proof checklist"));
+  assert.ok(labels.has("README records partner launch evidence rows"));
   assert.ok(labels.has("README records market-positioning memo"));
   assert.ok(labels.has("README records owner-intent starter packs"));
   assert.ok(labels.has("README records installer quote checklist"));
@@ -71,6 +73,7 @@ test("App Store preflight keeps release guardrails aligned", async () => {
   assert.ok(labels.has("Codemagic guide records blocked and paused reset controls"));
   assert.ok(labels.has("Codemagic guide records submitted and approved launch follow-up panel"));
   assert.ok(labels.has("Codemagic guide records paid-link launch proof checklist"));
+  assert.ok(labels.has("Codemagic guide records partner launch evidence rows"));
   assert.ok(labels.has("Codemagic guide records market-positioning memo"));
   assert.ok(labels.has("Codemagic guide records owner-intent starter packs"));
   assert.ok(labels.has("Codemagic guide records installer quote checklist"));
@@ -83,9 +86,12 @@ test("App Store preflight keeps release guardrails aligned", async () => {
   assert.ok(labels.has("shop brief exports installer quote checklist"));
   assert.ok(labels.has("builder surfaces installer quote checklist"));
   assert.ok(labels.has("builder surfaces shared independence disclosure"));
+  assert.ok(labels.has("builder surfaces partner launch evidence rows"));
+  assert.ok(labels.has("commerce exports partner launch evidence rows"));
   assert.ok(labels.has("shop brief exports shared independence disclosure"));
   assert.ok(labels.has("privacy and support copy reuse shared independence disclosure"));
   assert.ok(labels.has("styles cover installer quote checklist states"));
-  assert.ok(report.checks.length >= 43);
+  assert.ok(labels.has("styles cover partner launch evidence rows"));
+  assert.ok(report.checks.length >= 49);
   assert.equal(report.ok, true, failures);
 });

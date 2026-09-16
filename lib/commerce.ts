@@ -181,6 +181,15 @@ export const paidLinkLaunchProofFields = [
   "Disclosure placement and source-price separation",
 ] as const;
 
+export type PartnerLaunchEvidenceRow = {
+  programName: string;
+  network?: string;
+  status: PartnerApplicationTrackerStatus;
+  statusLabel: string;
+  proof: readonly string[];
+  risk: string;
+};
+
 export const partnerSubmissionReviewChecklist = [
   "Confirm the application is on the expected partner or network domain before entering private details.",
   "Review every visible field, checkbox, opt-in, agreement and program term before final Continue or Submit.",
@@ -482,6 +491,36 @@ export function paidLinkLaunchStatus(priorities: readonly PartnerApplicationPrio
   ].join("\n");
 }
 
+export function partnerLaunchEvidenceRows(priorities: readonly PartnerApplicationPriority[], applicationStatuses: CommerceApplicationPackInput["applicationStatuses"]): PartnerLaunchEvidenceRow[] {
+  return priorities
+    .map(priority => ({ priority, status: applicationTrackerStatusKey(applicationStatuses?.[priority.program.id]) }))
+    .filter(({ status }) => status === "submitted" || status === "approved")
+    .map(({ priority, status }) => ({
+      programName: priority.program.name,
+      network: priority.program.network,
+      status,
+      statusLabel: partnerApplicationTrackerStatusNames[status],
+      proof: paidLinkLaunchProofFields,
+      risk: status === "approved"
+        ? "Approved still needs a partner-issued tracking URL, clean-browser test and visible label before paid links go live."
+        : "Submitted is not approved; keep links as source or application references until terms and tracking are issued.",
+    }));
+}
+
+function partnerLaunchEvidenceSection(priorities: readonly PartnerApplicationPriority[], applicationStatuses: CommerceApplicationPackInput["applicationStatuses"]) {
+  const rows = partnerLaunchEvidenceRows(priorities, applicationStatuses);
+  return [
+    "Partner launch evidence",
+    ...(rows.length
+      ? rows.flatMap(row => [
+        `- ${row.programName}${row.network ? ` via ${row.network}` : ""} - ${row.statusLabel}`,
+        `  Risk: ${row.risk}`,
+        `  Proof fields: ${row.proof.join("; ")}`,
+      ])
+      : ["- No submitted or approved partner programs yet."]),
+  ].join("\n");
+}
+
 function applicationTrackerSummary(programs: readonly PartnerProgram[], priorities: readonly PartnerApplicationPriority[], applicationStatuses: CommerceApplicationPackInput["applicationStatuses"], applicationStatusNotes?: CommerceApplicationPackInput["applicationStatusNotes"]) {
   const counts = Object.fromEntries(applicationTrackerStatuses.map(status => [status, 0])) as Record<PartnerApplicationTrackerStatus, number>;
   for (const program of programs) counts[applicationTrackerStatusKey(applicationStatuses?.[program.id])] += 1;
@@ -733,6 +772,8 @@ export function buildPartnerSubmissionReviewSheet({ name, notes, state, parts, g
     "",
     "Submission review checklist",
     partnerSubmissionReviewChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    partnerLaunchEvidenceSection(priorities, applicationStatuses),
     "",
     "Before marking Submitted",
     "- Capture the partner network confirmation or application receipt.",
@@ -1030,6 +1071,8 @@ export function buildPaidLinkDisclosurePack({ name, notes, state, parts, generat
     "Launch proof to verify",
     paidLinkLaunchProofFields.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
+    partnerLaunchEvidenceSection(allPriorities, applicationStatuses),
+    "",
     "Placement rules",
     "- Put the disclosure before or near the first paid outbound link.",
     "- Label each individual paid link or button as sponsored or affiliate.",
@@ -1076,6 +1119,8 @@ export function buildCommerceApplicationPack({ name, notes, state, parts, genera
     "",
     "Launch proof to verify",
     paidLinkLaunchProofFields.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    partnerLaunchEvidenceSection(allPriorities, applicationStatuses),
     "",
     paidLinkLaunchStatus(allPriorities, applicationStatuses),
     "",

@@ -175,10 +175,14 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /paidLinkLaunchProofFields/);
   assert.match(source, /paidLinkLaunchStatus/);
   assert.match(source, /paidLinkLaunchLines/);
+  assert.match(source, /partnerLaunchEvidenceRows/);
+  assert.match(source, /partnerLaunchEvidence/);
   assert.match(source, /Sponsored-link readiness/);
   assert.match(source, /aria-label="Paid-link launch status"/);
   assert.match(source, /aria-label="Paid-link launch proof"/);
+  assert.match(source, /aria-label="Partner launch evidence"/);
   assert.match(source, /Launch proof before paid links/);
+  assert.match(source, /Launch evidence to collect/);
   assert.match(source, /Keep tracking IDs and private partner credentials outside public source/);
   assert.match(source, /Paid-link disclosure/);
   assert.match(source, /Paid-link disclosure preview/);
@@ -424,6 +428,8 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(commerce, /paidLinkLaunchChecklist/);
   assert.match(commerce, /paidLinkLaunchProofFields/);
   assert.match(commerce, /paidLinkLaunchStatus/);
+  assert.match(commerce, /function partnerLaunchEvidenceRows/);
+  assert.match(commerce, /Partner launch evidence/);
   assert.match(commerce, /Paid-link launch status/);
   assert.match(commerce, /Launch proof to verify/);
   assert.match(commerce, /Partner-issued tracking URL stored outside public source/);
@@ -637,7 +643,13 @@ test("builder shows submitted and approved partner launch follow-up", async () =
   assert.match(source, /Copy disclosure pack/);
   assert.match(source, /Share disclosure pack/);
   assert.match(source, /Download disclosure pack/);
+  assert.match(source, /aria-label="Partner launch evidence"/);
+  assert.match(source, /Launch evidence to collect/);
+  assert.match(source, /launch-evidence-row/);
   assert.match(css, /\.launch-application-notes/);
+  assert.match(css, /\.launch-evidence-list/);
+  assert.match(css, /\.launch-evidence-row\.approved/);
+  assert.match(css, /\.launch-evidence-row\.submitted/);
   assert.match(css, /\.launch-application-notes div/);
   assert.match(css, /\.launch-application-notes \[data-slot=button\]/);
 });

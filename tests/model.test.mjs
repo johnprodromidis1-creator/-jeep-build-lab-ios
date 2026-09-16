@@ -50,7 +50,7 @@ const {initialState,baseCatalog,categories,selectedParts,totalFor,buildIssues,st
 const {catalogFitScore,catalogSortOptions,compareCatalogParts,dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
 const {buildShopBrief,installerQuoteChecklist}=shopBrief;
-const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,independenceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationAnswers,buildAffiliateApplicationProfile,buildBlockedApplicationSupportDraft,buildBlockedApplicationSupportMailtoUrl,buildCommerceApplicationPack,buildPartnerApplicationLinks,buildPartnerApplicationTrackerCsv,buildPartnerApplicationTrackerText,buildPaidLinkDisclosurePack,buildPartnerOutreachDraftPack,buildPartnerOutreachEmailDraft,buildPartnerOutreachMailtoUrl,buildPartnerSubmissionReviewSheet,commerceApplicationChecklist,affiliateApplicationAnswers,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist,partnerSubmissionReviewChecklist,partnerSubmissionPrivateFields,paidLinkDisclosureSnippet,paidLinkLaunchChecklist,paidLinkLaunchProofFields,paidLinkLaunchStatus}=commerce;
+const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,partnerLaunchEvidenceRows,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,independenceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationAnswers,buildAffiliateApplicationProfile,buildBlockedApplicationSupportDraft,buildBlockedApplicationSupportMailtoUrl,buildCommerceApplicationPack,buildPartnerApplicationLinks,buildPartnerApplicationTrackerCsv,buildPartnerApplicationTrackerText,buildPaidLinkDisclosurePack,buildPartnerOutreachDraftPack,buildPartnerOutreachEmailDraft,buildPartnerOutreachMailtoUrl,buildPartnerSubmissionReviewSheet,commerceApplicationChecklist,affiliateApplicationAnswers,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist,partnerSubmissionReviewChecklist,partnerSubmissionPrivateFields,paidLinkDisclosureSnippet,paidLinkLaunchChecklist,paidLinkLaunchProofFields,paidLinkLaunchStatus}=commerce;
 const {buildRecipes}=recipes;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
@@ -171,6 +171,13 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(launchStatus,/Submitted applications still waiting on approval or terms: 1 \(RealTruck via Impact\)\./);
  assert.match(launchStatus,/Unapproved relevant programs still locked: \d+\./);
  assert.match(launchStatus,/only approved, partner-issued tracking URLs may be labeled affiliate or sponsored/);
+ const evidence=partnerLaunchEvidenceRows(priorities,applicationStatuses);
+ assert.equal(evidence.length,2);
+ assert.ok(evidence.some(row=>row.programName==="RealTruck"&&row.network==="Impact"&&row.status==="submitted"));
+ assert.ok(evidence.some(row=>row.programName==="Turn 14 Distribution"&&row.status==="approved"));
+ assert.ok(evidence.every(row=>row.proof.includes("Partner-issued tracking URL stored outside public source")));
+ assert.match(evidence.find(row=>row.status==="submitted").risk,/Submitted is not approved/);
+ assert.match(evidence.find(row=>row.status==="approved").risk,/Approved still needs a partner-issued tracking URL/);
  const pack=buildCommerceApplicationPack({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses});
  assert.match(pack,/Jeep Build Lab partner application pack/);
  assert.match(pack,/Generated: 2026-09-14/);
@@ -189,6 +196,11 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(pack,/Pre-publish paid-link checks/);
  assert.match(pack,/Launch proof to verify/);
  assert.match(pack,/Partner-issued tracking URL stored outside public source/);
+ assert.match(pack,/Partner launch evidence/);
+ assert.match(pack,/RealTruck via Impact - Submitted/);
+ assert.match(pack,/Submitted is not approved; keep links as source or application references/);
+ assert.match(pack,/Turn 14 Distribution - Approved/);
+ assert.match(pack,/Approved still needs a partner-issued tracking URL/);
  assert.match(pack,/Paid-link launch status/);
  assert.match(pack,/Approved programs ready for tracking-link setup: 1 \(Turn 14 Distribution\)\./);
  assert.match(pack,/Launch rule: only approved, partner-issued tracking URLs may be labeled affiliate or sponsored/);
@@ -294,6 +306,11 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(disclosure,/Pre-publish paid-link checks/);
  assert.match(disclosure,/Launch proof to verify/);
  assert.match(disclosure,/Clean-browser test date and expected landing page/);
+ assert.match(disclosure,/Partner launch evidence/);
+ assert.match(disclosure,/RealTruck via Impact - Submitted/);
+ assert.match(disclosure,/Submitted is not approved; keep links as source or application references/);
+ assert.match(disclosure,/Turn 14 Distribution - Approved/);
+ assert.match(disclosure,/Approved still needs a partner-issued tracking URL/);
  assert.match(disclosure,/Partner has approved the account and program terms/);
  assert.match(disclosure,/Placement rules/);
  assert.match(disclosure,/Label each individual paid link or button as sponsored or affiliate/);
@@ -326,6 +343,9 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(review,/Program agreement acceptance, privacy terms and email marketing opt-in choices/);
  assert.match(review,/Submission review checklist/);
  assert.match(review,/Confirm the application is on the expected partner or network domain/);
+ assert.match(review,/Partner launch evidence/);
+ assert.match(review,/RealTruck via Impact - Submitted/);
+ assert.match(review,/Turn 14 Distribution - Approved/);
  assert.match(review,/Before marking Submitted/);
  assert.match(review,/Suggested owner approval line/);
  assert.match(review,/I approve submitting the visible CARiD application fields/);

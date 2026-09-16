@@ -4,7 +4,7 @@ Use the owner's Apple Developer account. Do not paste signing certificates, priv
 
 ## Preferred route: Codemagic
 
-Use the owner's existing Codemagic account. The mobile GitHub repository is connected, and the repository includes a manual iOS archive/upload workflow and [Codemagic setup instructions](CODEMAGIC.md). The first unsigned compile check passed in **2m 24s** at `ac43eb5`, confirmed by the owner's September 10 screenshot. This app's Apple record and provisioning profile remain unverified in this environment; a September 14 TestFlight attempt from current GitHub `main` failed before archive because Codemagic had no matching App Store provisioning profile for `com.johnprodromidis.jeepbuildlab`. Complete signing setup, then retry the TestFlight workflow on current `main`. No personal Mac is required for that route.
+Use the owner's existing Codemagic account. The mobile GitHub repository is connected, and the repository includes a manual iOS archive/upload workflow and [Codemagic setup instructions](CODEMAGIC.md). The first unsigned compile check passed in **2m 24s** at `ac43eb5`, confirmed by the owner's September 10 screenshot. This app's Apple record and provisioning profile remain unverified in this environment; a September 14 TestFlight attempt from current GitHub `main` failed before archive because Codemagic had no matching App Store provisioning profile for `com.johnprodromidis.jeepbuildlab`. The workflow now includes an early signing-profile check that names this missing profile gate before archive/export. Complete signing setup, then retry the TestFlight workflow on current `main`. No personal Mac is required for that route.
 
 ## Alternative: on a Mac
 
@@ -17,7 +17,7 @@ Use the owner's existing Codemagic account. The mobile GitHub repository is conn
 7. In Xcode select a generic iOS device destination, then Product → Archive. In Organizer validate and distribute to App Store Connect. Use Xcode's signed distribution flow. Increment the build number for subsequent uploads.
 8. Wait for processing. Complete export-compliance and beta information accurately. In TestFlight, create/select an internal testing group, add the processed build, and add the owner as an eligible internal tester. Install through the TestFlight invitation or app. [Apple internal-testing instructions](https://developer.apple.com/help/app-store-connect/test-a-beta-version/add-internal-testers/)
 
-Codemagic is the selected Mac build service. The first native simulator compile passed; the first TestFlight workflow attempt proved the profile gate is still missing. A signed archive and TestFlight upload remain pending. The Sites web deployment does not create a TestFlight binary. After installing the signed build, complete the smoke tests below before capturing final App Store screenshots with [SCREENSHOTS.md](SCREENSHOTS.md).
+Codemagic is the selected Mac build service. The first native simulator compile passed; the first TestFlight workflow attempt proved the profile gate is still missing. A signed archive and TestFlight upload remain pending. The Sites web deployment does not create a TestFlight binary. The next signed retry should either pass the early profile check or stop before archive with a message to add this app's App Store provisioning profile. After installing the signed build, complete the smoke tests below before capturing final App Store screenshots with [SCREENSHOTS.md](SCREENSHOTS.md).
 
 ## Test one task at a time
 
@@ -35,8 +35,8 @@ Codemagic is the selected Mac build service. The first native simulator compile 
 | 10 | Check privacy/help, large text, VoiceOver, keyboard and rotation | Content and buttons remain usable; contact link opens mail composer | Pending |
 | 11 | Change the current build, choose New build and confirm, wait for draft saved, then close and reopen | Empty new build returns; the old draft does not reappear; named garage builds remain | Pending |
 | 12 | Clear Labor allowance, type 125.50, then tap another field; enter 32.5 as current tire diameter and finish editing | Labor becomes $125.50 and tire size 32.5; partial typing is preserved; an invalid or out-of-range entry keeps the previous value with a visible explanation | Pending |
-| 13 | Open vehicle settings, switch to 4xe, then review wheels, tires and suspension | Vehicle becomes 2024 Sahara 4xe with 20-inch starting wheels; 20-inch Ridge Grappler tires and the Mopar 4xe lift appear; gas-only parts remain excluded with reasons when Show excluded is on | Pending |
-| 14 | From a clean or saved draft, tap Load starter and confirm if prompted | 2024 Sahara 4xe starter loads with the sourced Nitto tire, Mopar 4xe lift, 20-inch starting wheels, matching spare and no fitment conflicts | Pending |
+| 13 | Open vehicle settings, switch to 4xe, then review rims, tires and suspension | Vehicle becomes 2024 Sahara 4xe with 20-inch starting rims; 20-inch Ridge Grappler tires and the Mopar 4xe lift appear; gas-only parts remain excluded with reasons when All loaded is on | Pending |
+| 14 | From a clean or saved draft, tap Load starter and confirm if prompted | 2024 Sahara 4xe starter loads with the sourced Nitto tire, Mopar 4xe lift, 20-inch starting rims, matching spare and no fitment conflicts | Pending |
 
 On the web version, also open a shared build link before restoring a backup or deleting app data. After the confirmed action and reload, the old link must be cleared; the restored draft or an empty garage must appear as appropriate.
 

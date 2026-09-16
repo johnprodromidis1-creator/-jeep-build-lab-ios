@@ -1,10 +1,11 @@
 import { z } from "zod";
 import catalog from "./catalog.json";
+import catalogExpansion from "./catalog-expansion";
 
 export const categories = ["wheels", "tires", "lift", "bumpers", "winches", "armor"] as const;
 export type Category = typeof categories[number];
 export const categoryNames: Record<Category, string> = {
-  wheels: "Wheels",
+  wheels: "Rims",
   tires: "Tires",
   lift: "Suspension",
   bumpers: "Bumpers",
@@ -50,7 +51,7 @@ export type Part = {
   customPrice?: boolean;
 };
 
-export const baseCatalog = catalog as Part[];
+export const baseCatalog = [...(catalog as Part[]), ...(catalogExpansion as Part[])];
 const stageValue = z.enum(["now", "later", "owned", "installed"]);
 const stagesSchema = z.object({
   wheels: stageValue.optional(),
@@ -185,6 +186,45 @@ export function partCoverage(p: Part) {
   return `${p.yearFrom}-${p.yearTo} JL four-door · ${p.trims.join(", ")} · ${powertrainList(p)}`;
 }
 
+function inchLabel(value: number) {
+  return `${Number.isInteger(value) ? value : value.toFixed(1)} in`;
+}
+
+export function partSpecBadges(p: Part) {
+  const badges: string[] = [];
+  const specs = p.specs;
+  if (p.category === "wheels") {
+    if (specs.rim) badges.push(`${inchLabel(specs.rim)} rim`);
+    if (specs.width) badges.push(`${inchLabel(specs.width)} wide`);
+    if (specs.offset !== undefined) badges.push(`${specs.offset > 0 ? "+" : ""}${specs.offset} mm offset`);
+    if (specs.finish) badges.push(specs.finish);
+  } else if (p.category === "tires") {
+    if (specs.diameter) badges.push(`${inchLabel(specs.diameter)} tire`);
+    if (specs.rim) badges.push(`Fits ${inchLabel(specs.rim)} rim`);
+    const loadRange = p.variant.match(/\b([CDEF])\b/);
+    if (loadRange) badges.push(`Load ${loadRange[1]}`);
+  } else if (p.category === "lift") {
+    if (specs.lift) badges.push(`${inchLabel(specs.lift)} lift`);
+    if (specs.maxTire) badges.push(`Up to ${inchLabel(specs.maxTire)} tires`);
+    if (specs.maxTireRubicon && specs.maxTireRubicon !== specs.maxTire) badges.push(`Rubicon ${inchLabel(specs.maxTireRubicon)} guide`);
+  } else if (p.category === "bumpers") {
+    badges.push(specs.winchMount ? "Winch-ready" : "No winch mount");
+    if (/stubby/i.test(p.variant)) badges.push("Stubby");
+    else if (/mid-width/i.test(p.variant)) badges.push("Mid-width");
+    else if (/full width/i.test(p.variant)) badges.push("Full width");
+  } else if (p.category === "winches") {
+    const capacity = p.variant.match(/(\d{1,2},?\d{3})\s*lb/i)?.[1];
+    if (capacity) badges.push(`${capacity} lb pull`);
+    if (/synthetic/i.test(p.variant)) badges.push("Synthetic rope");
+    else if (/steel/i.test(p.variant)) badges.push("Steel cable");
+  } else if (p.category === "armor") {
+    badges.push("JL 4-door");
+    if (/pair/i.test(p.variant)) badges.push("Pair");
+    if (/step/i.test(p.variant)) badges.push("Step");
+  }
+  return badges.slice(0, 4);
+}
+
 export function selectedParts(s: BuildState, parts: Part[] = baseCatalog) {
   return categories.map(c => parts.find(p => p.id === s.picks[c])).filter((p): p is Part => !!p);
 }
@@ -228,16 +268,16 @@ export function buildIssues(s: BuildState, parts: Part[] = baseCatalog): Issue[]
   }
   const rim = wheel?.specs.rim ?? s.stockRim;
   if (tire && tire.specs.rim !== rim) {
-    issues.push({ level: "error", category: "tires", message: `Wheel diameter mismatch: ${tire.specs.rim}″ tire requires a ${tire.specs.rim}″ wheel. Your selected wheels are ${rim}″.` });
+    issues.push({ level: "error", category: "tires", message: `Rim diameter mismatch: ${tire.specs.rim}″ tire requires a ${tire.specs.rim}″ rim. Your selected rims are ${rim}″.` });
   }
   if (wheel && !tire && rim !== s.stockRim) {
-    issues.push({ level: "error", category: "tires", message: `Wheel diameter mismatch: your current tires fit ${s.stockRim}″ wheels and cannot mount on these ${rim}″ wheels. Add ${rim}″ tires or keep your current wheels.` });
+    issues.push({ level: "error", category: "tires", message: `Rim diameter mismatch: your current tires fit ${s.stockRim}″ rims and cannot mount on these ${rim}″ rims. Add ${rim}″ tires or keep your current rims.` });
   }
   const diameter = tire?.specs.diameter ?? s.stockTire;
   const max = lift ? (s.trim === "Rubicon" ? (lift.specs.maxTireRubicon ?? lift.specs.maxTire) : lift.specs.maxTire) : undefined;
   if (max && diameter > max) issues.push({ level: "error", category: "tires", message: `${diameter}″ tires exceed this lift's listed ${max}″ tire limit for your trim.` });
   if (tire && !lift && diameter > s.stockTire + .2) issues.push({ level: "note", message: "Larger-than-stock tires: clearance is unverified. Check lift, fenders, steering and suspension travel before purchase." });
-  if (lift && !wheel) issues.push({ level: "note", message: "Factory wheels with this lift need additional clearance checks; wheel changes or spacers may be required." });
+  if (lift && !wheel) issues.push({ level: "note", message: "Factory rims with this lift need additional clearance checks; rim changes or spacers may be required." });
   if (wheel || tire) issues.push({ level: "note", message: "Confirm rim width, offset/backspacing, brake clearance, tire load rating and spare-carrier capacity. Matching diameters alone does not establish fitment." });
   if (lift) issues.push({ level: "note", message: "Budget for alignment and any required geometry correction, tire calibration or gearing changes. The preview does not simulate suspension travel." });
   if (selected.some(p => p.category === "winches")) {
@@ -262,3 +302,29 @@ export function optionAddsBuildError(p: Part, s: BuildState, parts: Part[] = bas
 }
 
 export const money = (cents: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 }).format(cents / 100);
+
+export function linePriceRangeLabel(parts: readonly Part[], state: BuildState) {
+  const prices = parts.map(part => part.priceCents * quantityFor(part, state));
+  if (!prices.length) return "No prices";
+  const low = Math.min(...prices);
+  const high = Math.max(...prices);
+  return low === high ? money(low) : `${money(low)} - ${money(high)}`;
+}
+
+export function sourceCheckedLabel(value: string) {
+  if (!value) return "not checked";
+  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(new Date(`${value}T00:00:00Z`));
+}
+
+export function latestSourceCheckedAt(parts: readonly Pick<Part, "checkedAt">[]) {
+  return parts.reduce((latest, part) => part.checkedAt > latest ? part.checkedAt : latest, "");
+}
+
+export function sourceFreshnessSummary(parts: readonly Pick<Part, "checkedAt">[]) {
+  const latest = latestSourceCheckedAt(parts);
+  return latest ? `${parts.length} sourced variants - latest check ${sourceCheckedLabel(latest)}` : "No sourced variants loaded";
+}
+
+export function priceBasis(part: Pick<Part, "customPrice" | "checkedAt">) {
+  return part.customPrice ? `Personal price note; source checked ${sourceCheckedLabel(part.checkedAt)}` : `Source snapshot checked ${sourceCheckedLabel(part.checkedAt)}`;
+}

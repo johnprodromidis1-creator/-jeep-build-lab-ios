@@ -7,6 +7,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 export const EXPECTED_BUNDLE_ID = "com.johnprodromidis.jeepbuildlab";
 export const EXPECTED_VERSION = "0.2.0";
 export const LIVE_SITE_URL = "https://jeep-build-lab.johnprodromidis1.chatgpt.site";
+export const EXPECTED_LIVE_SITES_VERSION = 124;
 
 const nativeSafeTests =
   "node --test tests/model.test.mjs tests/device-storage.test.mjs tests/ios-metadata.test.mjs tests/platform.test.mjs";
@@ -44,26 +45,48 @@ export async function runPreflight(projectRoot = scriptRoot) {
     packageSource,
     codemagic,
     iosVerify,
+    codemagicPrepare,
+    codemagicSigningCheck,
     project,
     info,
     capacitor,
     mobileHtml,
     privacyManifest,
+    readme,
     readiness,
     codemagicDoc,
+    marketPositioning,
+    buildRecipesDoc,
+    shopBriefDoc,
+    builderDoc,
+    commerceDoc,
+    globalCss,
+    privacyContent,
     testflightDoc,
+    screenshotsDoc,
   ] = await Promise.all([
     source(projectRoot, "package.json"),
     source(projectRoot, "codemagic.yaml"),
     source(projectRoot, "scripts/ios-verify.sh"),
+    source(projectRoot, "scripts/prepare-codemagic-ios.py"),
+    source(projectRoot, "scripts/check-codemagic-signing.sh"),
     source(projectRoot, "ios/App/App.xcodeproj/project.pbxproj"),
     source(projectRoot, "ios/App/App/Info.plist"),
     source(projectRoot, "capacitor.config.ts"),
     source(projectRoot, "mobile/index.html"),
     source(projectRoot, "ios/App/App/PrivacyInfo.xcprivacy"),
+    source(projectRoot, "README.md"),
     source(projectRoot, "docs/app-store/READINESS.md"),
     source(projectRoot, "docs/app-store/CODEMAGIC.md"),
+    source(projectRoot, "docs/market-positioning-2026-09-16.md"),
+    source(projectRoot, "lib/build-recipes.ts"),
+    source(projectRoot, "lib/shop-brief.ts"),
+    source(projectRoot, "app/builder.tsx"),
+    source(projectRoot, "lib/commerce.ts"),
+    source(projectRoot, "app/globals.css"),
+    source(projectRoot, "app/components/privacy-content.tsx"),
     source(projectRoot, "docs/app-store/TESTFLIGHT.md"),
+    source(projectRoot, "docs/app-store/SCREENSHOTS.md"),
   ]);
   const packageJson = JSON.parse(packageSource);
 
@@ -83,6 +106,15 @@ export async function runPreflight(projectRoot = scriptRoot) {
   check(checks, !has(codemagic, /\btriggering:/), "Codemagic workflows remain manual");
   check(checks, has(codemagic, /name: Run release preflight\s+script: npm run release:preflight/), "TestFlight workflow runs release preflight");
   check(checks, has(iosVerify, /npm ci\s+npm run release:preflight\s+npx tsc --noEmit/), "unsigned iOS verify script runs release preflight after install");
+  check(checks, has(codemagicPrepare, /environment\.get\("BUNDLE_ID"\) != expected_bundle/), "Codemagic prep enforces the registered Bundle ID");
+  check(checks, has(codemagicPrepare, /PROJECT_BUILD_NUMBER/) && has(codemagicPrepare, /BUILD_NUMBER_OFFSET/), "Codemagic prep derives build numbers from Codemagic");
+  check(checks, has(codemagicPrepare, /number = int\(sequence\) \+ int\(offset\) \+ 1/), "Codemagic prep increments each uploaded build number");
+  check(checks, has(codemagicPrepare, /config\.get\("appId"\) != expected_bundle/) && has(codemagicPrepare, /config\.get\("server", \{\}\)\.get\("url"\)/), "Codemagic prep rejects wrong IDs and remote shells");
+  check(checks, has(codemagicPrepare, /connect-src 'none'/) && has(codemagicPrepare, /compiled mobile entry point is missing/), "Codemagic prep verifies the offline mobile bundle");
+  check(checks, has(codemagicPrepare, /len\(bundles\) != 2/) && has(codemagicPrepare, /if count != 2:/), "Codemagic prep updates both Xcode build configurations");
+  check(checks, has(codemagic, /script: bash scripts\/check-codemagic-signing\.sh/), "TestFlight workflow checks signing profile before archive");
+  check(checks, has(codemagicSigningCheck, /App Store provisioning profile/) && has(codemagicSigningCheck, /Codemagic currently has profiles for other apps only/), "Codemagic signing check names the missing profile gate");
+  check(checks, has(codemagicSigningCheck, /Entitlements:get-task-allow/) && has(codemagicSigningCheck, /ProvisionedDevices/), "Codemagic signing check rejects non-App Store profiles");
 
   check(checks, countMatches(project, new RegExp(`PRODUCT_BUNDLE_IDENTIFIER = ${EXPECTED_BUNDLE_ID.replace(/\./g, "\\.")};`, "g")) === 2, "Debug and Release Bundle IDs match");
   check(checks, has(project, /MARKETING_VERSION = 0\.2\.0;/), "Xcode marketing version is 0.2.0");
@@ -107,11 +139,93 @@ export async function runPreflight(projectRoot = scriptRoot) {
 
   check(checks, await exists(projectRoot, "app/privacy/page.tsx"), "privacy route exists");
   check(checks, await exists(projectRoot, "app/support/page.tsx"), "support route exists");
+  check(checks, readme.includes(LIVE_SITE_URL), "README handoff includes the live public site");
+  check(checks, readme.includes(`Sites version ${EXPECTED_LIVE_SITES_VERSION}`), "README records the latest Sites version");
+  check(checks, has(readme, /early Codemagic signing-profile gate/i), "README records the signing-profile gate");
+  check(checks, has(readme, /blank blocked targets stay visible with default blocker guidance/i), "README records blank blocked-target guidance");
+  check(checks, has(readme, /paused partner targets skip next-action guidance/i), "README records paused partner-target guidance");
+  check(checks, has(readme, /paused application follow-up exports/i), "README records paused application export guidance");
+  check(checks, has(readme, /visible paused application notes panel/i), "README records paused application notes panel");
+  check(checks, has(readme, /status-filtered actionable application order/i), "README records status-filtered application order");
+  check(checks, has(readme, /blocked and paused reset controls/i), "README records blocked and paused reset controls");
+  check(checks, has(readme, /submitted and approved launch follow-up panel/i), "README records submitted and approved launch follow-up panel");
+  check(checks, has(readme, /launch proof checklist/i), "README records paid-link launch proof checklist");
+  check(checks, has(readme, /partner launch evidence rows/i), "README records partner launch evidence rows");
+  check(checks, has(readme, /future checkout guardrails/i), "README records future checkout guardrails");
+  check(checks, has(readme, /commerce-mode readiness map/i), "README records commerce-mode readiness map");
+  check(checks, has(readme, /market-positioning memo/i), "README records market-positioning memo");
+  check(checks, has(readme, /six source-backed owner-intent starter packs/i), "README records owner-intent starter packs");
+  check(checks, has(readme, /installer quote checklist/i), "README records installer quote checklist");
+  check(checks, has(readme, /shared independence disclosure/i), "README records shared independence disclosure");
   check(checks, readiness.includes(LIVE_SITE_URL), "readiness handoff includes the live public site");
+  check(checks, readiness.includes(`Sites version ${EXPECTED_LIVE_SITES_VERSION}`), "readiness records the latest Sites version");
   check(checks, has(readiness, /no signed IPA or TestFlight upload has been verified/i), "readiness keeps signed-build status honest");
+  check(checks, has(readiness, /early signing-profile gate/i), "readiness records the signing-profile gate");
+  check(checks, has(readiness, /passes 78 tests/i), "readiness records the current regression count");
+  check(checks, has(readiness, /in-picker 15\+ choice depth proof strip/i), "readiness records the catalog depth proof strip");
+  check(checks, has(readiness, /blank blocked targets stay visible with default blocker guidance/i), "readiness records blank blocked-target guidance");
+  check(checks, has(readiness, /paused partner targets skip next-action guidance/i), "readiness records paused partner-target guidance");
+  check(checks, has(readiness, /paused application follow-up exports/i), "readiness records paused application export guidance");
+  check(checks, has(readiness, /visible paused application notes panel/i), "readiness records paused application notes panel");
+  check(checks, has(readiness, /status-filtered actionable application order/i), "readiness records status-filtered application order");
+  check(checks, has(readiness, /blocked and paused reset controls/i), "readiness records blocked and paused reset controls");
+  check(checks, has(readiness, /submitted and approved launch follow-up panel/i), "readiness records submitted and approved launch follow-up panel");
+  check(checks, has(readiness, /launch proof checklist/i), "readiness records paid-link launch proof checklist");
+  check(checks, has(readiness, /partner launch evidence rows/i), "readiness records partner launch evidence rows");
+  check(checks, has(readiness, /future checkout guardrails/i), "readiness records future checkout guardrails");
+  check(checks, has(readiness, /commerce-mode readiness map/i), "readiness records commerce-mode readiness map");
+  check(checks, has(readiness, /neutral build-advisor layer/i), "readiness records neutral build-advisor positioning");
+  check(checks, has(readiness, /six source-backed owner-intent starter packs/i), "readiness records owner-intent starter packs");
+  check(checks, has(readiness, /installer quote checklist/i), "readiness records installer quote checklist");
+  check(checks, has(readiness, /shared independence disclosure/i), "readiness records shared independence disclosure");
   check(checks, has(codemagicDoc, /matching provisioning profile/i), "Codemagic guide calls out the app-specific profile");
+  check(checks, codemagicDoc.includes(`Sites version ${EXPECTED_LIVE_SITES_VERSION}`), "Codemagic guide records the latest Sites version");
+  check(checks, has(codemagicDoc, /expanded 78-test regression suite/i), "Codemagic guide records the current regression count");
+  check(checks, has(codemagicDoc, /in-picker 15\+ choice proof strip/i), "Codemagic guide records the catalog depth proof strip");
+  check(checks, has(codemagicDoc, /blank blocked targets stay visible with default blocker guidance/i), "Codemagic guide records blank blocked-target guidance");
+  check(checks, has(codemagicDoc, /paused partner targets skip next-action guidance/i), "Codemagic guide records paused partner-target guidance");
+  check(checks, has(codemagicDoc, /paused application follow-up exports/i), "Codemagic guide records paused application export guidance");
+  check(checks, has(codemagicDoc, /visible paused application notes panel/i), "Codemagic guide records paused application notes panel");
+  check(checks, has(codemagicDoc, /status-filtered actionable application order/i), "Codemagic guide records status-filtered application order");
+  check(checks, has(codemagicDoc, /blocked and paused reset controls/i), "Codemagic guide records blocked and paused reset controls");
+  check(checks, has(codemagicDoc, /submitted and approved launch follow-up panel/i), "Codemagic guide records submitted and approved launch follow-up panel");
+  check(checks, has(codemagicDoc, /launch proof checklist/i), "Codemagic guide records paid-link launch proof checklist");
+  check(checks, has(codemagicDoc, /partner launch evidence rows/i), "Codemagic guide records partner launch evidence rows");
+  check(checks, has(codemagicDoc, /future checkout guardrails/i), "Codemagic guide records future checkout guardrails");
+  check(checks, has(codemagicDoc, /commerce-mode readiness map/i), "Codemagic guide records commerce-mode readiness map");
+  check(checks, has(codemagicDoc, /market-positioning memo/i), "Codemagic guide records market-positioning memo");
+  check(checks, has(codemagicDoc, /six source-backed owner-intent starter packs/i), "Codemagic guide records owner-intent starter packs");
+  check(checks, has(codemagicDoc, /installer quote checklist/i), "Codemagic guide records installer quote checklist");
+  check(checks, has(codemagicDoc, /shared independence disclosure/i), "Codemagic guide records shared independence disclosure");
   check(checks, has(codemagicDoc, /No automatic push triggers or paid plan changes are configured/i), "Codemagic guide keeps cost/trigger guardrail");
+  check(checks, has(marketPositioning, /neutral build-advisor layer/i), "market-positioning memo names the neutral advisor wedge");
+  check(checks, has(marketPositioning, /Jeep official Wrangler/i) && has(marketPositioning, /RealTruck/i) && has(marketPositioning, /Quadratec/i) && has(marketPositioning, /ExtremeTerrain/i), "market-positioning memo covers current competitor set");
+  check(checks, has(marketPositioning, /Do not compete on/i) && has(marketPositioning, /Paid-link or commission claims/i), "market-positioning memo keeps commerce claims constrained");
+  check(checks, has(marketPositioning, /six source-backed owner-intent starter packs/i), "market-positioning memo records template-pack implementation");
+  check(checks, has(buildRecipesDoc, /Low-cost visual refresh/) && has(buildRecipesDoc, /Beach weekend 4xe/) && has(buildRecipesDoc, /Overland weekend recovery/), "starter recipes include new owner-intent packs");
+  check(checks, has(shopBriefDoc, /export function installerQuoteChecklist/) && has(shopBriefDoc, /Installer quote checklist/), "shop brief exports installer quote checklist");
+  check(checks, has(builderDoc, /aria-label="Installer quote checklist"/) && has(builderDoc, /installerQuoteItems=installerQuoteChecklist/), "builder surfaces installer quote checklist");
+  check(checks, has(builderDoc, /independenceDisclosure/) && has(builderDoc, /Independence disclosure/), "builder surfaces shared independence disclosure");
+  check(checks, has(builderDoc, /partnerLaunchEvidenceRows/) && has(builderDoc, /Launch evidence to collect/), "builder surfaces partner launch evidence rows");
+  check(checks, has(builderDoc, /futureCheckoutReadinessChecklist/) && has(builderDoc, /Future checkout guardrails/), "builder surfaces future checkout guardrails");
+  check(checks, has(builderDoc, /commerceModeReadinessRows/) && has(builderDoc, /Commerce mode readiness/), "builder surfaces commerce-mode readiness map");
+  check(checks, has(commerceDoc, /function partnerLaunchEvidenceRows/) && has(commerceDoc, /Partner launch evidence/), "commerce exports partner launch evidence rows");
+  check(checks, has(commerceDoc, /futureCheckoutReadinessChecklist/) && has(commerceDoc, /Stripe-hosted checkout or Payment Links/), "commerce exports future checkout guardrails");
+  check(checks, has(commerceDoc, /commerceModeReadinessRows/) && has(commerceDoc, /Commerce mode readiness/), "commerce exports commerce-mode readiness map");
+  check(checks, has(shopBriefDoc, /independenceDisclosure/), "shop brief exports shared independence disclosure");
+  check(checks, has(privacyContent, /independenceDisclosure/), "privacy and support copy reuse shared independence disclosure");
+  check(checks, has(globalCss, /\.installer-quote-checklist/) && has(globalCss, /\.installer-quote-row\.needs-review/), "styles cover installer quote checklist states");
+  check(checks, has(globalCss, /\.launch-evidence-list/) && has(globalCss, /\.launch-evidence-row\.approved/) && has(globalCss, /\.launch-evidence-row\.submitted/), "styles cover partner launch evidence rows");
+  check(checks, has(globalCss, /\.future-checkout-readiness/) && has(globalCss, /\.future-checkout-readiness ul/), "styles cover future checkout guardrails");
+  check(checks, has(globalCss, /\.commerce-mode-map/) && has(globalCss, /\.commerce-mode-row\.checkout/), "styles cover commerce-mode readiness map");
   check(checks, has(testflightDoc, /This app's Apple record and provisioning profile remain unverified/i), "TestFlight guide keeps account-owner signing gate");
+  check(checks, has(screenshotsDoc, /one to 10 screenshots per device size/i), "screenshot plan keeps App Store count limits");
+  check(checks, has(screenshotsDoc, /cannot include alpha\/transparency/i), "screenshot plan forbids alpha transparency");
+  check(checks, has(screenshotsDoc, /iPhone 6\.9-inch/i) && has(screenshotsDoc, /iPad 13-inch/i), "screenshot plan covers iPhone and iPad targets");
+  check(checks, has(screenshotsDoc, /Use raw screenshots from the actual signed or TestFlight app first/i), "screenshot plan requires native signed/TestFlight captures");
+  check(checks, has(screenshotsDoc, /do not submit browser captures or generated mockups/i), "screenshot plan rejects browser or generated final screenshots");
+  check(checks, countMatches(screenshotsDoc, /^\d+\. /gm) >= 5 && countMatches(screenshotsDoc, /^\d+\. /gm) <= 10, "screenshot plan has a bounded capture sequence");
+  check(checks, has(screenshotsDoc, /Do not include real personal build notes, email inboxes, passwords, Apple IDs, notification banners or browser chrome/i), "screenshot plan protects private capture data");
 
   return {
     ok: checks.every((item) => item.ok),

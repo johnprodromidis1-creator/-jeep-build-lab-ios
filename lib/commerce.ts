@@ -52,6 +52,7 @@ export const partnerApplicationTrackerStatusNames = {
   submitted: "Submitted",
   approved: "Approved",
   paused: "Paused",
+  blocked: "Blocked",
 } as const;
 
 export type PartnerApplicationTrackerStatus = keyof typeof partnerApplicationTrackerStatusNames;
@@ -204,6 +205,7 @@ export const partnerPrograms = [
       "Review the RealTruck offer terms inside Impact before submitting.",
       "Use Jeep Build Lab's public URL and off-road build-planning audience description.",
       "Confirm Impact account name, country, timezone, currency and Partner Program Agreement acceptance before Continue.",
+      "If Impact blocks account creation, fix password or account setup inside Impact and keep this target blocked until the next form is reviewable.",
       "Do not add RealTruck tracking links until Impact approval and link testing are complete.",
     ],
   },
@@ -447,7 +449,7 @@ function applicationTrackerSummary(programs: readonly PartnerProgram[], prioriti
     ...applicationTrackerStatuses.map(status => `- ${partnerApplicationTrackerStatusNames[status]}: ${counts[status]}`),
     next
       ? `- Next application: ${partnerProgramLabel(next.program)} (${applicationTrackerStatusLabel(applicationStatuses?.[next.program.id])})`
-      : "- Next application: All tracked programs are submitted or approved.",
+      : "- Next application: No unblocked application target is ready; reset a blocked or paused program when it can move again.",
   ].join("\n");
 }
 
@@ -687,6 +689,7 @@ function trackerNextAction(status: PartnerApplicationTrackerStatus) {
   if (status === "approved") return "Use only approved tested tracking links and keep paid labels visible.";
   if (status === "submitted") return "Watch for approval, terms, tracking-link rules and any requested verification.";
   if (status === "ready") return "Submit the application after private business, tax, traffic and contact fields are verified.";
+  if (status === "blocked") return "Resolve password, account, eligibility or partner-site errors before retrying this application.";
   if (status === "paused") return "Resolve the blocker or confirm this program is still worth pursuing.";
   return "Prepare the profile, verify private details and apply through the listed link.";
 }

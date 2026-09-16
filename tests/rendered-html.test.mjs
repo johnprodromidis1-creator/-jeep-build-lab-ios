@@ -180,6 +180,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /cyclePartnerApplicationStatus/);
   assert.match(source, /advanceNextPartnerApplication/);
   assert.match(source, /pauseNextPartnerApplication/);
+  assert.match(source, /blockNextPartnerApplication/);
   assert.match(source, /resetNextPartnerApplication/);
   assert.match(source, /nextPartnerApplication/);
   assert.match(source, /nextPartnerAnswerTarget/);
@@ -219,6 +220,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /Mark profile ready/);
   assert.match(source, /Mark submitted/);
   assert.match(source, /Pause target/);
+  assert.match(source, /Block target/);
   assert.match(source, /Reset target/);
   assert.match(source, /Copy target prep/);
   assert.match(source, /Copy email draft/);
@@ -228,6 +230,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /Download the answer kit, then draft outreach from the text file/);
   assert.match(source, /Download the answer kit, then copy target details from the text file/);
   assert.match(source, /onPauseTarget=\{pauseNextPartnerApplication\}/);
+  assert.match(source, /onBlockTarget=\{blockNextPartnerApplication\}/);
   assert.match(source, /onResetTarget=\{resetNextPartnerApplication\}/);
   assert.match(source, /onAdvanceTarget=\{advanceNextPartnerApplication\}/);
   assert.match(source, /onCopyTarget=\{copyTargetPrep\}/);
@@ -325,6 +328,8 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(commerce, /Profile ready/);
   assert.match(commerce, /Submitted/);
   assert.match(commerce, /Approved/);
+  assert.match(commerce, /Blocked/);
+  assert.match(commerce, /Resolve password, account, eligibility or partner-site errors/);
   assert.match(commerce, /Sponsored-link readiness/);
   assert.match(commerce, /paidLinkDisclosureSnippet/);
   assert.match(commerce, /paidLinkLaunchChecklist/);
@@ -350,6 +355,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(css, /\.partner-next-complete/);
   assert.match(css, /\.partner-status-list/);
   assert.match(css, /\.partner-status/);
+  assert.match(css, /\.partner-status\.blocked strong/);
 });
 
 test("vehicle edits warn before selected parts become invalid", async () => {

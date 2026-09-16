@@ -110,8 +110,9 @@ test("commerce partner directory covers all affiliate reseller dealer and distri
  const realTruck=partnerPrograms.find(program=>program.id==="realtruck-affiliate");
  assert.equal(realTruck.network,"Impact");
  assert.match(realTruck.note,/Impact affiliate application path/);
- assert.ok(realTruck.requirements.length>=3);
- assert.ok(realTruck.requirements.some(item=>item.includes("account name, country, timezone, currency")));
+  assert.ok(realTruck.requirements.length>=3);
+  assert.ok(realTruck.requirements.some(item=>item.includes("account name, country, timezone, currency")));
+ assert.ok(realTruck.requirements.some(item=>item.includes("password or account setup")));
  assert.ok(partnerPrograms.some(p=>p.relationship==="affiliate"));
  assert.ok(partnerPrograms.some(p=>p.relationship==="reseller"));
  assert.ok(partnerPrograms.some(p=>p.relationship==="dealer"));
@@ -155,6 +156,7 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.ok(partnerSubmissionPrivateFields.length>=5);
  assert.match(paidLinkDisclosureSnippet,/clearly labeled affiliate or sponsored/);
  assert.equal(partnerApplicationTrackerStatusNames.submitted,"Submitted");
+ assert.equal(partnerApplicationTrackerStatusNames.blocked,"Blocked");
  const applicationStatuses={"realtruck-affiliate":"submitted","tire-rack-affiliate":"ready","turn-14-distribution":"approved"};
  const pack=buildCommerceApplicationPack({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses});
  assert.match(pack,/Jeep Build Lab partner application pack/);
@@ -172,7 +174,7 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(pack,/Pre-publish paid-link checks/);
  assert.match(pack,/Submission review checklist/);
  assert.match(pack,/Review every visible field, checkbox, opt-in, agreement and program term/);
- assert.match(pack,/Application tracker summary\n- To apply: \d+\n- Profile ready: 1\n- Submitted: 1\n- Approved: 1\n- Paused: 0\n- Next application: /);
+ assert.match(pack,/Application tracker summary\n- To apply: \d+\n- Profile ready: 1\n- Submitted: 1\n- Approved: 1\n- Paused: 0\n- Blocked: 0\n- Next application: /);
  assert.match(pack,/Suggested application order/);
  assert.match(pack,/1\. RealTruck via Impact - Matches 2 selected parts across Tires, Suspension\. Tracker: Submitted\./);
  assert.match(pack,/Next outreach email draft/);
@@ -293,6 +295,17 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(review,/Before marking Submitted/);
  assert.match(review,/Suggested owner approval line/);
  assert.match(review,/I approve submitting the visible CARiD application fields/);
+ const blockedStatuses={...applicationStatuses,"carid-affiliate":"blocked"};
+ const blockedPack=buildCommerceApplicationPack({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses:blockedStatuses});
+ assert.match(blockedPack,/Application tracker summary\n- To apply: \d+\n- Profile ready: 1\n- Submitted: 1\n- Approved: 1\n- Paused: 0\n- Blocked: 1\n- Next application: /);
+ assert.match(blockedPack,/Next outreach email draft/);
+ assert.match(blockedPack,/Subject: Jeep Build Lab partner application - 4 Wheel Parts/);
+ const blockedAnswers=buildAffiliateApplicationAnswers({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses:blockedStatuses});
+ assert.match(blockedAnswers,/Program: 4 Wheel Parts/);
+ assert.match(blockedAnswers,/Tracker status: To apply/);
+ const blockedTracker=buildPartnerApplicationTrackerCsv({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses:blockedStatuses});
+ assert.match(blockedTracker,/"CARiD","","Affiliate","Blocked","Application needed"/);
+ assert.match(blockedTracker,/"Resolve password, account, eligibility or partner-site errors before retrying this application\."/);
 });
 test("totals multiply individual wheels/tires, count kits once, and include allowances",()=>{
  const s=base();s.picks={wheels:"method-MR70178550900",tires:"nitto-217020",lift:"lift-16400-0073"};s.labor=50000;s.extras=30000;

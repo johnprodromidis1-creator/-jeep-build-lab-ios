@@ -471,6 +471,7 @@
 .partner-status-tracker>div{display:flex;justify-content:space-between;gap:10px;align-items:start}
 .partner-status-tracker>div>strong{font-size:13px;color:#eef6f7}
 .partner-status-tracker small{font-size:12px;color:#9fb4bd;line-height:1.4;text-align:right}
+.partner-status-list{display:grid;gap:7px;max-height:220px;overflow:auto;padding-right:2px}
 .partner-status{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;width:100%;border:1px solid #33474f;background:#17262d;color:#dce7eb;border-radius:5px;padding:7px 8px;text-align:left;cursor:pointer}
 .partner-status span{font-size:12px;line-height:1.35;overflow-wrap:anywhere}
 .partner-status strong{font-size:12px;font-weight:700;color:#efc690;border:1px solid #66593d;background:#332d21;border-radius:999px;padding:2px 7px;white-space:nowrap}

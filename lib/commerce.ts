@@ -450,6 +450,38 @@ function nextApplicationTargetLines(priorities: readonly PartnerApplicationPrior
   ];
 }
 
+export function buildPartnerOutreachEmailDraft({ name, state, parts, applicationStatuses }: CommerceApplicationPackInput) {
+  const priorities = partnerApplicationPrioritiesForBuild(state, parts);
+  const next = nextApplicationPriority(priorities, applicationStatuses);
+  if (!next) {
+    return [
+      "No outreach draft needed right now.",
+      "All tracked partner programs for this build are submitted or approved. Keep approved tracking links labeled and tested before publishing.",
+    ].join("\n");
+  }
+  const program = next.program;
+  return [
+    `Subject: Jeep Build Lab partner application - ${program.name}`,
+    "",
+    `Hi ${program.name} team,`,
+    "",
+    "I'm preparing a partner application for Jeep Build Lab, an independent Wrangler JL build planner that helps owners compare sourced rims, tires, suspension, recovery and armor options before they click out to a retailer or partner program.",
+    "",
+    "Public site: https://jeep-build-lab.johnprodromidis1.chatgpt.site/",
+    `Current build context: ${name.trim() || "Untitled build"} - ${vehicleDescription(state)}`,
+    `Why this program fits: ${next.reason}`,
+    `Application path: ${safeCommerceUrl(program.url)}`,
+    ...(program.network ? [`Partner network: ${program.network}`] : []),
+    "",
+    "Current commerce posture: links are reference and application links only until a partner approves terms, tracking is tested, and sponsored or affiliate labels are shown near outbound links.",
+    "",
+    `Details to verify before sending: legal business name, applicant name, phone, mailing address, tax/payment details, traffic estimate, and ${program.requirements?.length ? "these program requirements: " + program.requirements.join(" ") : "any partner-specific requirements."}`,
+    "",
+    "Thanks,",
+    "John",
+  ].join("\n");
+}
+
 export function buildAffiliateApplicationAnswers({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
   const priorities = partnerApplicationPrioritiesForBuild(state, parts);
@@ -466,6 +498,9 @@ export function buildAffiliateApplicationAnswers({ name, state, parts, generated
     `- Commerce status: ${noActiveCommerceDisclosure}`,
     "",
     ...nextApplicationTargetLines(priorities, applicationStatuses),
+    "",
+    "Next outreach email draft",
+    buildPartnerOutreachEmailDraft({ name, notes: "", state, parts, generatedAt, applicationStatuses }),
     "",
     "Common application answers",
     affiliateApplicationAnswerLines(),
@@ -562,6 +597,9 @@ export function buildAffiliateApplicationProfile({ name, notes, state, parts, ge
     "Suggested application order",
     priorities.map((priority, index) => suggestedApplicationLine(priority, index, applicationStatuses)).join("\n"),
     "",
+    "Next outreach email draft",
+    buildPartnerOutreachEmailDraft({ name, notes, state, parts, generatedAt, applicationStatuses }),
+    "",
     "Partner focus",
     programs.map(program => [
       `- ${program.name}${program.network ? ` via ${program.network}` : ""}`,
@@ -653,6 +691,9 @@ export function buildCommerceApplicationPack({ name, notes, state, parts, genera
     "",
     "Suggested application order",
     priorities.map((priority, index) => suggestedApplicationLine(priority, index, applicationStatuses)).join("\n"),
+    "",
+    "Next outreach email draft",
+    buildPartnerOutreachEmailDraft({ name, notes, state, parts, generatedAt, applicationStatuses }),
     "",
     "Selected build source links",
     selected.length ? selected.map(part => selectedPartCommerceLine(part, state)).join("\n") : "- No parts are selected yet. The program directory below is not narrowed to a build.",

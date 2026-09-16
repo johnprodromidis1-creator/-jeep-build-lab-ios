@@ -50,7 +50,7 @@ const {initialState,baseCatalog,categories,selectedParts,totalFor,buildIssues,st
 const {catalogFitScore,catalogSortOptions,compareCatalogParts,dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
 const {buildShopBrief}=shopBrief;
-const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationAnswers,buildAffiliateApplicationProfile,buildCommerceApplicationPack,buildPartnerApplicationLinks,buildPaidLinkDisclosurePack,commerceApplicationChecklist,affiliateApplicationAnswers,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist,paidLinkDisclosureSnippet,paidLinkLaunchChecklist}=commerce;
+const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationAnswers,buildAffiliateApplicationProfile,buildCommerceApplicationPack,buildPartnerApplicationLinks,buildPaidLinkDisclosurePack,buildPartnerOutreachEmailDraft,commerceApplicationChecklist,affiliateApplicationAnswers,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist,paidLinkDisclosureSnippet,paidLinkLaunchChecklist}=commerce;
 const {buildRecipes}=recipes;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
@@ -170,6 +170,10 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(pack,/Application tracker summary\n- To apply: \d+\n- Profile ready: 1\n- Submitted: 1\n- Approved: 1\n- Paused: 0\n- Next application: /);
  assert.match(pack,/Suggested application order/);
  assert.match(pack,/1\. RealTruck via Impact - Matches 2 selected parts across Tires, Suspension\. Tracker: Submitted\./);
+ assert.match(pack,/Next outreach email draft/);
+ assert.match(pack,/Subject: Jeep Build Lab partner application - CARiD/);
+ assert.match(pack,/Current commerce posture: links are reference and application links only until a partner approves terms/);
+ assert.match(pack,/Details to verify before sending: legal business name, applicant name, phone/);
  assert.match(pack,/Selected build source links/);
  assert.match(pack,/Source: Quadratec - https:\/\/www\.quadratec\.com\/p\/nitto\/ridge-grappler-tire/);
  assert.match(pack,/Application link: https:\/\/www\.tirerack\.com\/affiliate/);
@@ -209,6 +213,8 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(profile,/Application tracker: Profile ready/);
  assert.match(profile,/Application tracker summary/);
  assert.match(profile,/Next application: /);
+ assert.match(profile,/Next outreach email draft/);
+ assert.match(profile,/Subject: Jeep Build Lab partner application - CARiD/);
  assert.match(profile,/Do not store passwords, banking info, tax IDs, private phone numbers or affiliate tracking credentials in the public app source/);
  assert.match(profile,/RealTruck via Impact/);
  assert.doesNotMatch(profile,/MORryde Jeep/);
@@ -221,6 +227,9 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(answers,/Relationship: Affiliate/);
  assert.match(answers,/Application link: https:\/\/www\.carid\.com\/affiliate\.html/);
  assert.match(answers,/Match reason: Matches 2 selected parts across Tires, Suspension\./);
+ assert.match(answers,/Next outreach email draft/);
+ assert.match(answers,/Subject: Jeep Build Lab partner application - CARiD/);
+ assert.match(answers,/Public site: https:\/\/jeep-build-lab\.johnprodromidis1\.chatgpt\.site\//);
  assert.match(answers,/Common application answers/);
  assert.match(answers,/Do not paste without verifying/);
  assert.match(answers,/Do not claim approved affiliate tracking, live checkout, dealer pricing, inventory ownership or dropship fulfillment/);
@@ -236,6 +245,10 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(disclosure,/Placement rules/);
  assert.match(disclosure,/Label each individual paid link or button as sponsored or affiliate/);
  assert.match(disclosure,/Owner notes\nApply before linking\./);
+ const draft=buildPartnerOutreachEmailDraft({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses});
+ assert.match(draft,/Subject: Jeep Build Lab partner application - CARiD/);
+ assert.match(draft,/Current build context: Commission plan - 2021 Wrangler JL Unlimited 4-door Sport, 3\.6L V6 gas/);
+ assert.match(draft,/Application path: https:\/\/www\.carid\.com\/affiliate\.html/);
 });
 test("totals multiply individual wheels/tires, count kits once, and include allowances",()=>{
  const s=base();s.picks={wheels:"method-MR70178550900",tires:"nitto-217020",lift:"lift-16400-0073"};s.labor=50000;s.extras=30000;

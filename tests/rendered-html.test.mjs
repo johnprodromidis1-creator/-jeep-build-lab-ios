@@ -202,8 +202,7 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(source, /application-answer-requirements/);
   assert.match(source, /requirements:nextPartnerApplication\.priority\.program\.requirements\?\?\[\]/);
   assert.match(source, /targetPrepText/);
-  assert.match(source, /targetOutreachEmail/);
-  assert.match(source, /Subject: Jeep Build Lab partner application/);
+  assert.match(source, /buildPartnerOutreachEmailDraft/);
   assert.match(source, /copyTargetPrep/);
   assert.match(source, /copyTargetOutreachEmail/);
   assert.match(source, /Open application/);
@@ -272,6 +271,10 @@ test("builder surfaces partner commerce disclosure and program links", async () 
   assert.match(commerce, /Jeep Build Lab affiliate application answer kit/);
   assert.match(commerce, /Affiliate application profile fields/);
   assert.match(commerce, /Next application target/);
+  assert.match(commerce, /buildPartnerOutreachEmailDraft/);
+  assert.match(commerce, /Next outreach email draft/);
+  assert.match(commerce, /Subject: Jeep Build Lab partner application/);
+  assert.match(commerce, /Current commerce posture: links are reference and application links only/);
   assert.match(commerce, /Common application answers/);
   assert.match(commerce, /Fulfillment role/);
   assert.match(commerce, /partnerApplicationTrackerStatusNames/);

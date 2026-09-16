@@ -153,6 +153,17 @@ export const sponsoredLinkReadinessChecklist = [
   "Keep a plain-language FTC disclosure visible near paid links and in exports.",
 ] as const;
 
+export const paidLinkDisclosureSnippet =
+  "Disclosure: Jeep Build Lab may earn a commission from links clearly labeled affiliate or sponsored. Prices, availability and fitment are not guaranteed; confirm the exact product, current price, shipping, returns and installation requirements with the seller before buying.";
+
+export const paidLinkLaunchChecklist = [
+  "Partner has approved the account and program terms for this website or app.",
+  "Tracking URL came from the approved partner network and was tested from a clean browser.",
+  "Outbound button or link is labeled affiliate or sponsored before the user clicks.",
+  "Disclosure appears before or near the first paid link on the page or export.",
+  "Source snapshot price remains separate from retailer checkout price, stock and shipping claims.",
+] as const;
+
 export const partnerPrograms = [
   {
     id: "tire-rack-affiliate",
@@ -570,6 +581,44 @@ export function buildAffiliateApplicationProfile({ name, notes, state, parts, ge
   ].join("\n");
 }
 
+export function buildPaidLinkDisclosurePack({ name, notes, state, parts, generatedAt = new Date().toISOString(), applicationStatuses }: CommerceApplicationPackInput) {
+  const selected = selectedParts(state, parts);
+  const programs = partnerProgramsForBuild(state, parts);
+  const allPriorities = partnerApplicationPrioritiesForBuild(state, parts);
+  return [
+    "Jeep Build Lab paid-link disclosure pack",
+    `Build: ${name.trim() || "Untitled build"}`,
+    `Generated: ${new Date(generatedAt).toISOString().slice(0, 10)}`,
+    `Vehicle: ${vehicleDescription(state)}`,
+    "",
+    "Use this disclosure only after partner approval, tracking-link testing and visible sponsored or affiliate labeling.",
+    "",
+    "Disclosure snippet",
+    paidLinkDisclosureSnippet,
+    "",
+    "Current commerce status",
+    `- ${commerceDisclosure}`,
+    `- ${noActiveCommerceDisclosure}`,
+    "",
+    "Build focus",
+    `- ${selected.length ? selectedCategorySummary(selected) : "No selected parts; use the full Jeep Build Lab audience."}`,
+    "",
+    applicationTrackerSummary(programs, allPriorities, applicationStatuses),
+    "",
+    "Pre-publish paid-link checks",
+    paidLinkLaunchChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    "Placement rules",
+    "- Put the disclosure before or near the first paid outbound link.",
+    "- Label each individual paid link or button as sponsored or affiliate.",
+    "- Keep source-price snapshots and checkout claims separate.",
+    "- Remove paid labels from links that are still only application or source references.",
+    "",
+    "Owner notes",
+    notes.trim() || "No notes provided.",
+  ].join("\n");
+}
+
 export function buildCommerceApplicationPack({ name, notes, state, parts, generatedAt = new Date().toISOString(), applicationStatuses }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
   const programs = partnerProgramsForBuild(state, parts);
@@ -593,6 +642,12 @@ export function buildCommerceApplicationPack({ name, notes, state, parts, genera
     "",
     "Sponsored-link readiness",
     sponsoredLinkReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    "Paid-link disclosure snippet",
+    paidLinkDisclosureSnippet,
+    "",
+    "Pre-publish paid-link checks",
+    paidLinkLaunchChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
     applicationTrackerSummary(programs, allPriorities, applicationStatuses),
     "",

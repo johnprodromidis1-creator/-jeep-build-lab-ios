@@ -451,6 +451,9 @@
 .sponsor-readiness p{margin:0;color:#afc1b2}
 .sponsor-readiness ul{margin:9px 0 0;padding-left:18px;color:#c7d6ca;font-size:12px;line-height:1.55}
 .sponsor-readiness li+li{margin-top:4px}
+.paid-disclosure-preview{border:1px solid #3d503f;background:#101b14;border-radius:5px;margin-top:10px;padding:9px 10px}
+.paid-disclosure-preview p{margin:4px 0 0;color:#c7d6ca}
+.paid-disclosure-preview span{display:block;color:#9eb3a5;font-size:12px;line-height:1.45;margin-top:7px}
 .sponsor-readiness-foot{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
 .sponsor-readiness-foot span{border:1px solid #55664f;background:#101b14;color:#dce8de;border-radius:999px;padding:3px 8px;font-size:12px}
 .application-profile-preview{border-top:1px solid #3d503f;margin-top:10px;padding-top:10px}
@@ -504,7 +507,7 @@
 .partner-status.approved strong{color:#d9f3dc;border-color:#4a704d;background:#102316}
 .partner-status.paused strong{color:#d9dde1;border-color:#596169;background:#1a2025}
 .commerce-directory-note{border-left:2px solid #7f6746;padding-left:9px}
-.commerce-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:8px 0 2px}
+.commerce-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:8px;margin:8px 0 2px}
 .commerce-actions [data-slot=button]{width:100%;white-space:normal}
 .commerce-sources{border:1px solid #3e5159;background:#121f25;border-radius:6px;padding:9px 10px;margin:10px 0 6px}
 .commerce-sources>strong{display:block;font-size:13px;font-weight:600;color:#eef6f7;margin-bottom:4px}

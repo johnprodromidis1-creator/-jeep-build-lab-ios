@@ -50,7 +50,7 @@ const {initialState,baseCatalog,categories,selectedParts,totalFor,buildIssues,st
 const {catalogFitScore,catalogSortOptions,compareCatalogParts,dimensionFilterOptions,hasCatalogFilter,matchesCatalogFilters}=catalogFilters;
 const {allGarageFilter,filterGarageBuilds,garageConflictCount,garageSearchText,hasGarageFilter}=garageFilters;
 const {buildShopBrief}=shopBrief;
-const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationAnswers,buildAffiliateApplicationProfile,buildCommerceApplicationPack,buildPartnerApplicationLinks,commerceApplicationChecklist,affiliateApplicationAnswers,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist}=commerce;
+const {partnerPrograms,partnerProgramsForParts,partnerProgramsForBuild,partnerApplicationPrioritiesForBuild,partnerApplicationTrackerStatusNames,commerceOffersForPart,commerceSummaryForPart,safeCommerceUrl,commerceDisclosure,noActiveCommerceDisclosure,buildAffiliateApplicationAnswers,buildAffiliateApplicationProfile,buildCommerceApplicationPack,buildPartnerApplicationLinks,buildPaidLinkDisclosurePack,commerceApplicationChecklist,affiliateApplicationAnswers,affiliateApplicationProfileFields,sponsoredLinkReadinessChecklist,paidLinkDisclosureSnippet,paidLinkLaunchChecklist}=commerce;
 const {buildRecipes}=recipes;
 const base=()=>structuredClone(initialState);
 const req=(user,method="GET",body,origin="https://test.local",query="")=>new Request("https://test.local/api/builds"+query,{method,headers:{...(user?{"oai-authenticated-user-id":user}:{}),origin,"Content-Type":"application/json"},...(body?{body:JSON.stringify(body)}:{})});
@@ -149,6 +149,8 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.ok(affiliateApplicationAnswers.length>=7);
  assert.ok(affiliateApplicationProfileFields.length>=8);
  assert.ok(sponsoredLinkReadinessChecklist.length>=5);
+ assert.ok(paidLinkLaunchChecklist.length>=5);
+ assert.match(paidLinkDisclosureSnippet,/clearly labeled affiliate or sponsored/);
  assert.equal(partnerApplicationTrackerStatusNames.submitted,"Submitted");
  const applicationStatuses={"realtruck-affiliate":"submitted","tire-rack-affiliate":"ready","turn-14-distribution":"approved"};
  const pack=buildCommerceApplicationPack({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses});
@@ -162,6 +164,9 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(pack,/Fulfillment role: Jeep Build Lab is currently a planning and referral experience/);
  assert.match(pack,/Sponsored-link readiness/);
  assert.match(pack,/Label every paid outbound link as sponsored or affiliate/);
+ assert.match(pack,/Paid-link disclosure snippet/);
+ assert.match(pack,/Disclosure: Jeep Build Lab may earn a commission from links clearly labeled affiliate or sponsored/);
+ assert.match(pack,/Pre-publish paid-link checks/);
  assert.match(pack,/Application tracker summary\n- To apply: \d+\n- Profile ready: 1\n- Submitted: 1\n- Approved: 1\n- Paused: 0\n- Next application: /);
  assert.match(pack,/Suggested application order/);
  assert.match(pack,/1\. RealTruck via Impact - Matches 2 selected parts across Tires, Suspension\. Tracker: Submitted\./);
@@ -220,6 +225,17 @@ test("commerce application pack exports selected partner paths and prep checklis
  assert.match(answers,/Do not paste without verifying/);
  assert.match(answers,/Do not claim approved affiliate tracking, live checkout, dealer pricing, inventory ownership or dropship fulfillment/);
  assert.match(answers,/Build focus: Tires, Suspension/);
+ const disclosure=buildPaidLinkDisclosurePack({name:"Commission plan",notes:"Apply before linking.",state,parts:baseCatalog,generatedAt:"2026-09-14T15:30:00.000Z",applicationStatuses});
+ assert.match(disclosure,/Jeep Build Lab paid-link disclosure pack/);
+ assert.match(disclosure,/Use this disclosure only after partner approval/);
+ assert.match(disclosure,/Disclosure snippet/);
+ assert.match(disclosure,/Current commerce status/);
+ assert.match(disclosure,/Application tracker summary/);
+ assert.match(disclosure,/Pre-publish paid-link checks/);
+ assert.match(disclosure,/Partner has approved the account and program terms/);
+ assert.match(disclosure,/Placement rules/);
+ assert.match(disclosure,/Label each individual paid link or button as sponsored or affiliate/);
+ assert.match(disclosure,/Owner notes\nApply before linking\./);
 });
 test("totals multiply individual wheels/tires, count kits once, and include allowances",()=>{
  const s=base();s.picks={wheels:"method-MR70178550900",tires:"nitto-217020",lift:"lift-16400-0073"};s.labor=50000;s.extras=30000;

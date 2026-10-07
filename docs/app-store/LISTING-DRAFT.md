@@ -31,9 +31,9 @@ The app includes planning calculations and fitment rules, a bundled illustrative
 
 ## Privacy questionnaire preparation
 
-Native code currently sends no build records to an app server. The Google Mobile Ads bridge is present but production ads remain disabled until real AdMob identifiers and a consent message are configured. Once enabled, review Google SDK collection and tracking behavior in the final privacy report before answering App Store Connect. The Filesystem plugin accesses app-owned temporary export files; the declared required-API reason is C617.1. The website's cloud account/data flow is distinct from the native build.
+Native code currently sends no build records to an app server. The Google Mobile Ads bridge is present but production ads remain disabled until real AdMob identifiers and consent messages are configured. Ads are non-personalized or limited by default; a personalized request requires an explicit Jeep Build Lab preference, eligible UMP state and authorized iOS App Tracking Transparency status. Google consent refusals and restricted or under-age treatment remain authoritative. Once enabled, review Google SDK collection and tracking behavior in the final privacy report before answering App Store Connect. The Filesystem plugin accesses app-owned temporary export files; the declared required-API reason is C617.1. The website's cloud account/data flow is distinct from the native build.
 
-No camera, microphone, photo-library, location, contacts or notification permission is requested. File sharing is user-initiated. Reassess these statements if any capability or SDK changes.
+No camera, microphone, photo-library, location or contacts permission is requested. Part Spotlight notification permission is requested only after the user enables it. App Tracking Transparency may be presented through the configured Google consent flow; refusal keeps ads non-personalized or limited and does not block app features. File sharing is user-initiated. Reassess these statements if any capability or SDK changes.
 
 Encryption configuration: `ITSAppUsesNonExemptEncryption = false` reflects this candidate's lack of custom/non-exempt encryption implementation; external HTTPS uses platform services. Confirm the final archive and questionnaire before upload.
 

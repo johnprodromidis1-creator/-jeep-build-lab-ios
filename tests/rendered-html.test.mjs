@@ -81,7 +81,7 @@ test("serves App Store support and privacy pages from the production worker", as
   assert.doesNotMatch(support.html, developmentPreviewMeta);
   assert.match(privacy.html, /Privacy policy/);
   assert.match(privacy.html, /does not require an account/);
-  assert.match(privacy.html, /does not request camera, contacts, microphone or photo-library access/);
+  assert.match(privacy.html, /does not request camera, contacts, microphone, location or photo-library access/);
   assert.match(support.html, /Support/);
   assert.match(support.html, /For help, email/);
   assert.match(support.html, /Offline use/);
@@ -110,9 +110,17 @@ test("native engagement is opt-in and production ads stay configuration-gated", 
   assert.match(engagement, /scheduledUntil-Date\.now\(\)<=2\*threeDays/);
   assert.match(engagement, /LocalNotifications\.cancel/);
   assert.match(ads, /VITE_ADMOB_IOS_BANNER_ID/);
-  assert.match(ads, /npa:true,isTesting:false/);
+  assert.match(ads, /trackingAuthorizationStatus/);
+  assert.match(ads, /tracking\.status==='notDetermined'/);
+  assert.match(ads, /requestTrackingAuthorization/);
+  assert.match(ads, /catch\(error\)\{\s*if\(enabled\)localStorage\.removeItem\(personalizationKey\)/);
+  assert.match(ads, /npa:!personalized,isTesting:false/);
+  assert.match(ads, /catch\{return false;\}/);
+  assert.match(settings, /Allow personalized ads/);
+  assert.match(settings, /setPersonalizedAds/);
   assert.doesNotMatch(ads, /ca-app-pub-3940256099942544/);
   assert.match(privacy, /Google Mobile Ads banner/);
+  assert.match(privacy, /Google’s stored refusal, restricted or under-age treatment still applies/);
   assert.match(privacy, /scheduled locally on your device every three days/);
 });
 

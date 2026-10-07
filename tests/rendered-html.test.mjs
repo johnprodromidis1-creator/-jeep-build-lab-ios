@@ -594,6 +594,20 @@ test("build summary breaks costs into purchase stages", async () => {
   assert.match(css, /\.stage-breakdown-row\.allowances/);
 });
 
+test("build summary surfaces a dependency-aware advisory build order", async () => {
+  const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
+  const planning = await readFile(new URL("../lib/planning.ts", import.meta.url), "utf8");
+  const shopBrief = await readFile(new URL("../lib/shop-brief.ts", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(source, /aria-label="Advisory build order"/);
+  assert.match(source, /advisoryBuildOrder=buildOrder\(state,parts\)/);
+  assert.match(source, /installer approves or revises the final sequence/i);
+  assert.match(planning, /export function buildOrder/);
+  assert.match(planning, /Set stance and geometry/);
+  assert.match(shopBrief, /Advisory build order/);
+  assert.match(css, /\.build-order/);
+});
+
 test("build summary exposes a category completion checklist", async () => {
   const source = await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8");
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");

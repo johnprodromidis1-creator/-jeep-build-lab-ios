@@ -1,6 +1,6 @@
 import { buildIssues, categoryNames, latestSourceCheckedAt, money, partCoverage, priceBasis, quantityFor, selectedParts, sourceCheckedLabel, vehicleDescription, type BuildState, type Part } from "./model";
 import { commerceDisclosure, commerceSummaryForPart, independenceDisclosure, noActiveCommerceDisclosure } from "./commerce";
-import { costPlan, stageFor, stageNames, type Stage } from "./planning";
+import { buildOrder, costPlan, stageFor, stageNames, type Stage } from "./planning";
 
 export type ShopBriefInput = {
   name: string;
@@ -137,6 +137,11 @@ export function buildShopBrief({ name, notes, state, parts, generatedAt }: ShopB
 
   lines.push("", `Shop confirmation checks (${checks.length})`);
   lines.push(...(checks.length ? checks.map(issue => `- ${issue.message}`) : ["- No extra confirmation checks yet."]));
+
+  const order = buildOrder(state, parts);
+  lines.push("", "Advisory build order");
+  lines.push(...(order.length ? order.map((step, index) => `${index + 1}. ${step.title}${step.parts.length ? `: ${step.parts.map(part => `${part.brand} ${part.name}`).join("; ")}` : ""}\n   Gate: ${step.gate}`) : ["- Select parts to generate an advisory install sequence."]));
+  lines.push("- The installer must approve or revise this sequence for the full vehicle and part combination.");
 
   lines.push("", "Installer quote checklist");
   lines.push(...installerQuoteChecklist({ notes, state, parts }).map(item => `- ${item.label} [${item.status}]: ${item.detail}`));

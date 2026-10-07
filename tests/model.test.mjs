@@ -566,6 +566,10 @@ test("shop brief export groups staged parts, totals, source links and fitment no
  assert.ok(checklist.some(item=>item.key==="allowances"&&item.status==="ready"));
  assert.ok(checklist.some(item=>item.key==="owner-notes"&&item.status==="ready"));
  assert.match(brief,/Jeep Build Lab shop brief/);
+ assert.match(brief,/Advisory build order/);
+ assert.match(brief,/Set stance and geometry/);
+ assert.match(brief,/Final combination check/);
+ assert.match(brief,/installer must approve or revise this sequence/i);
  assert.match(brief,/Build: Trail quote/);
  assert.match(brief,/Generated: 2026-09-14/);
  assert.match(brief,/2021 Wrangler JL Unlimited 4-door Sport/);

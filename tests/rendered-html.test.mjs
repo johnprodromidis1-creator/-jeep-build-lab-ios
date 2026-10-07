@@ -110,6 +110,7 @@ test("native engagement is opt-in and production ads stay configuration-gated", 
   assert.match(engagement, /scheduledUntil-Date\.now\(\)<=2\*threeDays/);
   assert.match(engagement, /LocalNotifications\.cancel/);
   assert.match(ads, /VITE_ADMOB_IOS_BANNER_ID/);
+  assert.match(ads, /VITE_ADMOB_RELEASE_ENABLED==='true'/);
   assert.match(ads, /trackingAuthorizationStatus/);
   assert.match(ads, /tracking\.status==='notDetermined'/);
   assert.match(ads, /requestTrackingAuthorization/);

@@ -5,7 +5,7 @@ let started=false;
 const personalizationKey='jeep-build-lab:personalized-ads:v1';
 const viteEnv=(import.meta as ImportMeta&{env?:Record<string,string|undefined>}).env;
 export const productionBannerAdId=viteEnv?.VITE_ADMOB_IOS_BANNER_ID?.trim()??'';
-export const adsConfigured=()=>Boolean(productionBannerAdId);
+export const adsConfigured=()=>Boolean(productionBannerAdId)&&viteEnv?.VITE_ADMOB_RELEASE_ENABLED==='true';
 export function personalizedAdsEnabled(){try{return localStorage.getItem(personalizationKey)==='enabled';}catch{return false;}}
 
 export async function setPersonalizedAds(enabled:boolean){

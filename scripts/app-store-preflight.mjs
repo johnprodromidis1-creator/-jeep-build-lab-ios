@@ -123,6 +123,8 @@ export async function runPreflight(projectRoot = scriptRoot) {
 
   check(checks, has(info, /<key>CFBundleDisplayName<\/key>\s*<string>Jeep Build Lab<\/string>/), "Info.plist display name is Jeep Build Lab");
   check(checks, has(info, /<key>ITSAppUsesNonExemptEncryption<\/key>\s*<false\/>/), "export compliance plist flag remains false");
+  check(checks, has(info, /<key>GADApplicationIdentifier<\/key>\s*<string>ca-app-pub-1660847545816586~2171358957<\/string>/), "Info.plist uses the verified Jeep Build Lab AdMob app ID");
+  check(checks, has(codemagic, /VITE_ADMOB_IOS_BANNER_ID: ca-app-pub-1660847545816586\/7665474197/) && has(codemagic, /VITE_ADMOB_RELEASE_ENABLED: "false"/), "Codemagic keeps the verified banner behind the release gate");
   check(checks, !has(info, /NSCameraUsageDescription|NSMicrophoneUsageDescription|NSLocationWhenInUseUsageDescription|NSPhotoLibraryUsageDescription/), "Info.plist avoids unused sensitive permissions");
 
   check(checks, has(capacitor, /appId:\s*'com\.johnprodromidis\.jeepbuildlab'/), "Capacitor app id matches the registered identifier");

@@ -21,6 +21,7 @@ test("iOS project keeps App Store identity, version and device-family settings a
 
   assert.match(info, /<key>CFBundleDisplayName<\/key>\s*<string>Jeep Build Lab<\/string>/);
   assert.match(info, /<key>ITSAppUsesNonExemptEncryption<\/key>\s*<false\/>/);
+  assert.match(info, /<key>GADApplicationIdentifier<\/key>\s*<string>ca-app-pub-1660847545816586~2171358957<\/string>/);
   assert.match(info, /<key>NSUserTrackingUsageDescription<\/key>\s*<string>[^<]+<\/string>/);
   assert.doesNotMatch(info, /NSCameraUsageDescription|NSMicrophoneUsageDescription|NSLocationWhenInUseUsageDescription|NSPhotoLibraryUsageDescription/);
 });

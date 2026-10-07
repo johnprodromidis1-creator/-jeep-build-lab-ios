@@ -17,6 +17,8 @@ test("App Store preflight keeps release guardrails aligned", async () => {
   assert.equal(report.expected.version, EXPECTED_VERSION);
   assert.equal(EXPECTED_LIVE_SITES_VERSION, 124);
   const labels = new Set(report.checks.map((item) => item.label));
+  assert.ok(labels.has("Info.plist uses the verified Jeep Build Lab AdMob app ID"));
+  assert.ok(labels.has("Codemagic keeps the verified banner behind the release gate"));
   assert.ok(labels.has("screenshot plan covers iPhone and iPad targets"));
   assert.ok(labels.has("screenshot plan requires native signed/TestFlight captures"));
   assert.ok(labels.has("screenshot plan rejects browser or generated final screenshots"));

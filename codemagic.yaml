@@ -8,6 +8,9 @@ workflows:
     environment:
       node: 24.19.0
       xcode: 26.6
+      vars:
+        VITE_ADMOB_IOS_BANNER_ID: ca-app-pub-1660847545816586/7665474197
+        VITE_ADMOB_RELEASE_ENABLED: "false"
     scripts:
       - name: Compile the bundled app for iOS Simulator
         script: bash scripts/ios-verify.sh
@@ -32,6 +35,8 @@ workflows:
       vars:
         BUNDLE_ID: com.johnprodromidis.jeepbuildlab
         BUILD_NUMBER_OFFSET: 0
+        VITE_ADMOB_IOS_BANNER_ID: ca-app-pub-1660847545816586/7665474197
+        VITE_ADMOB_RELEASE_ENABLED: "false"
     scripts:
       - name: Install locked dependencies
         script: npm ci

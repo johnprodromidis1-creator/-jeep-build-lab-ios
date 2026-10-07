@@ -15,7 +15,7 @@ test("App Store preflight keeps release guardrails aligned", async () => {
 
   assert.equal(report.expected.bundleId, EXPECTED_BUNDLE_ID);
   assert.equal(report.expected.version, EXPECTED_VERSION);
-  assert.equal(EXPECTED_LIVE_SITES_VERSION, 124);
+  assert.equal(EXPECTED_LIVE_SITES_VERSION, 162);
   const labels = new Set(report.checks.map((item) => item.label));
   assert.ok(labels.has("Info.plist uses the verified Jeep Build Lab AdMob app ID"));
   assert.ok(labels.has("Codemagic keeps the verified banner behind the release gate"));

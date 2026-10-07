@@ -7,7 +7,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 export const EXPECTED_BUNDLE_ID = "com.johnprodromidis.jeepbuildlab";
 export const EXPECTED_VERSION = "0.2.0";
 export const LIVE_SITE_URL = "https://jeep-build-lab.johnprodromidis1.chatgpt.site";
-export const EXPECTED_LIVE_SITES_VERSION = 124;
+export const EXPECTED_LIVE_SITES_VERSION = 162;
 
 const nativeSafeTests =
   "node --test tests/model.test.mjs tests/device-storage.test.mjs tests/ios-metadata.test.mjs tests/platform.test.mjs";
@@ -163,7 +163,7 @@ export async function runPreflight(projectRoot = scriptRoot) {
   check(checks, readiness.includes(`Sites version ${EXPECTED_LIVE_SITES_VERSION}`), "readiness records the latest Sites version");
   check(checks, has(readiness, /no signed IPA or TestFlight upload has been verified/i), "readiness keeps signed-build status honest");
   check(checks, has(readiness, /early signing-profile gate/i), "readiness records the signing-profile gate");
-  check(checks, has(readiness, /passes 78 tests/i), "readiness records the current regression count");
+  check(checks, has(readiness, /passes 82 tests/i), "readiness records the current regression count");
   check(checks, has(readiness, /in-picker 15\+ choice depth proof strip/i), "readiness records the catalog depth proof strip");
   check(checks, has(readiness, /blank blocked targets stay visible with default blocker guidance/i), "readiness records blank blocked-target guidance");
   check(checks, has(readiness, /paused partner targets skip next-action guidance/i), "readiness records paused partner-target guidance");
@@ -182,7 +182,7 @@ export async function runPreflight(projectRoot = scriptRoot) {
   check(checks, has(readiness, /shared independence disclosure/i), "readiness records shared independence disclosure");
   check(checks, has(codemagicDoc, /matching provisioning profile/i), "Codemagic guide calls out the app-specific profile");
   check(checks, codemagicDoc.includes(`Sites version ${EXPECTED_LIVE_SITES_VERSION}`), "Codemagic guide records the latest Sites version");
-  check(checks, has(codemagicDoc, /expanded 78-test regression suite/i), "Codemagic guide records the current regression count");
+  check(checks, has(codemagicDoc, /expanded 82-test regression suite/i), "Codemagic guide records the current regression count");
   check(checks, has(codemagicDoc, /in-picker 15\+ choice proof strip/i), "Codemagic guide records the catalog depth proof strip");
   check(checks, has(codemagicDoc, /blank blocked targets stay visible with default blocker guidance/i), "Codemagic guide records blank blocked-target guidance");
   check(checks, has(codemagicDoc, /paused partner targets skip next-action guidance/i), "Codemagic guide records paused partner-target guidance");

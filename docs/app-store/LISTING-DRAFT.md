@@ -15,7 +15,7 @@ Plan your Wrangler JL upgrades with a curated parts catalog, an illustrative bui
 
 Choose rims, tires, suspension, bumpers, winches and side armor. Compare two build plans, include a matching spare, enter price quotes, and split purchases into buy now, buy later, already owned or installed.
 
-Save builds on your iPhone without an account. The bundled catalog, preview, calculations and device garage work offline. Export a parts list, shop brief or commerce application pack, review clearly labeled source/partner links, back up your garage, or share a configuration link when you are ready.
+Save builds on your iPhone without an account. The bundled catalog, preview, calculations and device garage work offline. Export a parts list, shop brief or commerce application pack, review clearly labeled source/partner links, back up your garage, or share a configuration link when you are ready. Optional local Part Spotlight notifications surface a sourced upgrade every three days.
 
 Coverage: 2018–2023 Wrangler JL Unlimited four-door, 3.6L gasoline, Sport/Sahara/Rubicon with standard factory suspension as the starting point, plus first-batch 2024 Sahara 4xe catalog support. TJ, JK, JT, two-door, diesel, 392, Xtreme Recon and other 4xe trims are not supported in this release.
 
@@ -31,7 +31,7 @@ The app includes planning calculations and fitment rules, a bundled illustrative
 
 ## Privacy questionnaire preparation
 
-Native code currently sends no build records to an app server and contains no ad/analytics SDKs or tracking. The Filesystem plugin accesses app-owned temporary export files; the declared required-API reason is C617.1. Do not automatically label the whole service “Data Not Collected”: review the final archive, native Browser behavior, support-email handling, platform logs and any added SDKs against Apple's current definitions and optional-disclosure exceptions before answering App Store Connect. The website's cloud account/data flow is distinct from the native build.
+Native code currently sends no build records to an app server. The Google Mobile Ads bridge is present but production ads remain disabled until real AdMob identifiers and a consent message are configured. Once enabled, review Google SDK collection and tracking behavior in the final privacy report before answering App Store Connect. The Filesystem plugin accesses app-owned temporary export files; the declared required-API reason is C617.1. The website's cloud account/data flow is distinct from the native build.
 
 No camera, microphone, photo-library, location, contacts or notification permission is requested. File sharing is user-initiated. Reassess these statements if any capability or SDK changes.
 

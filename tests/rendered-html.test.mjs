@@ -96,6 +96,26 @@ test("mobile toast notifications stay above the sticky build sheet bar", async (
   assert.match(css, /\.mobile-total\{display:flex;position:fixed;bottom:0;/);
 });
 
+test("native engagement is opt-in and production ads stay configuration-gated", async () => {
+  const settings = await readFile(new URL("../app/components/app-settings.tsx", import.meta.url), "utf8");
+  const engagement = await readFile(new URL("../lib/engagement.ts", import.meta.url), "utf8");
+  const ads = await readFile(new URL("../lib/ads.ts", import.meta.url), "utf8");
+  const privacy = await readFile(new URL("../app/components/privacy-content.tsx", import.meta.url), "utf8");
+  assert.match(settings, /Spotlight notifications/);
+  assert.match(settings, /setPartSpotlights/);
+  assert.match(engagement, /requestPermissions/);
+  assert.match(engagement, /length:18/);
+  assert.match(engagement, /threeDays=3\*24\*60\*60\*1000/);
+  assert.match(engagement, /\(index\+1\)\*threeDays/);
+  assert.match(engagement, /scheduledUntil-Date\.now\(\)<=2\*threeDays/);
+  assert.match(engagement, /LocalNotifications\.cancel/);
+  assert.match(ads, /VITE_ADMOB_IOS_BANNER_ID/);
+  assert.match(ads, /npa:true,isTesting:false/);
+  assert.doesNotMatch(ads, /ca-app-pub-3940256099942544/);
+  assert.match(privacy, /Google Mobile Ads banner/);
+  assert.match(privacy, /scheduled locally on your device every three days/);
+});
+
 test("app-owned plain buttons declare non-submit behavior", async () => {
   const sources = [
     ["app/builder.tsx", await readFile(new URL("../app/builder.tsx", import.meta.url), "utf8")],

@@ -27,6 +27,8 @@ import {isNative,publicOrigin,exportFile,shareLink,openExternal} from '@/lib/pla
 import {partThumbnail} from '@/lib/part-images';
 import {AppSettings} from './components/app-settings';
 import {DecimalInput} from './components/decimal-input';
+import {listenForPartSpotlights,refreshPartSpotlights} from '@/lib/engagement';
+import {startAdBanner} from '@/lib/ads';
 
 const icons={wheels:CircleDot,tires:CircleDot,lift:MoveVertical,bumpers:PanelTop,winches:Anchor,armor:Shield};
 const starter4xeRecipe=buildRecipes.find(recipe=>recipe.id==="sahara-4xe")??buildRecipes[0];
@@ -388,6 +390,7 @@ export default function Builder({storageMode='device'}:{storageMode?:'device'|'c
    try{const raw=window.location.hash.slice(7);if(raw.length>5000)throw new Error();const parsed=decodeSharedBuildStatePayload(raw);queueMicrotask(()=>{setState(parsed);setName("Linked JL build");setDirty(true);toast.success("Build loaded from link.");});}catch{toast.error("This build link is invalid or uses unsupported parts.");}
   }
  },[storage]);
+ useEffect(()=>{void startAdBanner().catch(()=>{});void refreshPartSpotlights(parts).catch(()=>{});void listenForPartSpotlights(partId=>{const part=parts.find(candidate=>candidate.id===partId);if(!part)return;setCategory(part.category);setDetail(part);setPrice(part.priceCents);setView('builder');toast.info(`Part spotlight: ${part.brand} ${part.name}`);});},[parts]);
  useEffect(()=>{if(!dirty||draft.status==="saved")return;const handler=(e:BeforeUnloadEvent)=>{e.preventDefault();};window.addEventListener("beforeunload",handler);return()=>window.removeEventListener("beforeunload",handler);},[dirty,draft.status]);
  async function loadGarage(){setGarageBusy(true);setGarageError('');try{setGarage(await storage.list());}catch(e){setGarageError(e instanceof Error?e.message:'Could not load garage.');}finally{setGarageBusy(false);}}
  function selectPart(p:Part){const picks={...state.picks},stages={...state.stages};if(picks[p.category]===p.id){delete picks[p.category];delete stages[p.category];}else{picks[p.category]=p.id;stages[p.category]='now';}update({picks,stages});}

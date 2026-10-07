@@ -64,6 +64,8 @@ test("Swift package wiring stays pinned to Capacitor and local native plugins", 
   assert.match(spm, /capacitor-swift-pm\.git", exact: "8\.5\.1"/);
   assert.match(spm, /package\(name: "CapacitorBrowser", path: "\.\.\/\.\.\/\.\.\/node_modules\/@capacitor\/browser"\)/);
   assert.match(spm, /package\(name: "CapacitorFilesystem", path: "\.\.\/\.\.\/\.\.\/node_modules\/@capacitor\/filesystem"\)/);
+  assert.match(spm, /package\(name: "CapacitorLocalNotifications", path: "\.\.\/\.\.\/\.\.\/node_modules\/@capacitor\/local-notifications"\)/);
+  assert.match(spm, /package\(name: "CapacitorCommunityAdmob", path: "\.\.\/\.\.\/\.\.\/node_modules\/@capacitor-community\/admob"\)/);
   assert.match(spm, /package\(name: "CapacitorShare", path: "\.\.\/\.\.\/\.\.\/node_modules\/@capacitor\/share"\)/);
   assert.doesNotMatch(spm, /\.pnpm|App\/App\/public/);
 });

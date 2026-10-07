@@ -85,6 +85,11 @@
 .catalog-toggle{min-height:42px;display:flex;align-items:center;gap:8px;border:1px solid #354248;border-radius:6px;background:#1b2225;padding:8px 11px;color:#bac7cc;font-size:12px;white-space:nowrap;cursor:pointer}
 .catalog-toggle input{width:16px;height:16px;accent-color:var(--primary)}
 .catalog-toggle strong{min-width:22px;text-align:center;border:1px solid #604f42;background:#403125;color:#ffd0b5;border-radius:999px;padding:1px 6px;font-size:12px}
+.engagement-settings label{display:flex;align-items:center;justify-content:space-between;gap:16px;border:1px solid #3d4d53;background:#172126;border-radius:6px;padding:12px;margin:8px 0 18px}
+.engagement-settings label span,.engagement-settings label small{display:block}
+.engagement-settings label strong{color:#f1f6f7;font-size:13px}
+.engagement-settings label small{color:#a7bac2;font-size:12px;line-height:1.4;margin-top:2px}
+.engagement-settings input{width:18px;height:18px;accent-color:var(--primary);flex:none}
 .favorite-toggle strong{border-color:#6b6040;background:#3b3523;color:#ffe0a7}
 .catalog-view-switch{min-height:42px;display:flex;align-items:stretch;border:1px solid #354248;border-radius:6px;background:#151d20;overflow:hidden;flex-shrink:0}
 .catalog-view-switch button{position:relative;display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 10px;min-width:96px;color:#aebec5;font-size:12px;font-weight:700;border-right:1px solid #354248;white-space:nowrap;transition:background .15s,color .15s}

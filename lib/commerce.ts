@@ -46,6 +46,38 @@ export type PartnerApplicationPriority = {
   reason: string;
 };
 
+export type PartnerApplicationGatePhase = "profile" | "network" | "legal" | "business" | "sponsorship" | "watchlist" | "verify";
+
+export type PartnerApplicationOperationRow = {
+  programId: string;
+  programName: string;
+  network?: string;
+  url: string;
+  relationship: string;
+  status: PartnerApplicationTrackerStatus;
+  statusLabel: string;
+  phaseKey: PartnerApplicationGatePhase;
+  phaseLabel: string;
+  ownerGate: string;
+  nextAction: string;
+  note: string;
+  reason: string;
+};
+
+export type PartnerSubmissionPacketRow = PartnerApplicationOperationRow & {
+  matchedCategories: readonly string[];
+  selectedPartCount: number;
+  requirements: readonly string[];
+  prepNote: string;
+  approvalLine: string;
+};
+
+export type PartnerApplicationSprintRow = PartnerSubmissionPacketRow & {
+  rank: number;
+  actionLabel: string;
+  ownerReview: string;
+};
+
 export const partnerApplicationTrackerStatusNames = {
   todo: "To apply",
   ready: "Profile ready",
@@ -154,6 +186,29 @@ export const affiliateApplicationAnswers = [
   },
 ] as const;
 
+export const applicationReviewEvidenceChecklist = [
+  {
+    label: "Traffic proof",
+    detail: "Current analytics, launch-stage estimate, follower count or email-list count used for the traffic or sales estimate.",
+  },
+  {
+    label: "Channel proof",
+    detail: "Website, social profile, content plan or sample build/export page the partner can review.",
+  },
+  {
+    label: "Business/contact proof",
+    detail: "Legal applicant name, business name, support email, phone and mailing address verified on the live form.",
+  },
+  {
+    label: "Terms proof",
+    detail: "Final program terms, agreement choices, opt-ins, exclusions, coupon-code rules and payout rules reviewed before submission.",
+  },
+  {
+    label: "Approval proof",
+    detail: "Confirmation email, approved dashboard status, partner-issued tracking URL and clean-browser link test kept outside public source.",
+  },
+] as const;
+
 export const sponsoredLinkReadinessChecklist = [
   "Apply through the partner program and wait for approval before replacing source links with tracking links.",
   "Label every paid outbound link as sponsored or affiliate before it can earn commission.",
@@ -169,6 +224,14 @@ export const futureCheckoutReadinessChecklist = [
   "Do not turn on tax calculation or tax language until business registrations and supported jurisdictions are verified.",
   "Verify webhook signatures, separate test/live credentials, Dashboard access controls and account 2FA before any production payment path.",
 ] as const;
+
+export const stripeSandboxReadiness = {
+  status: "Sandbox setup started",
+  checkedAt: "2026-09-16",
+  evidence: "Stripe sent a sandbox setup guide and business-verification path.",
+  nextAction: "Confirm the intended business identity, finish owner-only verification in Stripe and complete test-mode checkout and webhook validation before any production integration.",
+  notActive: "No live payments, production checkout, public account identifiers or client-side secret keys.",
+} as const;
 
 export const commerceModeReadinessRows = [
   {
@@ -190,10 +253,31 @@ export const commerceModeReadinessRows = [
   {
     key: "checkout",
     mode: "Stripe / payment checkout",
-    status: "Locked",
-    role: "Future payment path only.",
-    unlock: "Approved commerce terms, exact fulfillment proof, tax registrations, secure server integration, verified webhooks and secrets stored outside source or mobile code.",
-    notActive: "No active Stripe checkout, payment collection or client-side secret keys.",
+    status: "Sandbox started; live locked",
+    role: "Stripe sandbox setup was evidenced on September 16, 2026; production payment remains a future path.",
+    unlock: "Confirm the intended business identity, finish owner-only Stripe verification, then validate approved commerce terms, fulfillment, tax, hosted checkout, webhooks and secret storage in test mode.",
+    notActive: "No live Stripe checkout, payment collection, public account identifiers or client-side secret keys.",
+  },
+] as const;
+
+export const applicationDataBoundaryRows = [
+  {
+    key: "public",
+    label: "Reusable public profile",
+    status: "Safe after review",
+    detail: "Website URL, app description, audience, promotion methods, catalog basis, build focus and independence disclosure.",
+  },
+  {
+    key: "owner",
+    label: "Owner-entered application fields",
+    status: "Review on live form",
+    detail: "Visible name, business name, country, timezone, currency, contact fields, traffic estimates, agreement choices and opt-ins.",
+  },
+  {
+    key: "private",
+    label: "Private credentials and payout data",
+    status: "Never store in app",
+    detail: "Passwords, tax IDs, banking details, payout credentials, API keys and partner-issued tracking IDs stay inside the partner network or Sites secrets.",
   },
 ] as const;
 
@@ -225,6 +309,19 @@ export type PartnerLaunchEvidenceRow = {
   risk: string;
 };
 
+export type PartnerOutreachQueueRow = {
+  programId: string;
+  programName: string;
+  network?: string;
+  status: PartnerApplicationTrackerStatus;
+  statusLabel: string;
+  subject: string;
+  action: string;
+  reason: string;
+  url: string;
+  note: string;
+};
+
 export const partnerSubmissionReviewChecklist = [
   "Confirm the application is on the expected partner or network domain before entering private details.",
   "Review every visible field, checkbox, opt-in, agreement and program term before final Continue or Submit.",
@@ -251,6 +348,13 @@ export const partnerPrograms = [
     url: "https://www.tirerack.com/affiliate",
     categories: ["wheels", "tires"],
     note: "Commission path for tire and rim referrals after approval and tracking setup.",
+    requirements: [
+      "Live page checked September 16, 2026: affiliate page advertises a 6% commission and 24/7 reporting.",
+      "Application flow opens the Tire Rack Affiliate Linking Agreement first; clicking I Agree accepts the legal terms and then opens the application.",
+      "Agreement text says Missouri residents cannot participate; confirm current eligibility before accepting.",
+      "Use wheel and tire content plus the public Jeep Build Lab URL as the traffic source.",
+      "Confirm current program agreement, payout rules and approved tracking assets before adding any paid Tire Rack link.",
+    ],
   },
   {
     id: "realtruck-affiliate",
@@ -262,6 +366,7 @@ export const partnerPrograms = [
     categories: allCategories,
     note: "Impact affiliate application path for truck and Jeep accessory referrals after approval.",
     requirements: [
+      "Live page checked September 16, 2026: RealTruck routes applications through Impact with a 30-day attribution-window claim on the public page.",
       "Review the RealTruck offer terms inside Impact before submitting.",
       "Use Jeep Build Lab's public URL and off-road build-planning audience description.",
       "Confirm Impact account name, country, timezone, currency and Partner Program Agreement acceptance before Continue.",
@@ -276,8 +381,15 @@ export const partnerPrograms = [
     relationship: "affiliate",
     status: "application-needed",
     url: "https://www.carid.com/affiliate.html",
+    network: "Impact",
     categories: allCategories,
     note: "Automotive parts affiliate path that requires approved tracking links.",
+    requirements: [
+      "Live browser check September 16, 2026: CARiD affiliate page loads and routes Sign Up With Impact to app.impact.com/campaign-promo-signup/CARiD.brand.",
+      "Impact signup gate asks for email, first name, last name, password and mobile number before Continue; owner must handle password/account setup.",
+      "Public page describes creator, forum, shop and high-traffic blog use cases, promotional tools, banners, tracking links, custom coupon codes and campaign assets.",
+      "Do not add CARiD tracking links until Impact approval and link testing are complete.",
+    ],
   },
   {
     id: "4-wheel-parts-affiliate",
@@ -285,8 +397,29 @@ export const partnerPrograms = [
     relationship: "affiliate",
     status: "application-needed",
     url: "https://www.flexoffers.com/affiliate-programs/4-wheel-parts-affiliate-program/",
+    network: "FlexOffers",
     categories: allCategories,
-    note: "Off-road retailer affiliate path via FlexOffers after publisher approval.",
+    note: "FlexOffers watchlist path; live listing currently shows the advertiser program as deactivated.",
+    requirements: [
+      "Live page checked September 16, 2026: FlexOffers listing displays Program Status: Deactivated while still showing 2.4% online-sales payout.",
+      "Do not apply or publish paid 4 Wheel Parts links unless FlexOffers shows the advertiser active again inside the publisher account.",
+      "Current app links stay application references until FlexOffers approval and tracking-link testing are complete.",
+    ],
+  },
+  {
+    id: "4-wheel-drive-hardware-affiliate",
+    name: "4 Wheel Drive Hardware",
+    relationship: "affiliate",
+    status: "application-needed",
+    url: "https://www.flexoffers.com/affiliate-programs/4-wheel-drive-hardware-affiliate-program/",
+    network: "FlexOffers",
+    categories: allCategories,
+    note: "FlexOffers affiliate path for a Jeep-focused parts retailer; verify active status inside the publisher account.",
+    requirements: [
+      "Live page checked September 16, 2026: FlexOffers listing describes 4 Wheel Drive Hardware as a leading online distributor of Jeep parts at 4wd.com.",
+      "FlexOffers sign-up and publisher-login links are the application gate; confirm active advertiser status inside the publisher account before applying or publishing paid links.",
+      "Do not add 4 Wheel Drive Hardware tracking links until FlexOffers approval and link testing are complete.",
+    ],
   },
   {
     id: "cj-pony-parts-creators",
@@ -294,8 +427,138 @@ export const partnerPrograms = [
     relationship: "affiliate",
     status: "application-needed",
     url: "https://www.cjponyparts.com/creators",
+    network: "CJ Affiliate",
     categories: allCategories,
     note: "Creator affiliate path for automotive content once a referral link is issued.",
+    requirements: [
+      "Live browser check September 16, 2026: CJ Creators page is readable, says no minimum follower count, pays monthly by direct deposit, and routes Apply Now to a CJ publisher signup.",
+      "CJ branded signup says an active CJ publisher account is required before applying to CJ Pony Parts.",
+      "Signup gate asks for language, country, email, password, confirm password and reCAPTCHA before Submit; owner must handle credentials and captcha.",
+      "Program panel lists 3% commission, 30-day cookie window, product feed and dedicated affiliate team; contact shown: jlee13@cjponyparts.com.",
+      "Keep CJ Pony Parts links unpaid until the creator account is approved and referral links are issued.",
+    ],
+  },
+  {
+    id: "dv8-offroad-affiliate",
+    name: "DV8 Offroad",
+    relationship: "affiliate",
+    status: "application-needed",
+    url: "https://dv8offroad.com/pages/affiliate",
+    categories: offRoadCategories,
+    note: "Direct off-road affiliate path for Jeep bumpers, armor, recovery and accessory referrals.",
+    requirements: [
+      "Live page checked September 16, 2026: DV8 Offroad affiliate page says affiliates can earn 5% commission on qualifying referral sales, with no minimum payout or sales requirement.",
+      "Live page says approved affiliates receive links, banners, creative assets and a dedicated 10% coupon code; commissions are paid monthly on net sales excluding returns, tax and shipping.",
+      "Application/account flow includes affiliate login/account pages; owner must review form fields, approval email and program exclusions before submitting.",
+      "Keep DV8 tracking links inactive until approval, generated links and the coupon code are tested.",
+    ],
+  },
+  {
+    id: "arb-affiliate",
+    name: "ARB Affiliate",
+    relationship: "affiliate",
+    status: "application-needed",
+    url: "https://arbusa.com/affiliates",
+    network: "AvantLink",
+    categories: offRoadCategories,
+    note: "Direct ARB affiliate path separate from distributor sourcing routes.",
+    requirements: [
+      "Live page checked September 16, 2026: ARB affiliate page lists a 5% headline rate, accepted affiliate rates from 3-5% depending on creator size and engagement, and a 30-day cookie duration.",
+      "Live page routes Apply Now to AvantLink publisher signup for merchant 40329.",
+      "ARB page names regular promotions, seasonal campaigns and dedicated affiliate support for accepted affiliates.",
+      "Keep ARB paid links separate from distributor/dealer sourcing routes until approval and tracking-link testing are complete.",
+    ],
+  },
+  {
+    id: "summit-racing-affiliate",
+    name: "Summit Racing",
+    relationship: "affiliate",
+    status: "application-needed",
+    url: "https://www.summitracing.com/summit-racing-affiliate",
+    categories: allCategories,
+    note: "Broad automotive affiliate path for parts and accessory referrals after approval.",
+    requirements: [
+      "Live page checked September 16, 2026: Summit Racing invites YouTubers, bloggers, social influencers and website owners to earn commissions by driving traffic and sales.",
+      "The current affiliate-page metadata advertises gear links, tools and 5% commission on every sale.",
+      "Review the current Summit Racing program terms, eligible products, application form and payout details before submitting.",
+      "Do not publish Summit Racing paid links until approval, link testing and visible affiliate labeling are complete.",
+    ],
+  },
+  {
+    id: "jegs-affiliate",
+    name: "JEGS",
+    relationship: "affiliate",
+    status: "application-needed",
+    url: "https://www.jegs.com/affiliate-program",
+    network: "Impact",
+    categories: allCategories,
+    note: "Impact Radius affiliate path for performance and Jeep-adjacent parts; approval needed before paid tracking links.",
+    requirements: [
+      "Live page checked September 16, 2026: JEGS affiliate program lists 1% commission on referral-site orders, 3% commission on in-house JEGS brand sales and a 5-day referral cookie.",
+      "Live page says JEGS carries over 1 million parts, over 700 third-party brands and Jeep/truck parts, with text links, banners and dedicated affiliate support.",
+      "Application steps require signing up as an Impact Radius publisher and then applying for the JEGS affiliate program via Impact.",
+      "Owner must review the Impact signup, password, mobile, payout and agreement fields before submitting.",
+    ],
+  },
+  {
+    id: "genesis-offroad-affiliate",
+    name: "Genesis Offroad",
+    relationship: "affiliate",
+    status: "application-needed",
+    url: "https://www.genesisoffroad.com/pages/affiliates",
+    network: "AvantLink",
+    categories: offRoadCategories,
+    note: "Off-road electrical/accessory affiliate path via AvantLink, useful for recovery and trail-build content.",
+    requirements: [
+      "Live page checked September 16, 2026: Genesis Offroad affiliate page says commission starts at 5%, with opportunity to grow up to 10% as sales are generated.",
+      "Live page routes Apply With AvantLink Now to AvantLink program 36713.",
+      "Live page says approved affiliates receive free AvantLink tools, campaign tracking and support.",
+      "Review AvantLink account requirements and Genesis program terms before submitting or publishing paid links.",
+    ],
+  },
+  {
+    id: "rough-country-partnership",
+    name: "Rough Country Partnership",
+    relationship: "affiliate",
+    status: "application-needed",
+    url: "https://www.roughcountry.com/partnership-program",
+    categories: allCategories,
+    note: "Brand ambassador, sponsorship or collaboration path; treat as sponsorship intake rather than approved affiliate tracking.",
+    requirements: [
+      "Live page checked September 16, 2026: Rough Country partnership page requires all sponsorship requests to go through the application process.",
+      "Minimum requirements include one or more of: 5K+ followers with 3%+ engagement, 500+ expected event attendees, recognized industry authority, or established media/channel reach.",
+      "Page says Rough Country does not offer free products for new/unproven pages, personal builds or unrelated content.",
+      "Do not describe this as approved affiliate commission until Rough Country confirms the specific paid-link or sponsorship terms.",
+    ],
+  },
+  {
+    id: "am-offroad-affiliate",
+    name: "AM Offroad",
+    relationship: "affiliate",
+    status: "application-needed",
+    url: "https://amoffroad.com/pages/affiliate-registration-page",
+    categories: allCategories,
+    note: "Aftermarket off-road affiliate path using offer-code attribution after approval.",
+    requirements: [
+      "Live page checked September 16, 2026: AM Offroad invites bloggers, social media influencers and webmasters to refer customers to its off-road parts site.",
+      "Live page says accepted affiliates receive an affiliate discount code and link for tracking traffic, with monthly commission credit for purchases using the offer code.",
+      "Review the registration form, code/link terms and payout details before submitting or displaying paid links.",
+    ],
+  },
+  {
+    id: "off-terrain-affiliate",
+    name: "Off Terrain",
+    relationship: "affiliate",
+    status: "application-needed",
+    url: "https://offterrain.com/affiliates/",
+    categories: offRoadCategories,
+    note: "Off-road accessory affiliate path with tiered commission terms after approval.",
+    requirements: [
+      "Live page checked September 16, 2026: Off Terrain affiliate page lists a tiered commission structure paying up to 10% on sales and a 30-day attribution window.",
+      "Page rules ban coupon/deal sites, link spamming, self-purchases, unofficial coupons and using OffTerrain in domain or personal branding.",
+      "Payout details require a PayPal email, a $100 minimum threshold and payment after the refund window, generally within 45-60 days of each sale.",
+      "Confirm current eligibility, payout terms and link assets before publishing any paid Off Terrain links.",
+    ],
   },
   {
     id: "morryde-jeep-affiliate",
@@ -304,16 +567,44 @@ export const partnerPrograms = [
     status: "application-needed",
     url: "https://morryde.com/morryde-jeep-affiliate-application/",
     categories: ["armor"],
-    note: "Jeep accessory affiliate application for relevant armor and utility products.",
+    note: "Jeep accessory affiliate path needs manual URL verification before applying.",
+    requirements: [
+      "Live check September 16, 2026: listed Jeep affiliate application URL returned 404 and search fell back to MORryde's homepage.",
+      "Search result September 16, 2026: MORryde contact path lists sales@MORryde.com and phone (574) 293-1581.",
+      "Verify the current MORryde Jeep affiliate route or contact path before entering application details.",
+      "Treat this target as blocked until a current application page or partner contact is confirmed.",
+    ],
+  },
+  {
+    id: "american-modified-affiliate",
+    name: "American Modified Affiliate",
+    relationship: "affiliate",
+    status: "application-needed",
+    url: "https://americanmodified.com/pages/affiliate-application",
+    network: "Refersion",
+    categories: ["lift", "bumpers", "armor"],
+    note: "Direct affiliate path with code and link tracking after Refersion approval.",
+    requirements: [
+      "Live browser check September 16, 2026: affiliate page embeds an American Modified Refersion registration form, even though page copy also mentions ShareASale.",
+      "Form asks for first name, last name, email, password, confirm password and Refersion Terms of Service acceptance before Sign Up.",
+      "Commission panel lists online purchase with processed valid payment, 30-day attribution window, percent-of-sale commission and 5.00% base commission.",
+      "Do not submit until the owner reviews password setup and Refersion terms; do not publish codes or links until approval and testing are complete.",
+    ],
   },
   {
     id: "american-modified-reseller",
-    name: "American Modified",
+    name: "American Modified Wholesale/Dropship",
     relationship: "reseller",
     status: "application-needed",
-    url: "https://americanmodified.com/en-ca/pages/become-a-reseller",
+    url: "https://americanmodified.com/pages/become-a-reseller",
     categories: ["wheels", "lift", "bumpers", "armor"],
     note: "Reseller and dropship-style path that needs business approval and terms.",
+    requirements: [
+      "Live browser check September 16, 2026: reseller, distributor, dropship and affiliate paths are all mentioned.",
+      "Wholesale or dropship inquiries can use the page form or wholesales@americanmodified.com; affiliate signup is a separate Refersion path on the site.",
+      "Page lists Keystone Automotive Operations as an authorized distributor route for American Modified products.",
+      "Do not claim dropship fulfillment or resale pricing until American Modified approves the exact path and terms.",
+    ],
   },
   {
     id: "quadratec-wholesale",
@@ -323,6 +614,13 @@ export const partnerPrograms = [
     url: "https://www.quadratec.com/wholesale",
     categories: allCategories,
     note: "Dealer pricing path for qualifying businesses; current catalog sources already use Quadratec pages.",
+    requirements: [
+      "Live page checked September 16, 2026: wholesale account path links to QuadratecWholesale.com account application and wholesale/register.",
+      "Search result September 16, 2026: account application says all forms must be completed in full and signed by an executive, owner or legal agent of the company applying.",
+      "Wholesale outreach route found September 16, 2026: wholesale@quadratec.com.",
+      "Dealer requirements call for a licensed automotive business with an operational company at application time.",
+      "Confirm free-shipping thresholds, oversized freight handling and wholesale terms before using dealer pricing claims.",
+    ],
   },
   {
     id: "extreme-terrain-dealer",
@@ -332,6 +630,12 @@ export const partnerPrograms = [
     url: "https://www.extremeterrain.com/dealer.html",
     categories: allCategories,
     note: "Dealer program for eligible shops and resellers after sign-up review.",
+    requirements: [
+      "Live page checked September 16, 2026: dealer page is reachable but public text extraction exposes mostly navigation and legal copy.",
+      "Search result September 16, 2026: dealer contact route lists New.dealer@turn5.com and 855-885-9487; resale-certificate handling points to ResaleCertificates@turn5.com and a CertExpress upload link.",
+      "Review the live dealer application/login flow manually and confirm any reseller-certificate requirements before submitting.",
+      "Keep ExtremeTerrain links as source/application links until dealer approval and permitted link terms are confirmed.",
+    ],
   },
   {
     id: "turn-14-distribution",
@@ -341,6 +645,12 @@ export const partnerPrograms = [
     url: "https://www.turn14.com/become_customer",
     categories: allCategories,
     note: "Wholesale distributor path for approved automotive businesses.",
+    requirements: [
+      "Live page checked September 16, 2026: requires professional retail storefront, shop facility or proprietary website.",
+      "Requires business license, state sales tax license and federal tax ID, plus automotive or powersports specialization.",
+      "Search result September 16, 2026: new-dealer contact path lists newdealers@turn14.com, general@turn14.com and 1-877-7TURN14.",
+      "Expect an opening order or buy-in and a review of how the business adds value through install, tuning, marketing, photography or content.",
+    ],
   },
   {
     id: "meyer-distributing",
@@ -350,15 +660,27 @@ export const partnerPrograms = [
     url: "https://www.meyerdistributing.com/en-us/customers/applicationterms.aspx",
     categories: allCategories,
     note: "Retailer and wholesaler application path that requires business and tax details.",
+    requirements: [
+      "Live page checked September 16, 2026: completed forms are emailed to CustApps@meyerdistributing.com.",
+      "Download the New Customer Application PDF and state tax exemption form before applying.",
+      "The customer application is not an open-account credit application; request a separate credit application from a salesperson if needed.",
+    ],
   },
   {
     id: "premier-performance",
     name: "Premier Performance",
     relationship: "distributor",
     status: "application-needed",
-    url: "https://premierwd.com/become-a-dealer/",
+    url: "https://apgwholesale.com/pages/become-a-dealer",
     categories: allCategories,
     note: "Wholesale dealer path for approved performance and off-road businesses.",
+    requirements: [
+      "Live check September 16, 2026: direct Premier fetch hit a proxy error; search results point Premier Performance toward APG Wholesale / Premier dealer access.",
+      "Search result September 16, 2026: APG Wholesale dealer page says to fill out the application to begin setting up an account with Premier and notes it is wholesale-only, not retail.",
+      "Search result September 16, 2026: APG Wholesale sales route lists salesteam@apgteam.com and 888-497-3666.",
+      "Verify the current APG/Premier dealer route before entering business or tax details.",
+      "Treat this target as needs-review until the current application host and terms are confirmed.",
+    ],
   },
   {
     id: "arb-distributors",
@@ -368,8 +690,154 @@ export const partnerPrograms = [
     url: "https://arbusahelp.zendesk.com/hc/en-us/articles/5963545842969-What-Distributors-can-I-get-your-products-through",
     categories: offRoadCategories,
     note: "Distributor routing reference for ARB-style off-road product sourcing.",
+    requirements: [
+      "Live page checked September 16, 2026: ARB routes product access through distributors rather than a direct affiliate form.",
+      "Listed distributor paths include Keystone Automotive, Meyer Distributing, Premier Performance, Transamerican Auto Parts and Turn 14.",
+      "Use ARB as a sourcing-route reference, not a paid-link target, unless a distributor approves a commission or dealer arrangement.",
+    ],
   },
 ] as const satisfies readonly PartnerProgram[];
+
+const partnerApplicationGateMap: Record<string, { phaseKey: PartnerApplicationGatePhase; phaseLabel: string; ownerGate: string; nextAction: string }> = {
+  "tire-rack-affiliate": {
+    phaseKey: "legal",
+    phaseLabel: "Legal agreement first",
+    ownerGate: "Owner must review and accept the Tire Rack linking agreement before the application opens.",
+    nextAction: "Open Tire Rack, review the agreement, then complete the application only after the final legal screen is checked.",
+  },
+  "realtruck-affiliate": {
+    phaseKey: "network",
+    phaseLabel: "Impact account blocker",
+    ownerGate: "Impact account setup, password rules and agreement fields must be resolved by the owner.",
+    nextAction: "Retry or fix the Impact account setup, then wait for RealTruck approval before using tracking links.",
+  },
+  "carid-affiliate": {
+    phaseKey: "network",
+    phaseLabel: "Impact application",
+    ownerGate: "Impact requires email, password, mobile and campaign terms before submission.",
+    nextAction: "Prepare the reusable Jeep Build Lab profile, then review CARiD's Impact campaign fields before submitting.",
+  },
+  "4-wheel-parts-affiliate": {
+    phaseKey: "watchlist",
+    phaseLabel: "Deactivated watchlist",
+    ownerGate: "FlexOffers currently shows the advertiser deactivated.",
+    nextAction: "Do not apply or publish paid links until FlexOffers shows the program active inside a publisher account.",
+  },
+  "4-wheel-drive-hardware-affiliate": {
+    phaseKey: "network",
+    phaseLabel: "FlexOffers account",
+    ownerGate: "FlexOffers publisher account and advertiser-active status must be reviewed.",
+    nextAction: "Check active status in FlexOffers, then apply with Jeep Build Lab's public profile if available.",
+  },
+  "cj-pony-parts-creators": {
+    phaseKey: "network",
+    phaseLabel: "CJ publisher gate",
+    ownerGate: "CJ signup requires account credentials and reCAPTCHA before applying to CJ Pony Parts.",
+    nextAction: "Create or log into a CJ publisher account, then apply to CJ Pony Parts after reviewing the campaign panel.",
+  },
+  "dv8-offroad-affiliate": {
+    phaseKey: "profile",
+    phaseLabel: "Direct affiliate form",
+    ownerGate: "Owner must review DV8 form fields, approval email language, exclusions and coupon-code terms.",
+    nextAction: "Apply with the public profile, then keep DV8 links inactive until generated links and coupon code are tested.",
+  },
+  "arb-affiliate": {
+    phaseKey: "network",
+    phaseLabel: "AvantLink signup",
+    ownerGate: "AvantLink publisher account, payout and ARB merchant terms must be reviewed.",
+    nextAction: "Apply through ARB's AvantLink merchant route after confirming creator size, engagement and site details.",
+  },
+  "summit-racing-affiliate": {
+    phaseKey: "legal",
+    phaseLabel: "Terms review",
+    ownerGate: "Owner must review the current application form, payout details, eligible products and affiliate agreement.",
+    nextAction: "Open Summit's verified live affiliate page, review the current terms and submit only after the owner confirms the form.",
+  },
+  "jegs-affiliate": {
+    phaseKey: "network",
+    phaseLabel: "Impact Radius signup",
+    ownerGate: "Impact Radius publisher account, password, mobile, payout and agreement fields need owner review.",
+    nextAction: "Apply through the JEGS Impact path after confirming the public profile and private account fields.",
+  },
+  "genesis-offroad-affiliate": {
+    phaseKey: "network",
+    phaseLabel: "AvantLink program",
+    ownerGate: "AvantLink publisher account and Genesis program 36713 terms must be reviewed.",
+    nextAction: "Apply through AvantLink, then wait for approval and partner-issued tracking links.",
+  },
+  "rough-country-partnership": {
+    phaseKey: "sponsorship",
+    phaseLabel: "Sponsorship criteria",
+    ownerGate: "Rough Country asks for qualifying follower, engagement, event, industry or media proof.",
+    nextAction: "Use this as an ambassador/sponsorship application only if the current audience evidence meets the criteria.",
+  },
+  "am-offroad-affiliate": {
+    phaseKey: "profile",
+    phaseLabel: "Direct affiliate registration",
+    ownerGate: "Owner must review offer-code, payout and registration terms before submitting.",
+    nextAction: "Apply with the public profile, then keep discount code and paid links inactive until approval and testing.",
+  },
+  "off-terrain-affiliate": {
+    phaseKey: "profile",
+    phaseLabel: "Direct affiliate form",
+    ownerGate: "PayPal email, $100 payout threshold, content rules and coupon restrictions require owner review.",
+    nextAction: "Apply only after confirming payout details and rule compliance, then test all issued links before publishing.",
+  },
+  "morryde-jeep-affiliate": {
+    phaseKey: "verify",
+    phaseLabel: "Route verification",
+    ownerGate: "The listed MORryde Jeep affiliate URL returned 404.",
+    nextAction: "Send or review the MORryde outreach draft and wait for a current application route before entering details.",
+  },
+  "american-modified-affiliate": {
+    phaseKey: "network",
+    phaseLabel: "Refersion signup",
+    ownerGate: "Refersion account credentials and terms must be reviewed by the owner.",
+    nextAction: "Apply through the Refersion form only after password setup and terms are checked.",
+  },
+  "american-modified-reseller": {
+    phaseKey: "business",
+    phaseLabel: "Wholesale/dropship review",
+    ownerGate: "Reseller or dropship terms, business details and fulfillment responsibilities must be confirmed.",
+    nextAction: "Use the outreach draft or reseller form to ask which path fits before claiming dropship or resale terms.",
+  },
+  "quadratec-wholesale": {
+    phaseKey: "business",
+    phaseLabel: "Dealer eligibility",
+    ownerGate: "Licensed automotive business, signed application and wholesale account requirements must be reviewed.",
+    nextAction: "Apply only if the business eligibility and required signatures are ready.",
+  },
+  "extreme-terrain-dealer": {
+    phaseKey: "business",
+    phaseLabel: "Dealer-flow review",
+    ownerGate: "Dealer flow and resale-certificate handling need manual review.",
+    nextAction: "Use the Turn5 dealer contact path or live dealer flow before entering business/private details.",
+  },
+  "turn-14-distribution": {
+    phaseKey: "business",
+    phaseLabel: "Distributor business proof",
+    ownerGate: "Professional storefront/site, business license, tax license, federal tax ID and value-add proof are expected.",
+    nextAction: "Prepare business documents before submitting a Turn 14 customer application.",
+  },
+  "meyer-distributing": {
+    phaseKey: "business",
+    phaseLabel: "Forms-first distributor",
+    ownerGate: "New customer application and tax exemption forms must be downloaded, completed and emailed.",
+    nextAction: "Prepare the required forms and ask Meyer for credit terms separately if needed.",
+  },
+  "premier-performance": {
+    phaseKey: "verify",
+    phaseLabel: "Route confirmation",
+    ownerGate: "Direct Premier route needs confirmation through APG/Premier before private details are entered.",
+    nextAction: "Use the APG/Premier draft or current dealer page to confirm the right application host.",
+  },
+  "arb-distributors": {
+    phaseKey: "verify",
+    phaseLabel: "Sourcing route only",
+    ownerGate: "ARB distributor list is a sourcing reference, not a direct commission approval path.",
+    nextAction: "Apply through an approved distributor only after written commission, dealer or reseller terms are confirmed.",
+  },
+};
 
 export function safeCommerceUrl(url: string) {
   const parsed = new URL(url);
@@ -443,18 +911,18 @@ export function partnerProgramsForBuild(state: BuildState, parts: Part[]): Partn
   return selected.length ? partnerProgramsForParts(selected) : [...partnerPrograms];
 }
 
-export function partnerApplicationPrioritiesForBuild(state: BuildState, parts: Part[]): PartnerApplicationPriority[] {
-  const selected = selectedParts(state, parts);
-  const programs = partnerProgramsForBuild(state, parts);
+function partnerApplicationPrioritiesForPrograms(programs: readonly PartnerProgram[], selected: readonly Part[]): PartnerApplicationPriority[] {
   return programs.map((program, order) => {
     const matchedParts = selected.filter(part => (program.categories as readonly Category[]).includes(part.category));
-    const matchedCategories = [...new Set((selected.length ? matchedParts.map(part => part.category) : program.categories).map(category => categoryNames[category]))];
+    const matchedCategories = [...new Set(((selected.length && matchedParts.length) ? matchedParts.map(part => part.category) : program.categories).map(category => categoryNames[category]))];
     const selectedPartCount = matchedParts.length;
     const score = selected.length
       ? selectedPartCount * 20 + matchedCategories.length * 5 + relationshipPriority[program.relationship] + (program.network ? 3 : 0)
       : matchedCategories.length * 3 + relationshipPriority[program.relationship] + (program.network ? 3 : 0);
     const reason = selected.length
-      ? `Matches ${selectedPartCount} selected part${selectedPartCount === 1 ? "" : "s"} across ${matchedCategories.join(", ")}.`
+      ? selectedPartCount
+        ? `Matches ${selectedPartCount} selected part${selectedPartCount === 1 ? "" : "s"} across ${matchedCategories.join(", ")}.`
+        : `Full-roster target; not matched to selected parts yet, but covers ${matchedCategories.join(", ")}.`
       : `Covers ${matchedCategories.length} catalog categor${matchedCategories.length === 1 ? "y" : "ies"} before you narrow a build.`;
     return { program, matchedCategories, selectedPartCount, score, reason, order };
   }).sort((a, b) => b.score - a.score || a.order - b.order)
@@ -465,6 +933,15 @@ export function partnerApplicationPrioritiesForBuild(state: BuildState, parts: P
       score: priority.score,
       reason: priority.reason,
     }));
+}
+
+export function partnerApplicationPrioritiesForBuild(state: BuildState, parts: Part[]): PartnerApplicationPriority[] {
+  const selected = selectedParts(state, parts);
+  return partnerApplicationPrioritiesForPrograms(partnerProgramsForBuild(state, parts), selected);
+}
+
+export function partnerApplicationPrioritiesForAllPrograms(state: BuildState, parts: Part[]): PartnerApplicationPriority[] {
+  return partnerApplicationPrioritiesForPrograms(partnerPrograms, selectedParts(state, parts));
 }
 
 function selectedPartCommerceLine(part: Part, state: BuildState) {
@@ -497,12 +974,192 @@ function applicationTrackerNote(programId: string, notes: CommerceApplicationPac
   return typeof notes?.[programId] === "string" ? notes[programId]!.trim() : "";
 }
 
+function partnerApplicationGate(program: PartnerProgram) {
+  return partnerApplicationGateMap[program.id] ?? {
+    phaseKey: "profile" as const,
+    phaseLabel: "Profile review",
+    ownerGate: "Owner must review form fields, program terms and private details before submission.",
+    nextAction: "Prepare the public Jeep Build Lab profile, review the live form, then submit only after final confirmation.",
+  };
+}
+
 function partnerProgramLabel(program: PartnerProgram) {
   return `${program.name}${program.network ? ` via ${program.network}` : ""}`;
 }
 
+export function partnerApplicationOperationRows(
+  priorities: readonly PartnerApplicationPriority[],
+  applicationStatuses: CommerceApplicationPackInput["applicationStatuses"],
+  applicationStatusNotes?: CommerceApplicationPackInput["applicationStatusNotes"],
+): PartnerApplicationOperationRow[] {
+  return priorities.map(priority => {
+    const program = priority.program;
+    const status = applicationTrackerStatusKey(applicationStatuses?.[program.id]);
+    const gate = partnerApplicationGate(program);
+    const note = applicationTrackerNote(program.id, applicationStatusNotes);
+    const nextAction = status === "approved"
+      ? "Collect partner-issued tracking URLs, test clean-browser landing pages and label links before activation."
+      : status === "submitted"
+        ? "Watch for approval, terms, tracking-link rules and any partner verification requests."
+        : status === "blocked"
+          ? "Resolve the blocker or partner-site issue before retrying this application."
+          : status === "paused"
+            ? "Leave skipped until the owner resets this program to To apply or Profile ready."
+            : gate.nextAction;
+    return {
+      programId: program.id,
+      programName: program.name,
+      network: program.network,
+      url: safeCommerceUrl(program.url),
+      relationship: relationshipNames[program.relationship],
+      status,
+      statusLabel: partnerApplicationTrackerStatusNames[status],
+      phaseKey: gate.phaseKey,
+      phaseLabel: gate.phaseLabel,
+      ownerGate: gate.ownerGate,
+      nextAction,
+      note,
+      reason: priority.reason,
+    };
+  });
+}
+
+function partnerApplicationOperationsSection(
+  priorities: readonly PartnerApplicationPriority[],
+  applicationStatuses: CommerceApplicationPackInput["applicationStatuses"],
+  applicationStatusNotes?: CommerceApplicationPackInput["applicationStatusNotes"],
+) {
+  const rows = partnerApplicationOperationRows(priorities, applicationStatuses, applicationStatusNotes);
+  if (!rows.length) return "Application operations ledger\n- No partner application path is in scope for this build.";
+  return [
+    "Application operations ledger",
+    ...rows.map(row => `- ${row.programName}${row.network ? ` via ${row.network}` : ""}: ${row.phaseLabel}. Tracker: ${row.statusLabel}. Owner gate: ${row.note || row.ownerGate} Next: ${row.nextAction}`),
+  ].join("\n");
+}
+
+function partnerSubmissionApprovalLine(programLabel: string) {
+  return `I approve submitting the visible ${programLabel} application fields, agreement choices, opt-ins and private account details after reviewing the final form.`;
+}
+
+export function partnerSubmissionPacketRows(
+  priorities: readonly PartnerApplicationPriority[],
+  applicationStatuses: CommerceApplicationPackInput["applicationStatuses"],
+  applicationStatusNotes?: CommerceApplicationPackInput["applicationStatusNotes"],
+): PartnerSubmissionPacketRow[] {
+  const operations = partnerApplicationOperationRows(priorities, applicationStatuses, applicationStatusNotes);
+  const operationByProgram = new Map(operations.map(row => [row.programId, row]));
+  return priorities.map(priority => {
+    const program = priority.program;
+    const operation = operationByProgram.get(program.id) ?? partnerApplicationOperationRows([priority], applicationStatuses, applicationStatusNotes)[0];
+    const label = partnerProgramLabel(program);
+    return {
+      ...operation,
+      matchedCategories: priority.matchedCategories,
+      selectedPartCount: priority.selectedPartCount,
+      requirements: program.requirements ?? [],
+      prepNote: program.note,
+      approvalLine: partnerSubmissionApprovalLine(label),
+    };
+  });
+}
+
+function sprintActionLabel(status: PartnerApplicationTrackerStatus) {
+  if (status === "approved") return "Activate carefully";
+  if (status === "submitted") return "Watch approval";
+  if (status === "ready") return "Review + submit";
+  if (status === "blocked") return "Fix blocker";
+  if (status === "paused") return "Paused";
+  return "Prep application";
+}
+
+function sprintOwnerReview(status: PartnerApplicationTrackerStatus) {
+  if (status === "approved") return "Use only partner-issued tracking URLs after a clean-browser test and visible affiliate or sponsored labels.";
+  if (status === "submitted") return "Wait for approval, terms, and tracking-link rules before changing any public link behavior.";
+  if (status === "ready") return "Open the live form, verify owner-private fields and terms, then submit only after the final screen is checked.";
+  if (status === "blocked") return "Resolve the password, account, eligibility, legal, or partner-site issue before retrying.";
+  if (status === "paused") return "Keep this program out of the active sprint until the owner resets it.";
+  return "Paste only reviewed public answers; complete private fields yourself on the partner site.";
+}
+
+export function partnerApplicationSprintRows(
+  priorities: readonly PartnerApplicationPriority[],
+  applicationStatuses: CommerceApplicationPackInput["applicationStatuses"],
+  applicationStatusNotes?: CommerceApplicationPackInput["applicationStatusNotes"],
+): PartnerApplicationSprintRow[] {
+  return partnerSubmissionPacketRows(priorities, applicationStatuses, applicationStatusNotes).map((row, index) => ({
+    ...row,
+    rank: index + 1,
+    actionLabel: sprintActionLabel(row.status),
+    ownerReview: sprintOwnerReview(row.status),
+  }));
+}
+
+function partnerSubmissionPacketSection(row: PartnerSubmissionPacketRow, index: number) {
+  return [
+    `Application ${index + 1}: ${row.programName}${row.network ? ` via ${row.network}` : ""}`,
+    `Tracker status: ${row.statusLabel}`,
+    ...(row.note ? [`Tracker note: ${row.note}`] : []),
+    `Relationship: ${row.relationship}`,
+    `Application phase: ${row.phaseLabel}`,
+    `Application link: ${row.url}`,
+    `Matched categories: ${row.matchedCategories.join(", ")}`,
+    `Selected part count: ${row.selectedPartCount}`,
+    `Match reason: ${row.reason}`,
+    `Owner gate: ${row.note || row.ownerGate}`,
+    `Next safe action: ${row.nextAction}`,
+    `Prep note: ${row.prepNote}`,
+    "",
+    "Program-specific requirements to verify",
+    row.requirements.length ? row.requirements.map((item, requirementIndex) => `${requirementIndex + 1}. ${item}`).join("\n") : "No program-specific requirements are recorded beyond live form review.",
+    "",
+    "Copy-ready public application answers",
+    affiliateApplicationAnswerLines(),
+    "",
+    "Private fields to complete only on the live partner form",
+    partnerSubmissionPrivateFields.map((item, privateIndex) => `${privateIndex + 1}. ${item}`).join("\n"),
+    "",
+    "Final owner approval line",
+    row.approvalLine,
+  ].join("\n");
+}
+
 function nextApplicationPriority(priorities: readonly PartnerApplicationPriority[], applicationStatuses: CommerceApplicationPackInput["applicationStatuses"]) {
   return priorities.find(priority => actionableApplicationStatuses.includes(applicationTrackerStatusKey(applicationStatuses?.[priority.program.id]))) ?? null;
+}
+
+export function partnerOutreachQueueRows(
+  priorities: readonly PartnerApplicationPriority[],
+  applicationStatuses: CommerceApplicationPackInput["applicationStatuses"],
+  applicationStatusNotes?: CommerceApplicationPackInput["applicationStatusNotes"],
+  limit = 3,
+): PartnerOutreachQueueRow[] {
+  const queueStatusOrder: Record<PartnerApplicationTrackerStatus, number> = {
+    ready: 0,
+    todo: 1,
+    submitted: 2,
+    approved: 3,
+    paused: 4,
+    blocked: 5,
+  };
+  return priorities
+    .map(priority => ({ priority, status: applicationTrackerStatusKey(applicationStatuses?.[priority.program.id]) }))
+    .filter(({ status }) => actionableApplicationStatuses.includes(status))
+    .sort((a, b) => queueStatusOrder[a.status] - queueStatusOrder[b.status] || b.priority.score - a.priority.score)
+    .slice(0, limit)
+    .map(({ priority, status }) => ({
+      programId: priority.program.id,
+      programName: priority.program.name,
+      network: priority.program.network,
+      status,
+      statusLabel: partnerApplicationTrackerStatusNames[status],
+      subject: `Jeep Build Lab partner application - ${priority.program.name}`,
+      action: status === "ready"
+        ? "Review the live form, verify private details, then submit only after the final screen is checked."
+        : "Prepare the public profile and draft outreach before entering owner-private details in the partner network.",
+      reason: priority.reason,
+      url: safeCommerceUrl(priority.program.url),
+      note: applicationTrackerNote(priority.program.id, applicationStatusNotes),
+    }));
 }
 
 export function paidLinkLaunchStatus(priorities: readonly PartnerApplicationPriority[], applicationStatuses: CommerceApplicationPackInput["applicationStatuses"]) {
@@ -565,6 +1222,45 @@ function commerceModeReadinessSection() {
       `  Unlock: ${row.unlock}`,
       `  Not active: ${row.notActive}`,
     ]),
+  ].join("\n");
+}
+
+function stripeSandboxReadinessSection() {
+  return [
+    "Stripe sandbox readiness",
+    `- Status: ${stripeSandboxReadiness.status}`,
+    `- Checked: ${stripeSandboxReadiness.checkedAt}`,
+    `- Evidence: ${stripeSandboxReadiness.evidence}`,
+    `- Next: ${stripeSandboxReadiness.nextAction}`,
+    `- Not active: ${stripeSandboxReadiness.notActive}`,
+  ].join("\n");
+}
+
+function applicationDataBoundarySection() {
+  return [
+    "Application data boundary",
+    ...applicationDataBoundaryRows.flatMap(row => [
+      `- ${row.label} - ${row.status}`,
+      `  ${row.detail}`,
+    ]),
+  ].join("\n");
+}
+
+function partnerOutreachQueueSection(priorities: readonly PartnerApplicationPriority[], applicationStatuses: CommerceApplicationPackInput["applicationStatuses"], applicationStatusNotes?: CommerceApplicationPackInput["applicationStatusNotes"]) {
+  const rows = partnerOutreachQueueRows(priorities, applicationStatuses, applicationStatusNotes, 5);
+  return [
+    "Gmail-ready outreach queue",
+    ...(rows.length
+      ? rows.flatMap(row => [
+        `- ${row.programName}${row.network ? ` via ${row.network}` : ""} - ${row.statusLabel}`,
+        `  Subject: ${row.subject}`,
+        `  Action: ${row.action}`,
+        `  Match: ${row.reason}`,
+        ...(row.note ? [`  Tracker note: ${row.note}`] : []),
+        `  Link: ${row.url}`,
+      ])
+      : ["- No unblocked or unpaused partner application needs outreach right now."]),
+    "- Draft only: Jeep Build Lab does not send email, submit forms or enter passwords.",
   ].join("\n");
 }
 
@@ -756,6 +1452,8 @@ export function buildPartnerOutreachDraftPack({ name, state, parts, generatedAt 
     `Vehicle: ${vehicleDescription(state)}`,
     `Scope: ${selected.length ? `${selected.length} selected part${selected.length === 1 ? "" : "s"} (${selectedCategorySummary(selected)})` : "No selected parts; full partner directory."}`,
     `Draft count: ${drafts.length} unsubmitted program${drafts.length === 1 ? "" : "s"} out of ${priorities.length} relevant program${priorities.length === 1 ? "" : "s"}.`,
+    "",
+    partnerOutreachQueueSection(priorities, applicationStatuses, applicationStatusNotes),
     ...(blockedFollowup ? ["", blockedFollowup] : []),
     ...(pausedFollowup ? ["", pausedFollowup] : []),
     ...(blockedFollowup ? ["", buildBlockedApplicationSupportDraft({ name, notes: "", state, parts, generatedAt, applicationStatuses, applicationStatusNotes })] : []),
@@ -804,6 +1502,8 @@ export function buildPartnerSubmissionReviewSheet({ name, notes, state, parts, g
     ].join("\n") : "- No relevant partner program found for this build.",
     "",
     applicationTrackerSummary(programs, priorities, applicationStatuses, applicationStatusNotes),
+    "",
+    partnerOutreachQueueSection(priorities, applicationStatuses, applicationStatusNotes),
     ...(blockedFollowup ? ["", blockedFollowup] : []),
     ...(pausedFollowup ? ["", pausedFollowup] : []),
     "",
@@ -817,11 +1517,15 @@ export function buildPartnerSubmissionReviewSheet({ name, notes, state, parts, g
     "Owner-private or legal fields to verify on the live form",
     partnerSubmissionPrivateFields.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
+    applicationDataBoundarySection(),
+    "",
     "Submission review checklist",
     partnerSubmissionReviewChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
     "Future checkout guardrails",
     futureCheckoutReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    stripeSandboxReadinessSection(),
     "",
     commerceModeReadinessSection(),
     "",
@@ -840,6 +1544,82 @@ export function buildPartnerSubmissionReviewSheet({ name, notes, state, parts, g
     "Owner notes",
     notes.trim() || "No notes provided.",
   ].join("\n");
+}
+
+function buildPartnerSubmissionPacketsForScope(
+  { name, notes, state, parts, generatedAt, applicationStatuses, applicationStatusNotes }: CommerceApplicationPackInput & { generatedAt: string },
+  programs: readonly PartnerProgram[],
+  priorities: readonly PartnerApplicationPriority[],
+  scope: string,
+  countBasis: string,
+) {
+  const rows = partnerSubmissionPacketRows(priorities, applicationStatuses, applicationStatusNotes);
+  const blockedFollowup = blockedApplicationFollowupSection(priorities, applicationStatuses, applicationStatusNotes);
+  const pausedFollowup = pausedApplicationFollowupSection(priorities, applicationStatuses, applicationStatusNotes);
+  return [
+    "Jeep Build Lab partner submission packets",
+    `Build: ${name.trim() || "Untitled build"}`,
+    `Generated: ${new Date(generatedAt).toISOString().slice(0, 10)}`,
+    `Vehicle: ${vehicleDescription(state)}`,
+    `Scope: ${scope}`,
+    `Packet count: ${rows.length} partner application packet${rows.length === 1 ? "" : "s"} out of ${programs.length} ${countBasis}.`,
+    "",
+    "How to use these packets",
+    "1. Open the partner application link for one program.",
+    "2. Paste only reviewed public answers that match the form field.",
+    "3. Enter private legal, phone, tax, banking, password and payout fields yourself on the live partner or network site.",
+    "4. Review every agreement, checkbox, opt-in and final page before you submit.",
+    "5. Mark the tracker Submitted only after the partner site confirms receipt.",
+    "",
+    `Current commerce status: ${noActiveCommerceDisclosure}`,
+    `Independence disclosure: ${independenceDisclosure}`,
+    "",
+    applicationTrackerSummary(programs, priorities, applicationStatuses, applicationStatusNotes),
+    "",
+    partnerApplicationOperationsSection(priorities, applicationStatuses, applicationStatusNotes),
+    ...(blockedFollowup ? ["", blockedFollowup] : []),
+    ...(pausedFollowup ? ["", pausedFollowup] : []),
+    "",
+    "Reusable public profile",
+    "- Website URL: https://jeep-build-lab.johnprodromidis1.chatgpt.site/",
+    "- Audience: Jeep Wrangler JL owners comparing rims, tires, suspension, bumpers, winches and armor before buying.",
+    "- Promotion methods: build guides, part comparisons, quote sheets, saved-build exports, partner-directory links and social posts.",
+    `- Catalog basis: ${parts.length} sourced variants with dated source snapshots; no live-price, inventory or checkout claim.`,
+    `- Build focus: ${scope}`,
+    "",
+    "Submission packets",
+    rows.length ? rows.map((row, index) => partnerSubmissionPacketSection(row, index)).join("\n\n---\n\n") : "No partner application packets are in scope for this build.",
+    "",
+    "Do not submit or paste",
+    "- Passwords, tax IDs, banking details, payout credentials, API keys or partner-issued tracking IDs into public app storage.",
+    "- Claims that affiliate tracking, dealer pricing, wholesale checkout, inventory ownership or dropship fulfillment is already approved.",
+    "- Paid-link labels or commission claims before approval, partner-issued tracking URLs, clean-browser testing and visible disclosure placement.",
+    "",
+    "Owner notes",
+    notes.trim() || "No notes provided.",
+  ].join("\n");
+}
+
+export function buildPartnerSubmissionPackets({ name, notes, state, parts, generatedAt = new Date().toISOString(), applicationStatuses, applicationStatusNotes }: CommerceApplicationPackInput) {
+  const selected = selectedParts(state, parts);
+  return buildPartnerSubmissionPacketsForScope(
+    { name, notes, state, parts, generatedAt, applicationStatuses, applicationStatusNotes },
+    partnerProgramsForBuild(state, parts),
+    partnerApplicationPrioritiesForBuild(state, parts),
+    selected.length ? `${selected.length} selected part${selected.length === 1 ? "" : "s"} (${selectedCategorySummary(selected)})` : "No selected parts; full partner directory.",
+    "relevant program" + (partnerProgramsForBuild(state, parts).length === 1 ? "" : "s"),
+  );
+}
+
+export function buildAllPartnerSubmissionPackets({ name, notes, state, parts, generatedAt = new Date().toISOString(), applicationStatuses, applicationStatusNotes }: CommerceApplicationPackInput) {
+  const selected = selectedParts(state, parts);
+  return buildPartnerSubmissionPacketsForScope(
+    { name, notes, state, parts, generatedAt, applicationStatuses, applicationStatusNotes },
+    partnerPrograms,
+    partnerApplicationPrioritiesForAllPrograms(state, parts),
+    `Full partner roster (${partnerPrograms.length} programs)${selected.length ? `; current build context: ${selected.length} selected part${selected.length === 1 ? "" : "s"} (${selectedCategorySummary(selected)})` : ""}`,
+    "total partner programs",
+  );
 }
 
 export function buildAffiliateApplicationAnswers({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses, applicationStatusNotes }: CommerceApplicationPackInput) {
@@ -861,6 +1641,8 @@ export function buildAffiliateApplicationAnswers({ name, state, parts, generated
     `- Independence disclosure: ${independenceDisclosure}`,
     "",
     ...nextApplicationTargetLines(priorities, applicationStatuses, applicationStatusNotes),
+    "",
+    partnerOutreachQueueSection(priorities, applicationStatuses, applicationStatusNotes),
     ...(blockedFollowup ? ["", blockedFollowup] : []),
     ...(pausedFollowup ? ["", pausedFollowup] : []),
     "",
@@ -918,6 +1700,10 @@ export function buildPartnerApplicationLinks({ name, state, parts, generatedAt =
     sponsoredLinkReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
     applicationTrackerSummary(programs, allPriorities, applicationStatuses, applicationStatusNotes),
+    "",
+    partnerApplicationOperationsSection(allPriorities, applicationStatuses, applicationStatusNotes),
+    "",
+    partnerOutreachQueueSection(allPriorities, applicationStatuses, applicationStatusNotes),
     ...(blockedFollowup ? ["", blockedFollowup] : []),
     ...(pausedFollowup ? ["", pausedFollowup] : []),
     "",
@@ -953,6 +1739,8 @@ function trackerNextAction(status: PartnerApplicationTrackerStatus) {
 export function buildPartnerApplicationTrackerCsv({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses, applicationStatusNotes }: CommerceApplicationPackInput) {
   const selected = selectedParts(state, parts);
   const priorities = partnerApplicationPrioritiesForBuild(state, parts);
+  const operationRows = partnerApplicationOperationRows(priorities, applicationStatuses, applicationStatusNotes);
+  const operationByProgram = new Map(operationRows.map(row => [row.programId, row]));
   const rows = [
     ["Jeep Build Lab partner application tracker"],
     ["Build", name.trim() || "Untitled build"],
@@ -962,9 +1750,10 @@ export function buildPartnerApplicationTrackerCsv({ name, state, parts, generate
     ["Commerce status", noActiveCommerceDisclosure],
     ["Independence disclosure", independenceDisclosure],
     [],
-    ["Rank", "Program", "Network", "Relationship", "Tracker status", "Tracker note", "Commerce status", "Matched categories", "Selected part count", "Match reason", "Application link", "Requirements", "Prep note", "Next action"],
+    ["Rank", "Program", "Network", "Relationship", "Tracker status", "Tracker note", "Application phase", "Owner gate", "Commerce status", "Matched categories", "Selected part count", "Match reason", "Application link", "Requirements", "Prep note", "Next action"],
     ...priorities.map((priority, index) => {
       const status = applicationTrackerStatusKey(applicationStatuses?.[priority.program.id]);
+      const operation = operationByProgram.get(priority.program.id);
       return [
         index + 1,
         priority.program.name,
@@ -972,6 +1761,8 @@ export function buildPartnerApplicationTrackerCsv({ name, state, parts, generate
         relationshipNames[priority.program.relationship],
         partnerApplicationTrackerStatusNames[status],
         applicationTrackerNote(priority.program.id, applicationStatusNotes),
+        operation?.phaseLabel ?? "",
+        operation?.note || operation?.ownerGate || "",
         commerceStatusNames[priority.program.status],
         priority.matchedCategories.join("; "),
         priority.selectedPartCount,
@@ -979,11 +1770,319 @@ export function buildPartnerApplicationTrackerCsv({ name, state, parts, generate
         safeCommerceUrl(priority.program.url),
         priority.program.requirements?.join(" ") ?? "",
         priority.program.note,
-        trackerNextAction(status),
+        operation?.nextAction ?? trackerNextAction(status),
       ];
     }),
   ];
   return rows.map(row => row.map(commerceCsvCell).join(",")).join("\r\n");
+}
+
+export function buildAllPartnerApplicationSubmissionChecklistCsv({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses, applicationStatusNotes }: CommerceApplicationPackInput) {
+  const selected = selectedParts(state, parts);
+  const priorities = partnerApplicationPrioritiesForAllPrograms(state, parts);
+  const operationRows = partnerApplicationOperationRows(priorities, applicationStatuses, applicationStatusNotes);
+  const operationByProgram = new Map(operationRows.map(row => [row.programId, row]));
+  const scope = `Full partner roster (${partnerPrograms.length} programs)${selected.length ? `; current build context: ${selected.length} selected part${selected.length === 1 ? "" : "s"} (${selectedCategorySummary(selected)})` : ""}`;
+  const rows = [
+    ["Jeep Build Lab all-partner submission checklist"],
+    ["Build", name.trim() || "Untitled build"],
+    ["Generated", new Date(generatedAt).toISOString().slice(0, 10)],
+    ["Vehicle", vehicleDescription(state)],
+    ["Scope", scope],
+    ["Commerce status", noActiveCommerceDisclosure],
+    ["Public answer count", affiliateApplicationAnswers.length],
+    ["Owner-private field count", partnerSubmissionPrivateFields.length],
+    ["Submission rule", "Open each partner form, paste only reviewed public answers, complete private fields yourself, and submit only after the final page is checked."],
+    [],
+    ["Rank", "Program", "Network", "Relationship", "Tracker status", "Tracker note", "Application phase", "Owner gate", "Next safe action", "Matched categories", "Selected part count", "Match reason", "Application link", "Program requirements", "Public answers ready", "Owner-private fields to verify", "Do not claim before approval"],
+    ...priorities.map((priority, index) => {
+      const status = applicationTrackerStatusKey(applicationStatuses?.[priority.program.id]);
+      const operation = operationByProgram.get(priority.program.id);
+      return [
+        index + 1,
+        priority.program.name,
+        priority.program.network ?? "",
+        relationshipNames[priority.program.relationship],
+        partnerApplicationTrackerStatusNames[status],
+        applicationTrackerNote(priority.program.id, applicationStatusNotes),
+        operation?.phaseLabel ?? "",
+        operation?.note || operation?.ownerGate || "",
+        operation?.nextAction ?? trackerNextAction(status),
+        priority.matchedCategories.join("; "),
+        priority.selectedPartCount,
+        priority.reason,
+        safeCommerceUrl(priority.program.url),
+        priority.program.requirements?.join(" ") ?? "",
+        affiliateApplicationAnswers.map(item => `${item.field}: ${item.answer}`).join(" | "),
+        partnerSubmissionPrivateFields.join(" | "),
+        "Approved affiliate tracking, dealer pricing, wholesale checkout, inventory ownership, dropship fulfillment or paid-link revenue.",
+      ];
+    }),
+  ];
+  return rows.map(row => row.map(commerceCsvCell).join(",")).join("\r\n");
+}
+
+export function buildAllPartnerApplicationWorksheetCsv({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses, applicationStatusNotes }: CommerceApplicationPackInput) {
+  const selected = selectedParts(state, parts);
+  const rows = partnerApplicationSprintRows(partnerApplicationPrioritiesForAllPrograms(state, parts), applicationStatuses, applicationStatusNotes);
+  const scope = `Full partner roster (${rows.length} programs)${selected.length ? `; current build context: ${selected.length} selected part${selected.length === 1 ? "" : "s"} (${selectedCategorySummary(selected)})` : ""}`;
+  const worksheetRows = rows.flatMap(row => {
+    const common = [
+      row.rank,
+      row.programName,
+      row.network ?? "",
+      row.relationship,
+      row.statusLabel,
+      row.note,
+      row.phaseLabel,
+      row.note || row.ownerGate,
+      row.nextAction,
+      safeCommerceUrl(row.url),
+    ];
+    const publicRows = affiliateApplicationAnswers.map(item => [
+      ...common,
+      "Public answer",
+      item.field,
+      item.answer,
+      "Paste only after confirming the live field matches this answer.",
+      "Safe to paste after review",
+    ]);
+    const privateRows = partnerSubmissionPrivateFields.map(item => [
+      ...common,
+      "Owner-private field",
+      item,
+      "Complete on the partner site only.",
+      "Do not save tax, banking, password, phone, payout or tracking credentials in Jeep Build Lab.",
+      "Owner entry required",
+    ]);
+    const requirementRows = (row.requirements.length ? row.requirements : ["Review the live partner form, agreement checkboxes and program terms before submitting."]).map(item => [
+      ...common,
+      "Live requirement",
+      "Requirement to verify",
+      item,
+      "Confirm on the partner site before final submission.",
+      "Verify live",
+    ]);
+    const evidenceRows = applicationReviewEvidenceChecklist.map(item => [
+      ...common,
+      "Review evidence",
+      item.label,
+      item.detail,
+      "Gather or confirm outside the public app before final submission.",
+      "Evidence required",
+    ]);
+    return [
+      ...publicRows,
+      ...privateRows,
+      ...requirementRows,
+      ...evidenceRows,
+      [
+        ...common,
+        "Final approval",
+        "Owner approval line",
+        row.approvalLine,
+        "Use only after reviewing every visible field, agreement choice and opt-in.",
+        "Owner approval required",
+      ],
+      [
+        ...common,
+        "Paid-link lock",
+        "Do not claim before approval",
+        "Approved affiliate tracking, dealer pricing, wholesale checkout, inventory ownership, dropship fulfillment or paid-link revenue.",
+        "Wait for partner approval, issued tracking URLs, clean-browser testing and visible labels.",
+        "Locked",
+      ],
+    ];
+  });
+  const output = [
+    ["Jeep Build Lab field-by-field partner application worksheet"],
+    ["Build", name.trim() || "Untitled build"],
+    ["Generated", new Date(generatedAt).toISOString().slice(0, 10)],
+    ["Vehicle", vehicleDescription(state)],
+    ["Scope", scope],
+    ["Commerce status", noActiveCommerceDisclosure],
+    ["Worksheet rule", "Use one row at a time while reviewing the live partner form. Public answers may be pasted after review; owner-private fields stay on the partner site."],
+    [],
+    ["Rank", "Program", "Network", "Relationship", "Tracker status", "Tracker note", "Application phase", "Owner gate", "Next safe action", "Application link", "Worksheet section", "Field or checkpoint", "Answer or instruction", "Owner action", "Paste status"],
+    ...worksheetRows,
+  ];
+  return output.map(row => row.map(commerceCsvCell).join(",")).join("\r\n");
+}
+
+export function buildAllPartnerApplicationSprintPlan({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses, applicationStatusNotes }: CommerceApplicationPackInput) {
+  const selected = selectedParts(state, parts);
+  const priorities = partnerApplicationPrioritiesForAllPrograms(state, parts);
+  const rows = partnerApplicationSprintRows(priorities, applicationStatuses, applicationStatusNotes);
+  const next = rows.find(row => row.status === "ready") ?? rows.find(row => row.status === "todo");
+  return [
+    "Jeep Build Lab all-partner application sprint",
+    `Build: ${name.trim() || "Untitled build"}`,
+    `Generated: ${new Date(generatedAt).toISOString().slice(0, 10)}`,
+    `Vehicle: ${vehicleDescription(state)}`,
+    `Scope: ${rows.length} partner targets${selected.length ? `; current build context: ${selected.length} selected part${selected.length === 1 ? "" : "s"} (${selectedCategorySummary(selected)})` : ""}`,
+    `Commerce status: ${noActiveCommerceDisclosure}`,
+    "",
+    "Sprint rule",
+    "Open each listed partner page, paste only reviewed public Jeep Build Lab answers, complete private owner fields yourself, and submit only after the final partner form screen is reviewed.",
+    "",
+    next ? `Next target: ${next.programName}${next.network ? ` via ${next.network}` : ""} - ${next.actionLabel}` : "Next target: no unblocked target is ready; reset a paused or blocked program when it can move.",
+    "",
+    "Copy-ready public answers",
+    affiliateApplicationAnswerLines(),
+    "",
+    "Owner-only fields to verify on the partner site",
+    partnerSubmissionPrivateFields.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    "Review evidence to gather before submitting",
+    applicationReviewEvidenceChecklist.map((item, index) => `${index + 1}. ${item.label}: ${item.detail}`).join("\n"),
+    "",
+    "Application sprint rows",
+    ...rows.flatMap(row => [
+      `${row.rank}. ${row.programName}${row.network ? ` via ${row.network}` : ""} - ${row.actionLabel}`,
+      `   Tracker status: ${row.statusLabel}`,
+      ...(row.note ? [`   Tracker note: ${row.note}`] : []),
+      `   Phase: ${row.phaseLabel}`,
+      `   Relationship: ${row.relationship}`,
+      `   Matched categories: ${row.matchedCategories.join(", ")}`,
+      `   Application link: ${row.url}`,
+      `   Owner gate: ${row.note || row.ownerGate}`,
+      `   Next safe action: ${row.nextAction}`,
+      `   Owner review: ${row.ownerReview}`,
+      `   Program requirements: ${row.requirements.length ? row.requirements.join(" ") : "Review the live form and partner terms before submitting."}`,
+      `   Final approval line: ${row.approvalLine}`,
+      "",
+    ]),
+    "Paid-link lock",
+    "Do not claim approved affiliate tracking, dealer pricing, wholesale checkout, inventory ownership, dropship fulfillment or paid-link revenue until the relevant partner approves terms and issued links are tested.",
+  ].join("\n");
+}
+
+export function buildPartnerApplicationSessionRunbook({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses, applicationStatusNotes }: CommerceApplicationPackInput) {
+  const selected = selectedParts(state, parts);
+  const rows = partnerApplicationSprintRows(partnerApplicationPrioritiesForAllPrograms(state, parts), applicationStatuses, applicationStatusNotes);
+  const openRows = [...rows.filter(row => row.status === "ready" || row.status === "todo")]
+    .sort((a, b) => (a.status === "ready" ? 0 : 1) - (b.status === "ready" ? 0 : 1));
+  const sessionRows = openRows.slice(0, 8);
+  const submittedOrApprovedRows = rows.filter(row => row.status === "submitted" || row.status === "approved");
+  const scope = `${rows.length} partner targets${selected.length ? `; current build context: ${selected.length} selected part${selected.length === 1 ? "" : "s"} (${selectedCategorySummary(selected)})` : ""}`;
+  return [
+    "Jeep Build Lab partner application session runbook",
+    `Build: ${name.trim() || "Untitled build"}`,
+    `Generated: ${new Date(generatedAt).toISOString().slice(0, 10)}`,
+    `Vehicle: ${vehicleDescription(state)}`,
+    `Scope: ${scope}`,
+    `Session target count: ${sessionRows.length} active target${sessionRows.length === 1 ? "" : "s"} ready to work now; ${openRows.length} open across the roster.`,
+    `Commerce status: ${noActiveCommerceDisclosure}`,
+    "",
+    "Session rule",
+    "Use this during a live application session. Do not submit until the final partner page is reviewed; private fields stay on the partner site.",
+    "",
+    "Before opening forms",
+    "1. Open each partner page from the listed application link and confirm the visible domain, network, terms, opt-ins and application type.",
+    "2. Paste public answers only when the live field asks for the same thing; never paste passwords, tax IDs, banking details, payout credentials or partner-issued tracking IDs into Jeep Build Lab.",
+    "3. Keep paid links inactive until the partner approves the account, issues tracking URLs, and those links pass clean-browser testing with visible affiliate or sponsored labels.",
+    "",
+    "Review evidence to gather",
+    applicationReviewEvidenceChecklist.map((item, index) => `${index + 1}. ${item.label}: ${item.detail}`).join("\n"),
+    "",
+    "Owner-only fields to have ready",
+    partnerSubmissionPrivateFields.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    "Copy-ready public answers",
+    affiliateApplicationAnswerLines(),
+    "",
+    "Session targets",
+    sessionRows.length ? sessionRows.flatMap(row => [
+      `${row.rank}. ${row.programName}${row.network ? ` via ${row.network}` : ""} - ${row.actionLabel}`,
+      `   Tracker status: ${row.statusLabel}${row.note ? ` - ${row.note}` : ""}`,
+      `   Application link: ${safeCommerceUrl(row.url)}`,
+      `   Owner gate: ${row.note || row.ownerGate}`,
+      `   Next safe action: ${row.nextAction}`,
+      `   Program requirements: ${row.requirements.length ? row.requirements.join(" ") : "Review the live form and partner terms before submitting."}`,
+      `   Paste rule: Use only the reviewed public answers above when the live form field matches.`,
+      `   Final owner approval line: ${row.approvalLine}`,
+      "",
+    ]).join("\n") : "No todo or profile-ready target is open. Reset a paused or blocked program before starting another application session.",
+    "",
+    "After each submission",
+    "1. Mark Submitted only after the partner form confirms submission or a confirmation email arrives.",
+    "2. Store confirmation emails, dashboard URLs, partner-issued tracking IDs, terms, payout settings and clean-browser test notes outside public source.",
+    "3. For approved programs, add the tracking URL only after labels, disclosure placement and destination testing are verified.",
+    "",
+    "Submitted or approved programs already in follow-up",
+    submittedOrApprovedRows.length ? submittedOrApprovedRows.map(row => `- ${row.programName}${row.network ? ` via ${row.network}` : ""}: ${row.statusLabel}. ${row.ownerReview}`).join("\n") : "- None yet.",
+    "",
+    "Blocked or paused handling",
+    "Use Blocked only when a password, account, eligibility, legal, or partner-site issue prevents final review. Use Paused when the program is not worth pursuing this session. Reset only when the owner is ready to apply.",
+  ].join("\n");
+}
+
+export function buildAllPartnerPublicAnswerDeck({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses, applicationStatusNotes }: CommerceApplicationPackInput) {
+  const selected = selectedParts(state, parts);
+  const priorities = partnerApplicationPrioritiesForAllPrograms(state, parts);
+  const rows = partnerApplicationSprintRows(priorities, applicationStatuses, applicationStatusNotes);
+  return [
+    "Jeep Build Lab public application answer deck",
+    `Build: ${name.trim() || "Untitled build"}`,
+    `Generated: ${new Date(generatedAt).toISOString().slice(0, 10)}`,
+    `Vehicle: ${vehicleDescription(state)}`,
+    `Scope: ${rows.length} partner targets${selected.length ? `; current build context: ${selected.length} selected part${selected.length === 1 ? "" : "s"} (${selectedCategorySummary(selected)})` : ""}`,
+    `Catalog basis: ${parts.length} sourced variants with dated source snapshots; no live-price, inventory or checkout claim.`,
+    `Commerce status: ${noActiveCommerceDisclosure}`,
+    `Independence disclosure: ${independenceDisclosure}`,
+    "",
+    "Safe-to-paste public answers",
+    affiliateApplicationAnswerLines(),
+    "",
+    "Partner roster links",
+    ...rows.flatMap(row => [
+      `${row.rank}. ${row.programName}${row.network ? ` via ${row.network}` : ""} - ${row.actionLabel}`,
+      `   Application link: ${row.url}`,
+      `   Tracker status: ${row.statusLabel}${row.note ? ` - ${row.note}` : ""}`,
+      `   Relationship: ${row.relationship}`,
+      `   Matched categories: ${row.matchedCategories.join(", ")}`,
+      `   Owner gate to review: ${row.note || row.ownerGate}`,
+      `   What to do next: ${row.nextAction}`,
+      `   Requirements to verify live: ${row.requirements.length ? row.requirements.join(" ") : "Review the partner form and terms before submitting."}`,
+      "",
+    ]),
+    "Owner-private fields not in this paste deck",
+    partnerSubmissionPrivateFields.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    "Submission rule",
+    "Open each partner page yourself, review final visible fields and agreements, then submit only after the final screen matches your intent. Keep paid links inactive until each partner approves and issues tested tracking URLs.",
+  ].join("\n");
+}
+
+export function buildPartnerApplicationTargetPrep(row: PartnerApplicationSprintRow) {
+  return [
+    "Jeep Build Lab single partner application prep",
+    `Program: ${row.programName}${row.network ? ` via ${row.network}` : ""}`,
+    `Tracker status: ${row.statusLabel}${row.note ? ` - ${row.note}` : ""}`,
+    `Application phase: ${row.phaseLabel}`,
+    `Relationship: ${row.relationship}`,
+    `Application link: ${safeCommerceUrl(row.url)}`,
+    `Matched categories: ${row.matchedCategories.join(", ")}`,
+    `Match reason: ${row.reason}`,
+    `Owner gate: ${row.note || row.ownerGate}`,
+    `Next safe action: ${row.nextAction}`,
+    `Owner review: ${row.ownerReview}`,
+    "",
+    "Safe-to-paste public answers",
+    affiliateApplicationAnswerLines(),
+    "",
+    "Requirements to verify live",
+    row.requirements.length ? row.requirements.map((item, index) => `${index + 1}. ${item}`).join("\n") : "Review the partner form and terms before submitting.",
+    "",
+    "Owner-private fields not in this prep",
+    partnerSubmissionPrivateFields.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    "Final owner approval line",
+    row.approvalLine,
+    "",
+    "Paid-link lock",
+    "Do not claim approved affiliate tracking, dealer pricing, wholesale checkout, inventory ownership, dropship fulfillment or paid-link revenue until this partner approves terms and issued links are tested.",
+  ].join("\n");
 }
 
 export function buildPartnerApplicationTrackerText({ name, state, parts, generatedAt = new Date().toISOString(), applicationStatuses, applicationStatusNotes }: CommerceApplicationPackInput) {
@@ -1002,6 +2101,10 @@ export function buildPartnerApplicationTrackerText({ name, state, parts, generat
     `Independence disclosure: ${independenceDisclosure}`,
     "",
     applicationTrackerSummary(programs, priorities, applicationStatuses, applicationStatusNotes),
+    "",
+    partnerApplicationOperationsSection(priorities, applicationStatuses, applicationStatusNotes),
+    "",
+    partnerOutreachQueueSection(priorities, applicationStatuses, applicationStatusNotes),
     ...(blockedFollowup ? ["", blockedFollowup] : []),
     ...(pausedFollowup ? ["", pausedFollowup] : []),
     "",
@@ -1047,6 +2150,11 @@ export function buildAffiliateApplicationProfile({ name, notes, state, parts, ge
     "Fields to verify before submitting",
     affiliateApplicationProfileFields.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
+    "Review evidence to gather before submitting",
+    applicationReviewEvidenceChecklist.map((item, index) => `${index + 1}. ${item.label}: ${item.detail}`).join("\n"),
+    "",
+    applicationDataBoundarySection(),
+    "",
     "Common application answers",
     affiliateApplicationAnswerLines(),
     "",
@@ -1054,6 +2162,10 @@ export function buildAffiliateApplicationProfile({ name, notes, state, parts, ge
     sponsoredLinkReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
     applicationTrackerSummary(programs, allPriorities, applicationStatuses, applicationStatusNotes),
+    "",
+    partnerApplicationOperationsSection(allPriorities, applicationStatuses, applicationStatusNotes),
+    "",
+    partnerOutreachQueueSection(allPriorities, applicationStatuses, applicationStatusNotes),
     ...(blockedFollowup ? ["", blockedFollowup] : []),
     ...(pausedFollowup ? ["", pausedFollowup] : []),
     "",
@@ -1114,6 +2226,10 @@ export function buildPaidLinkDisclosurePack({ name, notes, state, parts, generat
     paidLinkLaunchStatus(allPriorities, applicationStatuses),
     "",
     applicationTrackerSummary(programs, allPriorities, applicationStatuses, applicationStatusNotes),
+    "",
+    partnerApplicationOperationsSection(allPriorities, applicationStatuses, applicationStatusNotes),
+    "",
+    partnerOutreachQueueSection(allPriorities, applicationStatuses, applicationStatusNotes),
     ...(blockedFollowup ? ["", blockedFollowup] : []),
     ...(pausedFollowup ? ["", pausedFollowup] : []),
     "",
@@ -1133,6 +2249,8 @@ export function buildPaidLinkDisclosurePack({ name, notes, state, parts, generat
     "",
     "Future checkout guardrails",
     futureCheckoutReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    stripeSandboxReadinessSection(),
     "",
     commerceModeReadinessSection(),
     "",
@@ -1162,6 +2280,8 @@ export function buildCommerceApplicationPack({ name, notes, state, parts, genera
     "Affiliate application profile fields",
     affiliateApplicationProfileFields.map((item, index) => `${index + 1}. ${item}`).join("\n"),
     "",
+    applicationDataBoundarySection(),
+    "",
     "Common application answers",
     affiliateApplicationAnswerLines(),
     "",
@@ -1170,6 +2290,8 @@ export function buildCommerceApplicationPack({ name, notes, state, parts, genera
     "",
     "Future checkout guardrails",
     futureCheckoutReadinessChecklist.map((item, index) => `${index + 1}. ${item}`).join("\n"),
+    "",
+    stripeSandboxReadinessSection(),
     "",
     commerceModeReadinessSection(),
     "",
@@ -1187,6 +2309,10 @@ export function buildCommerceApplicationPack({ name, notes, state, parts, genera
     paidLinkLaunchStatus(allPriorities, applicationStatuses),
     "",
     applicationTrackerSummary(programs, allPriorities, applicationStatuses, applicationStatusNotes),
+    "",
+    partnerApplicationOperationsSection(allPriorities, applicationStatuses, applicationStatusNotes),
+    "",
+    partnerOutreachQueueSection(allPriorities, applicationStatuses, applicationStatusNotes),
     ...(blockedFollowup ? ["", blockedFollowup] : []),
     ...(pausedFollowup ? ["", pausedFollowup] : []),
     "",

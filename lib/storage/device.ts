@@ -2,6 +2,17 @@ import {baseCatalog,saveSchema,totalFor} from '../model';
 import {backupSchema,draftSchema,applyPrices,StorageError,type BuildStorage,type Backup,type Draft,type PriceNote} from './types';
 type DeviceData={builds:Backup['builds'];prices:PriceNote[];draft:Draft|null;revision:number};
 const empty=():DeviceData=>({builds:[],prices:[],draft:null,revision:0});
+// randomUUID is restricted to secure contexts. getRandomValues also supports
+// the internal HTTP preview while keeping identifiers cryptographically random.
+function buildId(){
+ if(typeof crypto.randomUUID==='function')return crypto.randomUUID();
+ const bytes=crypto.getRandomValues(new Uint8Array(16));
+ bytes[6]=(bytes[6]&0x0f)|0x40;
+ bytes[8]=(bytes[8]&0x3f)|0x80;
+ const hex=Array.from(bytes,byte=>byte.toString(16).padStart(2,'0')).join('');
+ return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
+}
+
 let opened:Promise<IDBDatabase>|undefined;
 function database(){
  if(!opened)opened=new Promise<IDBDatabase>((resolve,reject)=>{
@@ -37,7 +48,7 @@ export const deviceStorage:BuildStorage={
  save:input=>transaction(true,data=>{const b=saveSchema.parse(input);const existing=b.id?data.builds.find(v=>v.id===b.id):undefined;
   if(b.id&&!existing)throw new StorageError('This build is no longer saved. Save it as a copy.',404);
   if(!b.id&&data.builds.length>=100)throw new StorageError('Garage limit reached. Remove an old build first.',400);
-  const id=b.id??crypto.randomUUID(),savedTotal=totalFor(b.state,applyPrices(data.prices)).total;
+  const id=b.id??buildId(),savedTotal=totalFor(b.state,applyPrices(data.prices)).total;
   const saved={id,name:b.name,notes:b.notes,state:b.state,updatedAt:new Date().toISOString(),savedTotal};
   data.builds=existing?data.builds.map(v=>v.id===id?saved:v):[...data.builds,saved];return {id,savedTotal};}),
  remove:id=>transaction(true,data=>{data.builds=data.builds.filter(b=>b.id!==id);if(data.draft?.buildId===id)data.draft.buildId=null;}),

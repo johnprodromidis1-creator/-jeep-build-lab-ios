@@ -57,3 +57,6 @@ xcuserdata/
 *.dSYM.zip
 *.mobileprovision
 *.p12
+
+/publish-stage/
+/jeep-privacy-site.tar.gz

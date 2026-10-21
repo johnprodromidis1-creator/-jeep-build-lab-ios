@@ -32,7 +32,30 @@ async function bundle(file,name){
 
 const {deviceStorage:storage}=await bundle('lib/storage/device.ts','device');
 const {initialState}=await bundle('lib/model.ts','model');
+const {backupSchema}=await bundle('lib/storage/types.ts','storage-types');
 const state=()=>({...structuredClone(initialState),picks:{tires:'nitto-217020'}});
+await test('backup schema preserves optional partner application progress and accepts legacy backups',()=>{
+ const legacy={format:'jeep-build-lab',version:1,exportedAt:new Date().toISOString(),builds:[],prices:[],draft:null};
+ assert.equal(backupSchema.safeParse(legacy).success,true);
+ const tracked={...legacy,partnerApplications:{statuses:{'realtruck-affiliate':'blocked','cj-pony-parts':'ready'},notes:{'realtruck-affiliate':'Retry account setup'}}};
+ const parsed=backupSchema.parse(tracked);
+ assert.equal(parsed.partnerApplications.statuses['cj-pony-parts'],'ready');
+ assert.equal(parsed.partnerApplications.notes['realtruck-affiliate'],'Retry account setup');
+ assert.equal(backupSchema.safeParse({...tracked,partnerApplications:{statuses:{'realtruck-affiliate':'paid'},notes:{}}}).success,false);
+ assert.equal(backupSchema.safeParse({...tracked,partnerApplications:{statuses:{},notes:{'realtruck-affiliate':'x'.repeat(241)}}}).success,false);
+});
+await test('device save supports contexts without crypto.randomUUID and preserves new catalog parts',async()=>{
+ const descriptor=Object.getOwnPropertyDescriptor(globalThis.crypto,'randomUUID');
+ Object.defineProperty(globalThis.crypto,'randomUUID',{configurable:true,value:undefined});
+ try{
+  const saved=await storage.save({name:'Bumper reference',notes:'',state:{...state(),picks:{bumpers:'quadratec-brute-strength-12057-0261'},labor:25000}});
+  assert.match(saved.id,/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+  assert.equal((await storage.list())[0].state.picks.bumpers,'quadratec-brute-strength-12057-0261');
+ }finally{
+  if(descriptor)Object.defineProperty(globalThis.crypto,'randomUUID',descriptor);else delete globalThis.crypto.randomUUID;
+  await storage.erase();
+ }
+});
 await test('device garage, backup restore, revision conflicts and erasure work without network access',async()=>{
  const originalFetch=globalThis.fetch;globalThis.fetch=()=>{throw new Error('Device garage must not use network requests.');};
  try{

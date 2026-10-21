@@ -12,6 +12,60 @@ const sources = {
 };
 
 const catalogExpansion = [
+{
+  "id": "quadratec-brute-strength-12057-0261",
+  "category": "bumpers",
+  "brand": "Quadratec",
+  "name": "Brute Strength Winch Bumper",
+  "variant": "Stubby \u00b7 black aluminum",
+  "reference": "Quadratec 12057-0261",
+  "priceCents": 97999,
+  "retailer": "Quadratec",
+  "url": "https://www.quadratec.com/p/quadratec/brute-strength-winch-front-bumper-jeep-wrangler-jl/stubby",
+  "checkedAt": "2026-10-21",
+  "yearFrom": 2018,
+  "yearTo": 2023,
+  "trims": [
+    "Sport",
+    "Sahara",
+    "Rubicon"
+  ],
+  "powertrains": [
+    "gas"
+  ],
+  "specs": {
+    "winchMount": true,
+    "finish": "black"
+  },
+  "notes": "Exact product-page price checked October 21, 2026. Includes winch plate; confirm winch envelope and mounting pattern. Sport fog lamps need separate brackets; factory steel-bumper fog lamps do not fit. D-rings, auxiliary lights and skid plate are extra. Planner coverage is limited to the supported gas JL models; 4xe fitment has not been confirmed."
+},
+{
+  "id": "quadratec-brute-strength-12057-0260",
+  "category": "bumpers",
+  "brand": "Quadratec",
+  "name": "Brute Strength Winch Bumper",
+  "variant": "Full width \u00b7 black aluminum",
+  "reference": "Quadratec 12057-0260",
+  "priceCents": 119999,
+  "retailer": "Quadratec",
+  "url": "https://www.quadratec.com/p/quadratec/brute-strength-winch-front-bumper-jeep-wrangler-jl/full-width",
+  "checkedAt": "2026-10-21",
+  "yearFrom": 2018,
+  "yearTo": 2023,
+  "trims": [
+    "Sport",
+    "Sahara",
+    "Rubicon"
+  ],
+  "powertrains": [
+    "gas"
+  ],
+  "specs": {
+    "winchMount": true,
+    "finish": "black"
+  },
+  "notes": "Exact product-page price checked October 21, 2026. Includes winch plate; confirm winch envelope and mounting pattern. Sport fog lamps need separate brackets; factory steel-bumper fog lamps do not fit. D-rings, auxiliary lights and skid plate are extra. Planner coverage is limited to the supported gas JL models; 4xe fitment has not been confirmed."
+},
   {
     id: "black-rhino-armory-1790ary85127g71",
     category: "wheels",

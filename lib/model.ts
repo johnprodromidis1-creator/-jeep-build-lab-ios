@@ -285,7 +285,7 @@ export function buildIssues(s: BuildState, parts: Part[] = baseCatalog): Issue[]
   }
   if (bumper?.id === "tactik-hd" && s.trim === "Sport") issues.push({ level: "note", message: "Sport fog lamps need Mopar 68298651AA mounting brackets; that extra cost is not in the parts total." });
   if (bumper?.id.startsWith("qrc-") && s.trim === "Rubicon") issues.push({ level: "note", message: "QRC bumper does not accept fog lights from the factory Rubicon steel bumper; check your original bumper option." });
-  if (selected.some(p => p.category === "armor") && s.trim === "Rubicon") issues.push({ level: "note", message: "Factory Rubicon rock rails must be removed for the selected QRC side armor." });
+  if (selected.some(p => p.id === "qrc-armor") && s.trim === "Rubicon") issues.push({ level: "note", message: "Factory Rubicon rock rails must be removed for the selected QRC side armor." });
   return issues;
 }
 
